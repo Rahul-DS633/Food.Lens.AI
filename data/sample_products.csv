@@ -1,0 +1,21 @@
+barcode,name,brand,category,net_weight_g,serving_size_g,energy_kcal,protein_g,carbs_g,sugars_g,added_sugar_g,fat_g,sat_fat_g,sodium_mg
+8901719101052,Parle-G Original Gluco Biscuits,Parle,biscuits,65.0,21.6,454.0,6.5,78.2,26.5,25.0,12.8,5.8,280.0
+8901058852349,Maggi 2-Minute Masala Noodles,Nestle,instant_noodles,70.0,70.0,427.0,8.0,63.5,2.2,1.5,15.7,6.8,1020.0
+8904063200142,Aloo Bhujia Spicy Mint Crisp,Haldiram's,namkeen,150.0,30.0,579.0,8.8,43.1,2.4,0.0,41.3,14.5,740.0
+8901262010025,Amul Butter Pasteurised,Amul,spreads,100.0,10.0,722.0,0.6,0.0,0.0,0.0,80.0,51.0,840.0
+8901719114120,Frooti Fresh 'N' Juicy Mango Drink,Parle Agro,drinks,160.0,160.0,65.0,0.1,16.2,15.5,12.0,0.0,0.0,18.0
+8901030927896,Knorr Classic Thick Tomato Soup,Knorr,soups,53.0,13.2,345.0,4.5,75.0,30.0,22.0,3.0,1.2,1420.0
+8901725131234,Britannia Good Day Butter Cookies,Britannia,biscuits,120.0,20.0,505.0,6.0,68.0,23.0,21.5,23.0,10.5,310.0
+8901499008231,Lay's India's Magic Masala Chips,PepsiCo,snacks,50.0,30.0,555.0,7.2,52.4,3.5,0.0,35.6,14.8,680.0
+8901233024921,Tata Tea Premium Desh Ki Chai,Tata,drinks,250.0,2.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+8901030001237,Cadbury Dairy Milk Chocolate,Mondelez,chocolate,50.0,20.0,532.0,7.8,60.5,57.0,48.0,29.5,17.5,150.0
+8901058000458,Nescafe Classic Instant Coffee,Nestle,drinks,50.0,1.5,100.0,0.0,0.0,0.0,0.0,0.0,0.0,10.0
+8902579100123,Kellogg's Corn Flakes Original,Kellogg's,cereals,475.0,30.0,378.0,8.2,84.0,8.5,7.0,0.9,0.4,460.0
+8906001021456,Saffola Gold Pro Healthy Lifestyle Edible Oil,Marico,oils,1000.0,10.0,900.0,0.0,0.0,0.0,0.0,100.0,20.0,0.0
+8901063142211,Dabur Honey 100% Pure,Dabur,spreads,250.0,15.0,319.0,0.3,79.5,79.5,0.0,0.0,0.0,17.0
+8901499010029,Kurkure Masala Munch,PepsiCo,snacks,90.0,30.0,560.0,6.2,54.8,1.8,0.0,35.5,15.2,890.0
+8901719124457,Monaco Salted Classic Biscuits,Parle,biscuits,75.0,25.0,480.0,8.0,66.0,7.5,6.0,20.0,9.0,820.0
+8901058863412,KitKat 4-Finger Crisp Wafer Chocolate,Nestle,chocolate,38.5,38.5,502.0,6.8,63.1,44.2,38.0,25.1,14.2,85.0
+8901030825123,Sunfeast Dark Fantasy Choco Fills,ITC,biscuits,75.0,25.0,509.0,5.5,66.0,37.0,35.0,24.8,11.5,210.0
+8904063200562,Haldiram's Minute Khana Moong Dal Halwa,Haldiram's,sweets,200.0,50.0,460.0,7.2,52.0,38.0,35.0,24.0,14.0,90.0
+8906014640124,Epigamia Greek Yogurt Natural,Drums Food,dairy,100.0,100.0,95.0,8.0,6.5,4.5,0.0,4.0,2.5,45.0

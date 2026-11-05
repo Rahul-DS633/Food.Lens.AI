@@ -1,0 +1,29 @@
+# Core Web & API
+fastapi>=0.115.0
+uvicorn>=0.30.0
+pydantic>=2.8.0
+streamlit>=1.38.0
+plotly>=5.22.0
+
+# Database
+sqlalchemy>=2.0.0
+
+# Image & OCR
+pillow>=10.4.0
+opencv-python>=4.10.0
+easyocr>=1.7.0
+
+# AI / LLM
+google-genai>=0.1.0
+
+# Data & Utilities
+pandas>=2.2.0
+numpy>=1.26.0
+pyyaml>=6.0.1
+requests>=2.32.0
+httpx>=0.27.0
+python-dotenv>=1.0.0
+
+# Testing & Property-based testing
+pytest>=8.3.0
+hypothesis>=6.110.0

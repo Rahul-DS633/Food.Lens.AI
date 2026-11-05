@@ -1,0 +1,31 @@
+code_or_name,common_name,category,explanation,allergen_flag
+wheat flour,Wheat Flour (Atta/Maida),flour,Primary carbohydrate base derived from milled wheat grain.,wheat
+refined wheat flour,Maida (Refined Wheat Flour),flour,Finely milled and refined wheat flour commonly used for texture in biscuits and noodles.,wheat
+sugar,Sugar (Sucrose),sweetener,Simple carbohydrate used for sweet taste and preservation.,none
+invert sugar syrup,Invert Sugar Syrup,sweetener,Syrup of glucose and fructose helping retain moisture and crispness.,none
+liquid glucose,Liquid Glucose,sweetener,Starch-derived sweetener used to prevent crystallization and improve mouthfeel.,none
+palm oil,Palm Oil,oil,Edible vegetable oil providing stability at high cooking temperatures.,none
+palmolein oil,Palmolein Oil,oil,Liquid fraction of palm oil widely used for crisp frying in savory snacks.,none
+sunflower oil,Sunflower Oil,oil,Plant-based vegetable oil containing unsaturated fatty acids.,none
+milk solids,Milk Solids,dairy,Dried milk proteins and fats providing flavor, browning, and texture.,milk
+butter,Butter,dairy,Traditional dairy fat made from churned milk cream.,milk
+salt,Common Salt (Iodised Salt),seasoning,Sodium chloride providing flavor enhancement and preservation.,none
+500,Sodium Bicarbonate,leavening_agent,Approved food-grade baking soda releasing CO2 for light texture.,none
+500(ii),Sodium Bicarbonate,leavening_agent,Approved food-grade baking soda releasing CO2 for light texture.,none
+503,Ammonium Bicarbonate,leavening_agent,Approved food-grade raising agent providing extra crispness in baked biscuits.,none
+503(ii),Ammonium Bicarbonate,leavening_agent,Approved food-grade raising agent providing extra crispness in baked biscuits.,none
+322,Lecithin,emulsifier,Natural lipid (usually from soy or sunflower) keeping fats and water evenly mixed.,soy
+412,Guar Gum,thickener,Natural soluble plant fibre from guar beans that improves chewiness and viscosity.,none
+508,Potassium Chloride,gelling_agent,Mineral salt used to stabilize texture and reduce sodium content.,none
+330,Citric Acid,acidulant,Natural fruit acid used to regulate tartness and enhance freshness.,none
+300,Ascorbic Acid (Vitamin C),antioxidant,Antioxidant vitamin that prevents spoilage and maintains natural color.,none
+150d,Caramel IV (Sulphite Ammonia),colour,Approved food colouring providing rich golden to brown hues.,none
+223,Sodium Metabisulphite,dough_conditioner,Preservative and dough conditioner helping maintain dough elasticity.,sulphites
+621,Monosodium Glutamate (MSG),flavour_enhancer,Sodium salt of glutamic acid providing savory umami taste.,none
+627,Disodium Guanylate,flavour_enhancer,Natural nucleotide salt enhancing savory aroma in seasonings.,none
+631,Disodium Inosinate,flavour_enhancer,Savory nucleotide enhancer frequently paired with MSG.,none
+peanut,Peanut / Groundnut,nut,Protein-rich legume seed.,peanut
+soy,Soybean,legume,Protein-rich plant legume.,soy
+almond,Almond,nut,Tree nut with healthy monounsaturated fats.,tree_nuts
+cashew,Cashew,nut,Tree nut used for creamy texture and richness.,tree_nuts
+gluten,Wheat Gluten,protein,Natural protein structure giving elasticity to dough and noodles.,wheat

@@ -1,0 +1,94 @@
+# FoodLens Category Nutritional Thresholds & Scoring Config
+# Version: 1.0.0
+# References: WHO Regional Nutrient Profile Models & Nutri-Score Technical Specifications
+
+version: "1.0.0"
+
+categories:
+  beverages:
+    energy_kcal:
+      low: 20.0
+      moderate: 40.0
+      high: 60.0
+    sugars_g:
+      low: 2.5
+      moderate: 5.0
+      high: 8.0
+    sat_fat_g:
+      low: 0.5
+      moderate: 1.5
+      high: 3.0
+    sodium_mg:
+      low: 20.0
+      moderate: 50.0
+      high: 100.0
+    protein_g:
+      bonus_threshold: 2.0
+    fibre_g:
+      bonus_threshold: 1.5
+
+  snacks:
+    energy_kcal:
+      low: 350.0
+      moderate: 450.0
+      high: 520.0
+    sugars_g:
+      low: 10.0
+      moderate: 20.0
+      high: 30.0
+    sat_fat_g:
+      low: 4.0
+      moderate: 8.0
+      high: 12.0
+    sodium_mg:
+      low: 300.0
+      moderate: 600.0
+      high: 900.0
+    protein_g:
+      bonus_threshold: 8.0
+    fibre_g:
+      bonus_threshold: 4.0
+
+  cereals:
+    energy_kcal:
+      low: 320.0
+      moderate: 400.0
+      high: 480.0
+    sugars_g:
+      low: 8.0
+      moderate: 15.0
+      high: 25.0
+    sat_fat_g:
+      low: 2.0
+      moderate: 5.0
+      high: 8.0
+    sodium_mg:
+      low: 200.0
+      moderate: 450.0
+      high: 700.0
+    protein_g:
+      bonus_threshold: 9.0
+    fibre_g:
+      bonus_threshold: 6.0
+
+  general:
+    energy_kcal:
+      low: 300.0
+      moderate: 420.0
+      high: 500.0
+    sugars_g:
+      low: 9.0
+      moderate: 18.0
+      high: 27.0
+    sat_fat_g:
+      low: 3.0
+      moderate: 7.0
+      high: 11.0
+    sodium_mg:
+      low: 250.0
+      moderate: 550.0
+      high: 850.0
+    protein_g:
+      bonus_threshold: 7.0
+    fibre_g:
+      bonus_threshold: 3.5

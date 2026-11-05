@@ -1,0 +1,92 @@
+{
+  "energy_kcal": [
+    "energy",
+    "energie",
+    "calories",
+    "energy value",
+    "caloric value",
+    "calorific value",
+    "total energy",
+    "kcal",
+    "ऊर्जा"
+  ],
+  "protein_g": [
+    "protein",
+    "proteins",
+    "proteines",
+    "protéines",
+    "crude protein",
+    "protien",
+    "प्रोटीन"
+  ],
+  "carbs_g": [
+    "carbohydrate",
+    "carbohydrates",
+    "total carbohydrate",
+    "total carbohydrates",
+    "carbs",
+    "कार्बोहाइड्रेट"
+  ],
+  "sugars_g": [
+    "total sugars",
+    "sugars",
+    "sugar",
+    "of which sugars",
+    "of which sugar",
+    "शर्करा"
+  ],
+  "added_sugar_g": [
+    "added sugars",
+    "added sugar",
+    "includes added sugars",
+    "includes added sugar",
+    "of which added sugars",
+    "अतिरिक्त चीनी"
+  ],
+  "fat_g": [
+    "total fat",
+    "fat",
+    "fats",
+    "total lipid",
+    "वसा"
+  ],
+  "sat_fat_g": [
+    "saturated fat",
+    "saturated fatty acids",
+    "sat fat",
+    "saturates",
+    "satures",
+    "saturés",
+    "acides gras satures",
+    "acides gras saturés",
+    "of which saturates",
+    "संतृप्त वसा"
+  ],
+  "trans_fat_g": [
+    "trans fat",
+    "trans fatty acids",
+    "trans-fat",
+    "trans fats",
+    "ट्रांस वसा"
+  ],
+  "fibre_g": [
+    "dietary fibre",
+    "dietary fiber",
+    "crude fibre",
+    "fibre",
+    "fiber",
+    "रेशा"
+  ],
+  "sodium_mg": [
+    "sodium",
+    "sod.",
+    "na",
+    "सोडियम"
+  ],
+  "salt_g": [
+    "salt",
+    "iodised salt",
+    "table salt",
+    "नमक"
+  ]
+}
