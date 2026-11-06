@@ -118,3 +118,4 @@ def decode_barcode_from_image(image_input) -> Tuple[Optional[str], Optional[str]
         pass
 
     return None, None
+

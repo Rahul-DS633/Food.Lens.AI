@@ -43,3 +43,4 @@ If **more than two** of the six core components (Energy, Sugar, Saturated Fat, S
 ## 5. Regulatory Disclaimer
 Every score result includes the following disclaimer:
 > *"Educational prototype score based on category nutrient thresholds. Not an official FSSAI or medical diagnostic rating."*
+

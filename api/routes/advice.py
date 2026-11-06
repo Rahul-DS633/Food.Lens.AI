@@ -30,3 +30,4 @@ def get_nutrition_advice(req: AdviceRequest):
         "evidence_numbers_used": explanation.evidence_numbers_used,
         "flagged_numbers": explanation.flagged_numbers,
     }
+

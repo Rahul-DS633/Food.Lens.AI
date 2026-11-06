@@ -1,12 +1,20 @@
 """
 FoodLens AI — Product Comparison
-Side-by-side per-100g nutritional evaluation to highlight sugar, fat, and sodium differences.
+Side-by-side per-100g nutritional evaluation with realistic product photography,
+vector iconography, and direct difference analysis.
 """
 
-import streamlit as st
+import sys
 from pathlib import Path
 
-st.set_page_config(page_title="Compare Foods — FoodLens AI", page_icon="⚖️", layout="wide")
+_PROJECT_ROOT = str(Path(__file__).resolve().parent.parent.parent)
+if _PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, _PROJECT_ROOT)
+
+import streamlit as st
+import pandas as pd
+
+st.set_page_config(page_title="Compare Foods — FoodLens AI", page_icon="🔍", layout="wide")
 
 CSS_PATH = Path(__file__).parent.parent / "assets" / "theme.css"
 if CSS_PATH.exists():
@@ -19,11 +27,22 @@ from foodlens.nutrition import NutritionProfile, create_nutrient
 from foodlens.scoring import calculate_foodlens_score
 from foodlens.ingredients import IngredientEngine
 from foodlens.gamification.xp import calculate_xp_award
+from app.components.icons import get_icon_svg
+from app.components.images import get_product_image
 
 ingredient_engine = IngredientEngine()
 
-st.title("⚖️ Side-by-Side Product Comparison")
-st.markdown("Compare 2 or more packaged products per **100g** to spot hidden sugars, saturated fat, and sodium differences.")
+scale_svg = get_icon_svg("scale", size=26, color="#144730")
+st.markdown(
+    f"""
+    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+        {scale_svg}
+        <h1 style="margin: 0; color: #144730; font-size: 26px;">Side-by-Side Product Comparison</h1>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+st.caption("Compare 2 packaged products per 100g to spot hidden sugars, saturated fat, and sodium differences.")
 
 db = SessionLocal()
 try:
@@ -91,20 +110,35 @@ try:
         db.add(XPEvent(user_id=1, event_type="compare", xp=xp_gain, ref_id=f"{id1}_vs_{id2}"))
         db.commit()
 
-    st.markdown("---")
+    st.markdown("<hr style='border: none; border-top: 1.5px solid #E2E8F0; margin: 18px 0;'>", unsafe_allow_html=True)
 
-    # Comparison Columns
+    # Side-by-side Realistic Product Showcase Cards
+    img1 = get_product_image(p1.name, p1.brand, p1.category, p1.image_url)
+    img2 = get_product_image(p2.name, p2.brand, p2.category, p2.image_url)
+
     col_c1, col_c2 = st.columns(2)
 
     with col_c1:
         st.markdown(
             f"""
-            <div class="foodlens-card" style="border-top: 5px solid #1B5E3F;">
-                <h3 style="margin-top: 0; color: #1B5E3F;">{p1.name}</h3>
-                <div style="font-size: 14px; color: #4B5563;"><b>{p1.brand}</b> • {p1.category.title()}</div>
-                <div style="margin: 12px 0;">
-                    <span style="font-size: 28px; font-weight: 800; color: {sc1.color_hex};">{sc1.score or 'N/A'}/100</span>
-                    <span style="font-size: 14px; font-weight: 600; color: #4B5563;">({sc1.band})</span>
+            <div class="product-card-3d" style="border-top: 5px solid #1B5E3F; padding: 18px;">
+                <div style="display: flex; gap: 14px; align-items: center; margin-bottom: 12px;">
+                    <div style="width: 80px; height: 80px; border-radius: 12px; overflow: hidden; background: #F8FAFC; border: 1px solid #E2E8F0; flex-shrink: 0;">
+                        <img src="{img1}" alt="{p1.name}" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div>
+                        <span style="font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; background: #DCFCE7; color: #166534; text-transform: uppercase;">
+                            {p1.brand}
+                        </span>
+                        <h3 style="margin: 4px 0 2px 0; color: #144730; font-size: 17px;">{p1.name}</h3>
+                        <div style="font-size: 13px; color: #64748B;">Category: {p1.category.title()}</div>
+                    </div>
+                </div>
+                <div style="background: #F8FAFC; border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: baseline;">
+                    <span style="font-size: 12.5px; font-weight: 700; color: #475569; text-transform: uppercase;">Nutri-Score</span>
+                    <span style="font-size: 26px; font-weight: 800; color: {sc1.color_hex}; font-family: 'JetBrains Mono', monospace;">
+                        {sc1.score or 'N/A'}<span style="font-size: 14px; color: #64748B;">/100 ({sc1.band})</span>
+                    </span>
                 </div>
             </div>
             """,
@@ -114,12 +148,24 @@ try:
     with col_c2:
         st.markdown(
             f"""
-            <div class="foodlens-card" style="border-top: 5px solid #2563EB;">
-                <h3 style="margin-top: 0; color: #2563EB;">{p2.name}</h3>
-                <div style="font-size: 14px; color: #4B5563;"><b>{p2.brand}</b> • {p2.category.title()}</div>
-                <div style="margin: 12px 0;">
-                    <span style="font-size: 28px; font-weight: 800; color: {sc2.color_hex};">{sc2.score or 'N/A'}/100</span>
-                    <span style="font-size: 14px; font-weight: 600; color: #4B5563;">({sc2.band})</span>
+            <div class="product-card-3d" style="border-top: 5px solid #2563EB; padding: 18px;">
+                <div style="display: flex; gap: 14px; align-items: center; margin-bottom: 12px;">
+                    <div style="width: 80px; height: 80px; border-radius: 12px; overflow: hidden; background: #F8FAFC; border: 1px solid #E2E8F0; flex-shrink: 0;">
+                        <img src="{img2}" alt="{p2.name}" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div>
+                        <span style="font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; background: #EFF6FF; color: #1D4ED8; text-transform: uppercase;">
+                            {p2.brand}
+                        </span>
+                        <h3 style="margin: 4px 0 2px 0; color: #1E3A8A; font-size: 17px;">{p2.name}</h3>
+                        <div style="font-size: 13px; color: #64748B;">Category: {p2.category.title()}</div>
+                    </div>
+                </div>
+                <div style="background: #F8FAFC; border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: baseline;">
+                    <span style="font-size: 12.5px; font-weight: 700; color: #475569; text-transform: uppercase;">Nutri-Score</span>
+                    <span style="font-size: 26px; font-weight: 800; color: {sc2.color_hex}; font-family: 'JetBrains Mono', monospace;">
+                        {sc2.score or 'N/A'}<span style="font-size: 14px; color: #64748B;">/100 ({sc2.band})</span>
+                    </span>
                 </div>
             </div>
             """,
@@ -127,7 +173,8 @@ try:
         )
 
     # Detailed Table of Nutrients per 100g
-    st.subheader("📊 Nutrient Table (Normalized Per 100g)")
+    st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
+    st.markdown("#### Nutritional Difference Breakdown (Per 100g)")
 
     def _diff_text(v1, v2, unit, lower_is_better=True):
         if v1 is None or v2 is None:
@@ -136,9 +183,9 @@ try:
         if abs(diff) < 0.1:
             return "Identical"
         if (diff < 0 and lower_is_better) or (diff > 0 and not lower_is_better):
-            return f"🟢 {p1.brand} has {abs(diff):g}{unit} {'less' if diff < 0 else 'more'}"
+            return f"Better: {p1.brand} has {abs(diff):g}{unit} {'less' if diff < 0 else 'more'}"
         else:
-            return f"🔴 {p1.brand} has {abs(diff):g}{unit} {'more' if diff > 0 else 'less'}"
+            return f"Higher: {p1.brand} has {abs(diff):g}{unit} {'more' if diff > 0 else 'less'}"
 
     metrics = [
         ("Energy", n1.energy_kcal, n2.energy_kcal, "kcal", True),
@@ -147,12 +194,11 @@ try:
         ("Sugar in Teaspoons", prof1.sugar_teaspoons, prof2.sugar_teaspoons, " tsp", True),
         ("Total Fat", n1.fat_g, n2.fat_g, "g", True),
         ("Saturated Fat", n1.sat_fat_g, n2.sat_fat_g, "g", True),
-        ("Protein", n1.protein_g, n2.protein_g, "g", False),  # Higher is better
-        ("Dietary Fibre", n1.fibre_g, n2.fibre_g, "g", False), # Higher is better
+        ("Protein", n1.protein_g, n2.protein_g, "g", False),
+        ("Dietary Fibre", n1.fibre_g, n2.fibre_g, "g", False),
         ("Sodium", n1.sodium_mg, n2.sodium_mg, "mg", True),
     ]
 
-    import pandas as pd
     rows = []
     for m_label, v1, v2, unit, lower_is_better in metrics:
         v1_str = f"{v1:g} {unit}" if v1 is not None else "Not reported"
@@ -160,13 +206,32 @@ try:
         comparison = _diff_text(v1, v2, unit, lower_is_better)
         rows.append({
             "Nutrient": m_label,
-            f"{p1.brand} ({p1.name[:15]}...)": v1_str,
-            f"{p2.brand} ({p2.name[:15]}...)": v2_str,
-            "Key Difference": comparison
+            f"{p1.brand} ({p1.name[:16]}...)": v1_str,
+            f"{p2.brand} ({p2.name[:16]}...)": v2_str,
+            "Evaluation": comparison
         })
 
     df = pd.DataFrame(rows)
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.dataframe(df, width="stretch", hide_index=True)
+
+    # Ingredients Side-by-side
+    st.markdown("#### Ingredients Comparison")
+    col_i1, col_i2 = st.columns(2)
+    with col_i1:
+        st.markdown(f"**{p1.name} Ingredients:**")
+        if p1.ingredients:
+            for item in p1.ingredients:
+                st.markdown(f"- **{item.name}** ({item.category})")
+        else:
+            st.caption("No ingredients parsed yet.")
+
+    with col_i2:
+        st.markdown(f"**{p2.name} Ingredients:**")
+        if p2.ingredients:
+            for item in p2.ingredients:
+                st.markdown(f"- **{item.name}** ({item.category})")
+        else:
+            st.caption("No ingredients parsed yet.")
 
 finally:
     db.close()

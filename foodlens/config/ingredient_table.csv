@@ -29,3 +29,40 @@ soy,Soybean,legume,Protein-rich plant legume.,soy
 almond,Almond,nut,Tree nut with healthy monounsaturated fats.,tree_nuts
 cashew,Cashew,nut,Tree nut used for creamy texture and richness.,tree_nuts
 gluten,Wheat Gluten,protein,Natural protein structure giving elasticity to dough and noodles.,wheat
+
+potatoes,Potatoes,vegetable,Whole or dehydrated root vegetable providing starchy bulk and texture.,none
+potato,Potatoes,vegetable,Whole or dehydrated root vegetable providing starchy bulk and texture.,none
+cotton seed oil,Cottonseed Oil,oil,Refined vegetable oil commonly blended for high-temperature snack frying.,none
+cottonseed oil,Cottonseed Oil,oil,Refined vegetable oil commonly blended for high-temperature snack frying.,none
+gram pulse flour,Besan (Gram Flour),legume,Ground chickpea/Bengal gram flour rich in protein and fiber, providing crisp texture in snacks.,none
+gram flour,Besan (Gram Flour),legume,Ground chickpea/Bengal gram flour rich in protein and fiber, providing crisp texture in snacks.,none
+besan,Besan (Gram Flour),legume,Ground chickpea/Bengal gram flour rich in protein and fiber, providing crisp texture in snacks.,none
+tepary bean flour,Moth Bean Flour,legume,Traditional Rajasthani legume flour lending authentic crunch to Bikaneri bhujia.,none
+moth bean flour,Moth Bean Flour,legume,Traditional Rajasthani legume flour lending authentic crunch to Bikaneri bhujia.,none
+edible starch,Edible Starch,starch,Purified plant carbohydrate used to absorb moisture and ensure crispiness.,none
+spices & condiments,Spices & Condiments,spice,Blend of aromatic ground spices for traditional flavor profile.,none
+spices,Mixed Spices,spice,Blend of aromatic ground spices for traditional flavor profile.,none
+coriander powder,Coriander Powder (Dhania),spice,Aromatic seed spice used for citrusy warm flavor.,none
+cumin powder,Cumin Powder (Jeera),spice,Warm earthy digestive spice fundamental in Indian cuisine.,none
+mango powder,Amchur (Dry Mango Powder),spice,Sun-dried green mango powder providing natural tart acidity.,none
+garlic powder,Garlic Powder,seasoning,Dehydrated garlic imparting pungent savory taste.,none
+onion powder,Onion Powder,seasoning,Dehydrated onion providing aromatic sweet-savory background.,none
+ginger powder,Ginger Powder (Saunth),spice,Warm pungent spice with digestive qualities.,none
+red chilli powder,Red Chilli Powder,spice,Ground dried chili peppers providing natural pungency and red color.,none
+mint leaves powder,Mint Powder (Pudina),herb,Dried spearmint/peppermint herb giving refreshing cool notes.,none
+turmeric powder,Turmeric (Haldi),spice,Ancient rhizome spice providing bright golden hue and warm aroma.,none
+black pepper,Black Pepper (Kali Mirch),spice,Pungent berry spice with piperine for sharp heat.,none
+clove,Clove Powder (Laung),spice,Intensely aromatic flower bud spice.,none
+cardamom,Cardamom (Elaichi),spice,Aromatic seed pod spice delivering sweet herbal warmth.,none
+annatto,Annatto Extract,colour,Natural seed-derived orange-yellow food coloring traditionally used in butter and cheese.,none
+mango pulp,Mango Pulp,fruit,Natural crushed Alphonso or Totapuri mango fruit puree providing authentic fruit flavor and sweetness.,none
+hydrolysed groundnut protein,Hydrolysed Peanut Protein,flavour_enhancer,Enzymatically broken down peanut protein imparting deep savory notes.,peanut
+501(i),Potassium Carbonate,acidity_regulator,Approved mineral salt used to regulate acidity and improve noodle firmness.,none
+500(i),Sodium Carbonate,acidity_regulator,Approved mineral salt imparting traditional alkaline chewiness in ramen and noodles.,none
+415,Xanthan Gum,stabilizer,Natural fermentation-derived polysaccharide improving texture, suspension, and mouthfeel.,none
+211,Sodium Benzoate,preservative,Approved antimicrobial preservative inhibiting yeast and mold in beverages.,none
+202,Potassium Sorbate,preservative,Widely used organic food preservative preventing spoilage in beverages.,none
+cocoa powder,Cocoa Powder,cocoa,Natural solids from roasted cocoa beans delivering rich chocolate flavor.,none
+cocoa butter,Cocoa Butter,fat,Natural vegetable fat extracted from cocoa beans for smooth melt-in-mouth texture.,none
+edible vegetable oil,Edible Vegetable Oil,oil,Food-grade refined plant oils providing frying medium and richness.,none
+vegetable fat,Vegetable Fat,oil,Hydrogenated or fractionated plant lipids providing shelf stability and flaky texture.,none

@@ -1,0 +1,165 @@
+# FoodLens AI - Allergen Synonym & Regional Nomenclature Map
+# Version: 1.0.0
+# References: FSSAI Labelling and Display Regulations 2020 & Codex Alimentarius
+
+categories:
+  milk:
+    display_name: "Milk & Dairy"
+    synonyms:
+      - "milk"
+      - "dairy"
+      - "butter"
+      - "ghee"
+      - "mawa"
+      - "khoya"
+      - "paneer"
+      - "malai"
+      - "casein"
+      - "caseinate"
+      - "whey"
+      - "lactose"
+      - "curd"
+      - "dahi"
+      - "milk solids"
+      - "skimmed milk powder"
+      - "whole milk powder"
+      - "milk fat"
+      - "cheese"
+      - "cream"
+
+  wheat_gluten:
+    display_name: "Wheat & Gluten"
+    synonyms:
+      - "wheat"
+      - "atta"
+      - "maida"
+      - "semolina"
+      - "suji"
+      - "sooji"
+      - "rava"
+      - "gluten"
+      - "wheat flour"
+      - "refined wheat flour"
+      - "whole wheat"
+      - "spelt"
+      - "barley"
+      - "rye"
+      - "malt"
+      - "malt extract"
+      - "durum"
+
+  peanut:
+    display_name: "Peanut / Groundnut"
+    synonyms:
+      - "peanut"
+      - "peanuts"
+      - "groundnut"
+      - "groundnuts"
+      - "moongphali"
+      - "mungfali"
+      - "peanut oil"
+      - "arachis oil"
+      - "monkey nuts"
+
+  tree_nuts:
+    display_name: "Tree Nuts"
+    synonyms:
+      - "almond"
+      - "almonds"
+      - "badam"
+      - "cashew"
+      - "cashews"
+      - "kaju"
+      - "walnut"
+      - "walnuts"
+      - "akhrot"
+      - "pistachio"
+      - "pistachios"
+      - "pista"
+      - "hazelnut"
+      - "hazelnuts"
+      - "macadamia"
+      - "pecan"
+      - "brazil nut"
+
+  soy:
+    display_name: "Soy & Soy Derivatives"
+    synonyms:
+      - "soy"
+      - "soya"
+      - "soybean"
+      - "soybeans"
+      - "soy protein"
+      - "soy lecithin"
+      - "soya lecithin"
+      - "edamame"
+      - "tofu"
+      - "ins 322"
+      - "e322"
+      - "ins 322(i)"
+      - "e322(i)"
+
+  egg:
+    display_name: "Egg & Egg Products"
+    synonyms:
+      - "egg"
+      - "eggs"
+      - "anda"
+      - "albumin"
+      - "albumen"
+      - "ovalbumin"
+      - "egg yolk"
+      - "egg white"
+      - "egg powder"
+      - "lysozyme"
+
+  sesame:
+    display_name: "Sesame"
+    synonyms:
+      - "sesame"
+      - "til"
+      - "gingelly"
+      - "tahini"
+      - "sesame seed"
+      - "sesame seeds"
+      - "sesame oil"
+
+  mustard:
+    display_name: "Mustard"
+    synonyms:
+      - "mustard"
+      - "sarson"
+      - "rai"
+      - "mustard greens"
+      - "mustard oil"
+      - "mustard seeds"
+
+  fish:
+    display_name: "Fish"
+    synonyms:
+      - "fish"
+      - "machhli"
+      - "machli"
+      - "tuna"
+      - "salmon"
+      - "cod"
+      - "anchovy"
+      - "fish gelatin"
+      - "isinglass"
+
+  shellfish:
+    display_name: "Shellfish / Crustaceans"
+    synonyms:
+      - "shrimp"
+      - "prawn"
+      - "prawns"
+      - "jhinga"
+      - "crab"
+      - "lobster"
+      - "crustacean"
+      - "crustaceans"
+      - "oyster"
+      - "clam"
+      - "squid"
+      - "molluscs"
+      - "shellfish"

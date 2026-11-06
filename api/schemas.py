@@ -93,3 +93,55 @@ class ErrorResponse(BaseModel):
     error_code: str  # LOW_CONFIDENCE, PRODUCT_NOT_FOUND, VALIDATION_FAILED, INVALID_IMAGE
     message: str
     details: Optional[Dict[str, Any]] = None
+
+
+# --- Personalized Food Fit Schemas ---
+
+class UserProfileCreate(BaseModel):
+    user_id: int = 1
+    name: str = Field(..., min_length=1, max_length=128, description="Display name, display only")
+    age: int = Field(..., ge=1, le=120, description="Age in years (1 to 120)")
+    weight_kg: Optional[float] = Field(None, ge=5.0, le=300.0, description="Optional weight in kg")
+    allergies: List[str] = Field(default_factory=list, description="List of declared allergen categories")
+    custom_allergens: str = Field("", description="Comma-separated custom triggers")
+    language: str = Field("en", description="Preferred language ('en' or 'hi')")
+    consent_given: bool = Field(False, description="Explicit consent to process dietary preferences")
+    parental_consent_given: bool = Field(False, description="Parental / guardian consent (required if age < 18)")
+
+
+class UserProfileResponse(BaseModel):
+    id: int
+    user_id: int
+    name: str
+    age: int
+    weight_kg: Optional[float] = None
+    allergies: List[str]
+    custom_allergens: str
+    language: str
+    consent_given: bool
+    parental_consent_given: bool
+    consent_timestamp: Optional[str] = None
+
+
+class PersonalFitRequest(BaseModel):
+    product_id: Optional[int] = None
+    portion_type: str = "serving"  # "serving", "100g", "packet", "custom"
+    custom_grams: Optional[float] = None
+    user_id: Optional[int] = None
+    profile_override: Optional[UserProfileCreate] = None
+    nutrition_data: Optional[Dict[str, Any]] = None
+    ingredients_text: Optional[str] = None
+
+
+class PersonalFitResponse(BaseModel):
+    verdict: str
+    portion_grams: float
+    confidence: float
+    allergen_check: Dict[str, Any]
+    nutrient_flags: List[Dict[str, Any]]
+    missing_data: List[str]
+    guidance_notes: List[str]
+    ai_explanation: Optional[Dict[str, Any]] = None
+    disclaimer: str
+
+

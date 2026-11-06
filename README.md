@@ -164,3 +164,4 @@ foodlens-ai/
 
 ## 💼 Portfolio & Resume Summary
 > **FoodLens AI:** Built a packaged-food analyzer using Python, FastAPI, OCR, and Gemini that extracts nutrition labels, validates them with rule-based checks, calculates portion-level nutrition deterministically, and explains results with grounded AI; added a gamified learning layer to boost label literacy.
+

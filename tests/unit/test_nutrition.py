@@ -124,3 +124,4 @@ def test_hypothesis_linear_scaling_property(val, grams):
     scaled = scale(n, grams)
     expected = round((val * grams) / 100.0, 2)
     assert scaled.value == expected
+

@@ -69,3 +69,4 @@ def evaluate_serving_trap_answer(actual_servings: float, chosen_servings: float)
         return 20, f"🎉 Correct! The packet actually contains {actual_servings:.1f} servings! (+20 XP)"
     else:
         return 10, f"👀 Tricky packet! It actually holds {actual_servings:.1f} servings, not {chosen_servings}! (+10 XP)"
+

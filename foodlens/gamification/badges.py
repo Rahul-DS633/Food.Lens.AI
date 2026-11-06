@@ -42,4 +42,9 @@ def check_new_achievements(stats: Dict[str, Any], already_earned_codes: List[str
     if hindi_explorer and "HINDI_EXPLORER" not in already_set:
         newly_earned.append("HINDI_EXPLORER")
 
+    profile_set_up = stats.get("profile_set_up", False)
+    if profile_set_up and "PROFILE_SET_UP" not in already_set:
+        newly_earned.append("PROFILE_SET_UP")
+
     return newly_earned
+

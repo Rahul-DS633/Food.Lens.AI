@@ -60,3 +60,4 @@ def test_nutritious_profile():
     assert result.score is not None
     assert result.score >= 70
     assert result.band == "Nutritious & Balanced"
+

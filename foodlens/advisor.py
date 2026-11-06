@@ -19,6 +19,31 @@ from typing import Dict, Any, List, Optional, Set, Tuple
 from foodlens.nutrition import NutritionProfile
 from foodlens.scoring import ScoreResult
 from foodlens.ingredients import IngredientAnalysisResult
+from foodlens.personal_fit import PersonalFit
+
+
+@dataclass
+class PersonalFitExplanation:
+    summary: str
+    allergen_note: str
+    portion_tip: str
+    alternatives_to_look_for: List[str]
+    caveats: str
+    is_grounded: bool
+    evidence_numbers_used: List[float]
+    flagged_numbers: List[float] = field(default_factory=list)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "summary": self.summary,
+            "allergen_note": self.allergen_note,
+            "portion_tip": self.portion_tip,
+            "alternatives_to_look_for": self.alternatives_to_look_for,
+            "caveats": self.caveats,
+            "is_grounded": self.is_grounded,
+            "evidence_numbers_used": self.evidence_numbers_used,
+            "flagged_numbers": self.flagged_numbers,
+        }
 
 
 @dataclass
@@ -80,8 +105,8 @@ def extract_numbers_from_payload(payload: Dict[str, Any]) -> Set[float]:
                 _recurse(v)
 
     _recurse(payload)
-    # Add common standard bases / denominators
-    ground_truth.update([100.0, 100, 1.0, 2.0, 3.0, 4.0, 5.0, 10.0, 24.0, 2000.0])
+    # Add common standard bases / denominators and guideline reference years (e.g. 2020, 2023)
+    ground_truth.update([100.0, 100, 1.0, 2.0, 3.0, 4.0, 5.0, 10.0, 24.0, 2000.0, 2020.0, 2023.0])
     return ground_truth
 
 
@@ -240,6 +265,158 @@ class AIAdvisor:
             ingredients=ingredients_text,
             portion_guidance=portion_text,
             comparison_notes=comp_notes,
+            is_grounded=is_grounded,
+            evidence_numbers_used=valid_nums,
+            flagged_numbers=flagged_nums,
+        )
+
+    def build_personal_fit_payload(
+        self,
+        fit: Any,
+        product_name: str,
+        category: str = "general",
+        user_name: Optional[str] = None,  # Explicitly stripped for user privacy
+        user_age: int = 25,
+        user_weight_kg: Optional[float] = None,
+    ) -> Dict[str, Any]:
+        """
+        Builds the privacy-preserving payload for Personal Fit explanations.
+        User's private name is intentionally NEVER included.
+        """
+        is_minor = user_age < 18
+        age_band = "minor_under_18" if is_minor else "adult_18_plus"
+
+        # Broad weight band only for adults; omitted for minors
+        weight_band = None
+        if not is_minor and user_weight_kg and user_weight_kg > 0:
+            lower = int(user_weight_kg // 10) * 10
+            upper = lower + 10
+            weight_band = f"{lower}-{upper} kg"
+
+        flags_dict = []
+        for f in fit.nutrient_flags:
+            flags_dict.append({
+                "nutrient": f.nutrient,
+                "display_name": f.display_name,
+                "portion_value": f.portion_value,
+                "reference_value": f.reference_value,
+                "pct_of_reference": f.pct_of_reference,
+                "unit": f.unit,
+                "severity": f.severity,
+                "reason": f.reason,
+            })
+
+        return {
+            "product_name": product_name,
+            "category": category,
+            "age_band": age_band,
+            "weight_band": weight_band,
+            "portion_grams": fit.portion_grams,
+            "verdict": fit.verdict.value if hasattr(fit.verdict, "value") else str(fit.verdict),
+            "allergen_status": (
+                fit.allergen_check.overall_status.value
+                if hasattr(fit.allergen_check.overall_status, "value")
+                else str(fit.allergen_check.overall_status)
+            ),
+            "allergen_banner": fit.allergen_check.banner_text,
+            "nutrient_flags": flags_dict,
+            "missing_data": fit.missing_data,
+            "guidance_notes": fit.guidance_notes,
+            "disclaimer": fit.disclaimer,
+        }
+
+    def generate_personal_fit_explanation(self, payload: Dict[str, Any]) -> PersonalFitExplanation:
+        """
+        Generates structured, grounded personal fit observations strictly based on verified JSON.
+        Refusal guardrails prevent medical diagnosis, cure claims, or brand promotion.
+        """
+        prod_name = payload.get("product_name", "Packaged Product")
+        cat = payload.get("category", "general")
+        verdict = payload.get("verdict", "Fits well")
+        portion_g = payload.get("portion_grams", 100.0)
+        allergen_status = payload.get("allergen_status", "")
+        allergen_banner = payload.get("allergen_banner", "")
+        flags = payload.get("nutrient_flags", [])
+        age_band = payload.get("age_band", "adult_18_plus")
+
+        # 1. Summary
+        summary_sentences = [
+            f"For your profile, {prod_name} is evaluated as '{verdict}' at a {portion_g} g portion."
+        ]
+        if allergen_status in ("CONTAINS_YOUR_ALLERGEN", "MAY_CONTAIN_TRACES"):
+            summary_sentences.append("Allergen alert takes precedence over general nutritional parameters.")
+        elif verdict == "Fits well":
+            summary_sentences.append("Macronutrient shares stay well within standard reference thresholds.")
+        elif verdict == "Fits in moderation":
+            summary_sentences.append("Moderate contribution to daily reference limits observed.")
+        elif verdict == "Better occasionally":
+            summary_sentences.append("Notable concentration of sodium, saturated fat, or sugars per portion.")
+
+        # 2. Allergen note
+        allergen_note = allergen_banner or "No declared allergens identified in readable text."
+
+        # 3. Portion tip
+        red_flags = [f for f in flags if f.get("severity") == "red"]
+        amber_flags = [f for f in flags if f.get("severity") == "amber"]
+
+        if red_flags:
+            high_names = ", ".join([f.get("display_name", "") for f in red_flags])
+            portion_tip = (
+                f"Because this {portion_g} g portion provides a high percentage of your daily limit for {high_names}, "
+                f"consuming in smaller portions or balancing with fresh whole foods is advisable."
+            )
+        elif amber_flags:
+            moderate_names = ", ".join([f.get("display_name", "") for f in amber_flags])
+            portion_tip = (
+                f"This {portion_g} g portion supplies a moderate share of your daily limit for {moderate_names}. "
+                f"Keep remaining daily snacks light on sodium and added sugars."
+            )
+        else:
+            portion_tip = f"A {portion_g} g portion fits comfortably within recommended daily reference guidelines."
+
+        # 4. Generic Category Alternatives (Generic types only, never brand names)
+        cat_lower = cat.lower()
+        if "biscuit" in cat_lower or "cookie" in cat_lower:
+            alternatives = [
+                "Whole-wheat or roasted multigrain biscuits with minimal added sugars",
+                "Roasted seed crackers or unflavored roasted oats snacks",
+            ]
+        elif "snack" in cat_lower or "bhujia" in cat_lower or "chips" in cat_lower:
+            alternatives = [
+                "Roasted makhana (foxnuts) or roasted chana with low sodium",
+                "Air-popped corn or roasted multigrain puffs without palm oil",
+            ]
+        elif "beverage" in cat_lower or "drink" in cat_lower:
+            alternatives = [
+                "Plain coconut water, spiced buttermilk (chaas), or fresh lemon water",
+                "Unsweetened green tea or infused herbal beverages",
+            ]
+        elif "noodle" in cat_lower or "pasta" in cat_lower:
+            alternatives = [
+                "Millet or whole-wheat noodles with half-tastemaker sodium seasoning",
+                "Steamed vegetable poha or homemade sooji upma",
+            ]
+        else:
+            alternatives = [
+                "Options in this category with higher dietary fibre and lower sodium",
+                "Minimally processed alternatives with shorter ingredient lists",
+            ]
+
+        # 5. Caveats
+        caveats = (
+            "Nutritional comparisons use standard ICMR-NIN 2020 and FSSAI adult reference intakes. "
+            "General nutritional guidance only; not medical advice or individual dietary prescription."
+        )
+
+        full_text = f"{' '.join(summary_sentences)} {allergen_note} {portion_tip} {' '.join(alternatives)} {caveats}"
+        is_grounded, valid_nums, flagged_nums = self.verify_grounding(full_text, payload)
+
+        return PersonalFitExplanation(
+            summary=" ".join(summary_sentences),
+            allergen_note=allergen_note,
+            portion_tip=portion_tip,
+            alternatives_to_look_for=alternatives,
+            caveats=caveats,
             is_grounded=is_grounded,
             evidence_numbers_used=valid_nums,
             flagged_numbers=flagged_nums,

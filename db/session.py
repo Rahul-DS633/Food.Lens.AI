@@ -4,13 +4,18 @@ Handles SQLite database connection, sessionmaker, and table seeding.
 """
 
 import os
+from datetime import datetime, timezone
 from pathlib import Path
+from typing import Dict, Any, List, Optional
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from db.models import (
-    Base, User, UserProgress, Achievement, Product, Nutrition, Ingredient
+    Base, User, UserProgress, Achievement, Product, Nutrition, Ingredient, UserProfile, Scan, XPEvent, UserAchievement
 )
 from foodlens.off_client import PRESEEDED_INDIAN_PRODUCTS
+from foodlens.ingredients import IngredientEngine
+
+ingredient_engine = IngredientEngine()
 
 DATA_DIR = Path(__file__).parent.parent / "data"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -79,6 +84,12 @@ INITIAL_ACHIEVEMENTS = [
         "description": "Switched FoodLens to Hindi label mode.",
         "icon": "🇮🇳",
     },
+    {
+        "code": "PROFILE_SET_UP",
+        "title": "Dietary Guardian",
+        "description": "Set up your personalized food profile and allergen preferences.",
+        "icon": "🛡️",
+    },
 ]
 
 
@@ -145,6 +156,22 @@ def init_db():
                     sodium_mg=nutr.get("sodium_mg"),
                 )
                 db.add(db_nutr)
+                target_prod = db_prod
+            else:
+                target_prod = existing_prod
+
+            # Seed ingredients if missing
+            if target_prod and not target_prod.ingredients and prod.get("ingredients_text"):
+                ing_analysis = ingredient_engine.analyze(prod["ingredients_text"])
+                for ing in ing_analysis.ingredients:
+                    db.add(Ingredient(
+                        product_id=target_prod.id,
+                        position=ing.position,
+                        name=ing.cleaned_name,
+                        category=ing.category,
+                        explanation=ing.explanation,
+                        allergen_flag=ing.allergen_tag or "none",
+                    ))
 
         db.commit()
     except Exception as e:
@@ -156,3 +183,66 @@ def init_db():
 
 # Ensure DB is initialized when session module is loaded
 init_db()
+
+
+def export_user_data(user_id: int, db: Session) -> Dict[str, Any]:
+    """
+    Exports all personal data related to a user (DPDP Act right to data portability).
+    """
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        return {"error": "User not found"}
+
+    profile = user.profile
+    profile_data = None
+    if profile:
+        profile_data = {
+            "name": profile.name,
+            "age": profile.age,
+            "weight_kg": profile.weight_kg,
+            "allergies": profile.allergies_json or [],
+            "custom_allergens": profile.custom_allergens_text,
+            "language": profile.language,
+            "consent_given": profile.consent_given,
+            "parental_consent_given": profile.parental_consent_given,
+            "consent_timestamp": profile.consent_timestamp.isoformat() if profile.consent_timestamp else None,
+            "updated_at": profile.updated_at.isoformat() if profile.updated_at else None,
+        }
+
+    scans = db.query(Scan).filter(Scan.user_id == user_id).all()
+    achievements = db.query(UserAchievement).filter(UserAchievement.user_id == user_id).all()
+
+    return {
+        "user_id": user.id,
+        "display_name": user.display_name,
+        "language": user.language,
+        "created_at": user.created_at.isoformat() if user.created_at else None,
+        "profile": profile_data,
+        "total_scans": len(scans),
+        "achievements_count": len(achievements),
+        "export_timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+def delete_user_data(user_id: int, db: Session) -> bool:
+    """
+    Deletes all personal profile and activity data for a user (DPDP Act right to erasure).
+    """
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        return False
+
+    if user.profile:
+        db.delete(user.profile)
+
+    # Clear user scans and xp events
+    db.query(Scan).filter(Scan.user_id == user_id).delete()
+    db.query(XPEvent).filter(XPEvent.user_id == user_id).delete()
+    db.query(UserAchievement).filter(UserAchievement.user_id == user_id).delete()
+
+    # Reset user display name to default guest
+    user.display_name = "Guest User"
+    db.commit()
+    return True
+
+

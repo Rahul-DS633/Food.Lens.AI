@@ -85,3 +85,4 @@ def compare_products(
         "xp_awarded": xp_awarded,
         "message": f"Comparison generated! +{xp_awarded} XP awarded."
     }
+

@@ -82,7 +82,8 @@ class ImagePreprocessor:
 
 class OCREngine:
     """
-    Wrapper around EasyOCR with lazy model loading and preprocessing.
+    Wrapper around EasyOCR with lazy model loading, local caching,
+    image preprocessing, and 2D table row reassembly.
     """
     def __init__(self, languages: Optional[List[str]] = None, use_gpu: bool = False):
         self.languages = languages or ["en"]
@@ -93,16 +94,103 @@ class OCREngine:
         if self._reader is None:
             try:
                 import easyocr
-                self._reader = easyocr.Reader(self.languages, gpu=self.use_gpu)
+                from pathlib import Path
+                model_dir = Path(__file__).resolve().parent.parent / "data" / "models" / "easyocr"
+                model_dir.mkdir(parents=True, exist_ok=True)
+                self._reader = easyocr.Reader(
+                    self.languages,
+                    gpu=self.use_gpu,
+                    model_storage_directory=str(model_dir),
+                    user_network_directory=str(model_dir)
+                )
             except Exception as e:
                 # If model download fails or EasyOCR unavailable, keep None
                 self._reader = None
         return self._reader
 
+    @staticmethod
+    def reassemble_table_rows(results: List[Any], y_tolerance_ratio: float = 0.5) -> List[OCRTextLine]:
+        """
+        Groups bounding boxes that lie on the same horizontal band into coherent table rows.
+        Within each row, tokens are ordered from left to right by their X coordinates.
+        This turns columnar OCR outputs like ['Protein', '14.1g'] into 'Protein 14.1g'.
+        """
+        if not results:
+            return []
+
+        items = []
+        for bbox, text, conf in results:
+            t = text.strip()
+            if not t:
+                continue
+            xs = [p[0] for p in bbox]
+            ys = [p[1] for p in bbox]
+            y_min, y_max = min(ys), max(ys)
+            x_min, x_max = min(xs), max(xs)
+            y_center = (y_min + y_max) / 2.0
+            height = max(1.0, y_max - y_min)
+            items.append({
+                "text": t,
+                "conf": float(conf),
+                "bbox": bbox,
+                "x_min": x_min,
+                "x_max": x_max,
+                "y_min": y_min,
+                "y_max": y_max,
+                "y_center": y_center,
+                "height": height,
+            })
+
+        if not items:
+            return []
+
+        # Sort top to bottom by y_center
+        items.sort(key=lambda it: it["y_center"])
+
+        rows = []
+        current_row = []
+        current_y = None
+        current_h = None
+
+        for it in items:
+            if not current_row:
+                current_row.append(it)
+                current_y = it["y_center"]
+                current_h = it["height"]
+            else:
+                threshold = max(current_h, it["height"]) * y_tolerance_ratio
+                if abs(it["y_center"] - current_y) <= threshold:
+                    current_row.append(it)
+                    current_y = sum(x["y_center"] for x in current_row) / len(current_row)
+                    current_h = max(x["height"] for x in current_row)
+                else:
+                    rows.append(current_row)
+                    current_row = [it]
+                    current_y = it["y_center"]
+                    current_h = it["height"]
+
+        if current_row:
+            rows.append(current_row)
+
+        reassembled: List[OCRTextLine] = []
+        for row in rows:
+            # Sort left to right
+            row.sort(key=lambda it: it["x_min"])
+            merged_text = " ".join(it["text"] for it in row).strip()
+            avg_conf = sum(it["conf"] for it in row) / len(row)
+            min_x = min(it["x_min"] for it in row)
+            max_x = max(it["x_max"] for it in row)
+            min_y = min(it["y_min"] for it in row)
+            max_y = max(it["y_max"] for it in row)
+            box = [[int(min_x), int(min_y)], [int(max_x), int(min_y)], [int(max_x), int(max_y)], [int(min_x), int(max_y)]]
+            reassembled.append(OCRTextLine(text=merged_text, confidence=round(avg_conf, 2), bbox=box))
+
+        return reassembled
+
     def extract_text_from_image(self, image_input: Any) -> List[OCRTextLine]:
         """
         Takes image bytes, path, or numpy array.
-        Returns extracted lines with confidence and bounding boxes.
+        Applies smart upscaling, gentle contrast enhancement, and 2D table row reassembly.
         """
         img = None
         if isinstance(image_input, str):
@@ -116,23 +204,42 @@ class OCREngine:
         if img is None:
             return []
 
-        # Preprocess
-        preprocessed = ImagePreprocessor.preprocess(img)
+        # Smart upscale: if image resolution is modest, upscale so small table numbers (14.1g, 3.1g) become sharp
+        h, w = img.shape[:2]
+        if max(h, w) < 2000:
+            scale = min(2.2, 2000.0 / max(h, w))
+            if scale > 1.2:
+                img = cv2.resize(img, (0, 0), fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
+
+        gray = ImagePreprocessor.to_grayscale(img)
+        enhanced = ImagePreprocessor.enhance_contrast_clahe(gray, clip_limit=1.5)
 
         reader = self._get_reader()
         if reader is None:
-            # Fallback if EasyOCR models aren't yet downloaded
             return []
 
         try:
-            results = reader.readtext(preprocessed)
-            lines: List[OCRTextLine] = []
-            for bbox, text, conf in results:
-                lines.append(OCRTextLine(
+            results = reader.readtext(enhanced)
+            if len(results) < 3:
+                results = reader.readtext(gray)
+
+            # Reassemble rows from 2D coordinates for table coherence
+            merged_rows = self.reassemble_table_rows(results, y_tolerance_ratio=0.6)
+
+            # Also collect individual raw items
+            raw_items = [
+                OCRTextLine(
                     text=text.strip(),
                     confidence=float(conf),
                     bbox=[[int(p[0]), int(p[1])] for p in bbox]
-                ))
-            return lines
+                )
+                for bbox, text, conf in results if text.strip()
+            ]
+
+            seen_texts = {r.text.lower() for r in merged_rows}
+            extra_lines = [item for item in raw_items if item.text.lower() not in seen_texts]
+
+            return merged_rows + extra_lines
         except Exception:
             return []
+

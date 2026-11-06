@@ -35,3 +35,4 @@ To ensure 100% groundedness, `AIAdvisor.verify_grounding()` executes after every
    - Sets `is_grounded = False`
    - Flags the specific numbers in `flagged_numbers`
    - Falls back to the verified deterministic explanation template.
+

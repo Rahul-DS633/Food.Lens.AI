@@ -93,3 +93,4 @@ def test_unit_confusion_extreme_sodium():
     )
     res = validate_nutrition_profile(profile)
     assert any(i.rule_name == "UnitConfusion" for i in res.issues)
+

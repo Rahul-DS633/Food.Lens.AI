@@ -148,3 +148,4 @@ def submit_minigame_attempt(
         "total_xp": progress.xp,
         "level": progress.level,
     }
+

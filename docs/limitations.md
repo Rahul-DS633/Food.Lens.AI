@@ -17,3 +17,4 @@
 - [ ] **Mobile Camera Optimization (React Native / Flutter PWA)**: Direct WebAssembly barcode scanning and real-time bounding box overlay.
 - [ ] **Full Multi-lingual OCR**: Expanded Hindi and regional Indian language OCR dictionary support for rural grocery labels.
 - [ ] **Barcode Batch Comparison**: Scanning multiple items in grocery store aisles to automatically identify lower-sugar alternatives.
+

@@ -89,6 +89,26 @@ class User(Base):
     progress = relationship("UserProgress", back_populates="user", uselist=False, cascade="all, delete-orphan")
     xp_events = relationship("XPEvent", back_populates="user")
     achievements = relationship("UserAchievement", back_populates="user")
+    profile = relationship("UserProfile", back_populates="user", uselist=False, cascade="all, delete-orphan")
+
+
+class UserProfile(Base):
+    __tablename__ = "user_profiles"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.id"), unique=True, nullable=False, index=True)
+    name = Column(String(128), nullable=False)          # Display only, never sent to external AI
+    age = Column(Integer, nullable=False)               # 1 to 120
+    weight_kg = Column(Float, nullable=True)            # Optional: 5.0 to 300.0 kg
+    allergies_json = Column(JSON, nullable=False)       # List[str]: ["milk", "peanut", ...]
+    custom_allergens_text = Column(Text, default="")    # Freeform comma-separated custom triggers
+    language = Column(String(8), default="en")          # "en" or "hi"
+    consent_given = Column(Boolean, default=False)      # Must be True
+    parental_consent_given = Column(Boolean, default=False) # Required if age < 18
+    consent_timestamp = Column(DateTime, default=utcnow)
+    updated_at = Column(DateTime, default=utcnow, onupdate=utcnow)
+
+    user = relationship("User", back_populates="profile")
 
 
 class Scan(Base):
@@ -195,3 +215,4 @@ class ChallengeAttempt(Base):
 
 Index("idx_scans_user_created", Scan.user_id, Scan.created_at)
 Index("idx_products_barcode", Product.barcode)
+

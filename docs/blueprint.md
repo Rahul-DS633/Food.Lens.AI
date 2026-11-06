@@ -225,3 +225,4 @@ Six-component category-aware formula:
 - `user_achievements`: user_id, achievement_id, earned_at
 - `challenges`: id, date, type, config_json
 - `challenge_attempts`: id, user_id, challenge_id, result_json, xp
+

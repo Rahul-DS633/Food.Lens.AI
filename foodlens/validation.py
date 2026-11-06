@@ -272,3 +272,4 @@ def validate_nutrition_profile(profile: NutritionProfile) -> ValidationResult:
         has_errors=has_errors,
         has_warnings=has_warnings,
     )
+

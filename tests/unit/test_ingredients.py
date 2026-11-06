@@ -41,3 +41,4 @@ def test_allergen_free_safety_wording():
     assert result.has_allergens is False
     assert result.allergen_banner == "No allergen detected in the text we could read."
     assert "free" not in result.allergen_banner.lower()
+

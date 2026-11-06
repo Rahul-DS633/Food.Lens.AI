@@ -51,3 +51,4 @@ def test_advisor_detects_ungrounded_hallucinated_numbers():
     is_grounded, valid, flagged = advisor.verify_grounding(fake_text, payload)
     assert is_grounded is False
     assert 999.0 in flagged
+

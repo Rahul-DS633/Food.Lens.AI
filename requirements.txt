@@ -27,3 +27,4 @@ python-dotenv>=1.0.0
 # Testing & Property-based testing
 pytest>=8.3.0
 hypothesis>=6.110.0
+

@@ -32,3 +32,4 @@ Evaluated across 20 popular packaged foods in India (`data/sample_products.csv`)
 - **Chocolates & Confectionery:** Cadbury Dairy Milk, Nestle KitKat, Moong Dal Halwa
 
 All 20 products completed validation, portion scaling (serving and packet portions), sugar teaspoon conversion, and category-aware scoring with 0 exceptions.
+

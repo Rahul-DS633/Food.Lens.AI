@@ -1,0 +1,67 @@
+# FoodLens AI - Standard Daily Reference Intakes
+# Version: 1.0.0
+# Sources:
+#   1. ICMR-NIN (Indian Council of Medical Research - National Institute of Nutrition), 2020:
+#      "Recommended Dietary Allowances and Estimated Average Requirements for Indians"
+#   2. FSSAI (Food Safety and Standards Authority of India), 2020:
+#      "Food Safety and Standards (Labelling and Display) Regulations, 2020", Schedule II
+#   3. WHO (World Health Organization) Guideline:
+#      "Sugars intake for adults and children" (2015) & "Sodium intake for adults and children" (2012)
+
+version: "1.0.0"
+
+metadata:
+  sources:
+    - name: "ICMR-NIN"
+      year: 2020
+      document: "Nutrient Requirements for Indians (RDA 2020)"
+    - name: "FSSAI"
+      year: 2020
+      document: "Labelling and Display Regulations 2020, Schedule II"
+    - name: "WHO"
+      year: 2015
+      document: "Guideline: Sugars and Sodium Intake for Adults"
+
+adult_general:
+  energy_kcal:
+    value: 2000.0
+    source: "FSSAI (2020) Schedule II / ICMR-NIN (2020)"
+    unit: "kcal"
+  total_fat_g:
+    value: 67.0
+    source: "FSSAI (2020) Schedule II (~30% of energy)"
+    unit: "g"
+  sat_fat_g:
+    value: 22.0
+    source: "FSSAI (2020) Schedule II (~10% of energy)"
+    unit: "g"
+  added_sugar_g:
+    value: 50.0
+    source: "FSSAI (2020) Schedule II / WHO (<10% of energy)"
+    unit: "g"
+  total_sugar_g:
+    value: 90.0
+    source: "FSSAI (2020) / ICMR-NIN (2020) reference"
+    unit: "g"
+  sodium_mg:
+    value: 2000.0
+    source: "FSSAI (2020) Schedule II / WHO Upper Limit (~5g salt)"
+    unit: "mg"
+  protein_g_default:
+    value: 54.0
+    source: "ICMR-NIN (2020) reference sedentary adult (avg 65kg male / 55kg female)"
+    unit: "g"
+  protein_g_per_kg:
+    value: 0.83
+    source: "ICMR-NIN (2020) RDA per kg body weight for healthy adults"
+    unit: "g/kg"
+  fibre_g:
+    value: 30.0
+    source: "ICMR-NIN (2020) recommended adequate intake"
+    unit: "g"
+
+# TODO: Verify additional demographic age bands (e.g. elderly >65, lactating/pregnant) with nutritionist / ICMR updates
+under_18_rules:
+  disable_calorie_guidance: true
+  disable_weight_based_protein: true
+  notice: "Individualized caloric or weight-based targets are disabled for ages under 18 under safety guidelines."

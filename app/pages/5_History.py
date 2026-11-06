@@ -1,11 +1,18 @@
 """
 FoodLens AI — Scan History & Activity Log
+Features realistic product thumbnails, vector status badges, and 3D card layout.
 """
 
-import streamlit as st
+import sys
 from pathlib import Path
 
-st.set_page_config(page_title="Scan History — FoodLens AI", page_icon="📜", layout="wide")
+_PROJECT_ROOT = str(Path(__file__).resolve().parent.parent.parent)
+if _PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, _PROJECT_ROOT)
+
+import streamlit as st
+
+st.set_page_config(page_title="Scan History — FoodLens AI", page_icon="🔍", layout="wide")
 
 CSS_PATH = Path(__file__).parent.parent / "assets" / "theme.css"
 if CSS_PATH.exists():
@@ -14,9 +21,20 @@ if CSS_PATH.exists():
 
 from db.session import SessionLocal
 from db.models import Scan, Product
+from app.components.icons import get_icon_svg
+from app.components.images import get_product_image
 
-st.title("📜 Scan History & Diary")
-st.caption("Review your previously scanned packaged foods, verified labels, and category trends.")
+history_svg = get_icon_svg("history", size=26, color="#144730")
+st.markdown(
+    f"""
+    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+        {history_svg}
+        <h1 style="margin: 0; color: #144730; font-size: 26px;">Scan History & Product Diary</h1>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+st.caption("Review your previously scanned packaged foods, verified labels, and nutritional scores.")
 
 db = SessionLocal()
 try:
@@ -29,11 +47,10 @@ try:
 
     if not scans:
         st.info("No scan history recorded yet. Open the Scanner to analyze your first packaged food!")
-        if st.button("Start Scanning →"):
+        if st.button("Start Scanning →", width="stretch", type="primary"):
             st.switch_page("pages/1_Scan.py")
         st.stop()
 
-    # Filter row
     cat_filter = st.selectbox("Filter by Category", ["All Categories", "biscuits", "snacks", "drinks", "spreads", "instant_noodles"])
 
     for s in scans:
@@ -44,16 +61,17 @@ try:
         if cat_filter != "All Categories" and prod.category != cat_filter:
             continue
 
-        score_color = "#1B5E3F" if (s.score and s.score >= 70) else ("#F59E0B" if (s.score and s.score >= 45) else "#DC2626")
+        score_color = "#166534" if (s.score and s.score >= 70) else ("#D97706" if (s.score and s.score >= 45) else "#DC2626")
         time_str = s.created_at.strftime("%b %d, %Y • %I:%M %p") if s.created_at else "Recently"
+        img_uri = get_product_image(prod.name, prod.brand, prod.category, prod.image_url)
 
-        col1, col2, col3 = st.columns([1, 4, 1])
+        col1, col2, col3 = st.columns([1, 4, 1.2])
 
         with col1:
             st.markdown(
                 f"""
-                <div style="background: #F3F4F6; border-radius: 12px; height: 75px; display: flex; align-items: center; justify-content: center; font-size: 32px;">
-                    {'🍪' if prod.category=='biscuits' else ('🍜' if 'noodle' in prod.category else ('🧃' if 'drink' in prod.category else '📦'))}
+                <div style="width: 100%; height: 75px; border-radius: 12px; overflow: hidden; background: #F8FAFC; border: 1px solid #E2E8F0; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
+                    <img src="{img_uri}" alt="{prod.name}" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
                 """,
                 unsafe_allow_html=True
@@ -62,9 +80,12 @@ try:
         with col2:
             st.markdown(
                 f"""
-                <div style="font-size: 16px; font-weight: 800; color: #111827;">{prod.name}</div>
-                <div style="font-size: 13px; color: #4B5563;"><b>{prod.brand}</b> • {prod.category.title()} • Barcode: <code>{prod.barcode}</code></div>
-                <div style="font-size: 12px; color: #9CA3AF; margin-top: 2px;">{time_str} • Source: {s.source_type.upper()}</div>
+                <div style="font-size: 15.5px; font-weight: 800; color: #0F172A; margin-bottom: 2px;">{prod.name}</div>
+                <div style="font-size: 13px; color: #475569;">
+                    <b>{prod.brand}</b> • <span style="text-transform: capitalize;">{prod.category}</span> • 
+                    <code>{prod.barcode}</code>
+                </div>
+                <div style="font-size: 11.5px; color: #64748B; margin-top: 3px;">{time_str} • Source: {s.source_type.upper()}</div>
                 """,
                 unsafe_allow_html=True
             )
@@ -72,18 +93,22 @@ try:
         with col3:
             st.markdown(
                 f"""
-                <div style="text-align: right;">
-                    <div style="font-size: 20px; font-weight: 800; color: {score_color};">{s.score or 'N/A'}/100</div>
-                    <span style="font-size: 11px; padding: 2px 6px; border-radius: 6px; background: #F3F4F6; color: #6B7280;">Grade {prod.quality_grade or 'B'}</span>
+                <div style="text-align: right; margin-bottom: 6px;">
+                    <span style="font-size: 20px; font-weight: 800; color: {score_color}; font-family: 'JetBrains Mono', monospace;">
+                        {s.score or 'N/A'}<span style="font-size: 12px; color: #64748B;">/100</span>
+                    </span>
+                    <span style="font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; background: #F1F5F9; color: #475569; margin-left: 4px;">
+                        Grade {prod.quality_grade or 'B'}
+                    </span>
                 </div>
                 """,
                 unsafe_allow_html=True
             )
-            if st.button("Inspect", key=f"reinspect_{s.id}", use_container_width=True):
+            if st.button("Inspect", key=f"reinspect_{s.id}", width="stretch"):
                 st.session_state.current_scan_product_id = prod.id
                 st.switch_page("pages/2_Result.py")
 
-        st.markdown("<hr style='margin: 8px 0; border: none; border-top: 1px solid #F3F4F6;'>", unsafe_allow_html=True)
+        st.markdown("<hr style='margin: 10px 0; border: none; border-top: 1px solid #E2E8F0;'>", unsafe_allow_html=True)
 
 finally:
     db.close()

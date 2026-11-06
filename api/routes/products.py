@@ -97,3 +97,4 @@ def get_product(product_id: int, db: Session = Depends(get_db)):
         "nutrition": nutrition_dict,
         "ingredients": ingredients_list,
     }
+

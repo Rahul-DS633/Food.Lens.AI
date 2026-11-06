@@ -197,3 +197,4 @@ def calculate_portion(
         return scale_profile(profile, custom_grams, target_basis_label=f"{custom_grams}g")
 
     raise ValueError(f"Unknown portion type: {portion_type}")
+

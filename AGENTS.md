@@ -100,3 +100,4 @@ foodlens-ai/
 - Keep functions small and modular.
 - Error codes must be descriptive and structured (`LOW_CONFIDENCE`, `PRODUCT_NOT_FOUND`, `VALIDATION_FAILED`).
 - Guardrails for AI: Every numeric claim made by Gemini must be verified against the input JSON. If a hallucinated number is detected, reject or regenerate the explanation.
+

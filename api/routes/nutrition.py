@@ -87,3 +87,4 @@ def calculate_nutritional_portion(
         "sugar_teaspoons": scaled.sugar_teaspoons,
         "salt_g": scaled.salt_g,
     }
+

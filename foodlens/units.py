@@ -106,3 +106,4 @@ def normalize_nutrient_value(
         return round(value * 1000.0, 2)
 
     return round(value, 4)
+

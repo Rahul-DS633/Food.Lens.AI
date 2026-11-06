@@ -44,3 +44,4 @@ def get_user_history(
         "count": len(results),
         "history": results,
     }
+

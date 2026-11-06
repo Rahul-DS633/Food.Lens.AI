@@ -84,3 +84,4 @@ def test_parse_messy_text_comma_decimals_and_kj():
     assert profile.added_sugar_g is None
     assert profile.trans_fat_g is None
     assert profile.fibre_g is None
+

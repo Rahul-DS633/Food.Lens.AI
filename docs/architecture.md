@@ -46,3 +46,4 @@ When OCR extraction and the product database (Open Food Facts / Local Cache) dis
 - The UI displays both values alongside their respective sources (`OCR` vs `OFF/API`).
 - The user is invited to select the verified ground truth.
 - The confirmed choice is stored with `verification_status="user_confirmed"` and awards the user $+15\text{ XP}$ for verified data contribution.
+

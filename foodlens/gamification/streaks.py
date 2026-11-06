@@ -56,3 +56,4 @@ def update_user_streak(
     else:
         # Streak reset gently
         return 1, longest_streak, streak_freezes, "Welcome back! Ready to explore today's food intelligence."
+

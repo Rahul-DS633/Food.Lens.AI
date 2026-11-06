@@ -84,3 +84,4 @@ def test_mini_games():
     xp_trap, msg_trap = evaluate_serving_trap_answer(3.0, 3.0)
     assert xp_trap == 20
     assert "Correct" in msg_trap
+

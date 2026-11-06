@@ -205,3 +205,4 @@ class IngredientEngine:
             allergen_banner=banner,
             has_allergens=has_allergens,
         )
+

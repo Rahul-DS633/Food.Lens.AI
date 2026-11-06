@@ -1,25 +1,27 @@
 """
-Streamlit Component: Score Ring Gauge
-Uses Plotly indicator gauge to display category-aware FoodLens Score.
+FoodLens AI — Score Ring Gauge Component
+Uses Plotly indicator gauge with vector status icons to display category-aware FoodLens Score.
 """
 
 import streamlit as st
 import plotly.graph_objects as go
 from typing import Optional
+from app.components.icons import get_icon_svg
 
 
 def render_score_ring(score: Optional[int], band: str, color_hex: str, version: str = "1.0.0"):
     """
     Renders a circular gauge for the 0-100 score.
-    If score is None, renders an informative 'Insufficient Data' placeholder.
+    If score is None, renders an informative 'Insufficient Data' card with vector alert icon.
     """
     if score is None:
+        alert_svg = get_icon_svg("alert", size=32, color="#F59E0B")
         st.markdown(
             f"""
-            <div style="text-align: center; padding: 24px; background: #F3F4F6; border-radius: 16px; border: 1.5px dashed #CBD5E1;">
-                <div style="font-size: 32px;">⚠️</div>
-                <div style="font-size: 18px; font-weight: 700; color: #4B5563; margin-top: 8px;">{band}</div>
-                <div style="font-size: 12px; color: #6B7280; margin-top: 4px;">Score v{version} • Missing > 2 core label values</div>
+            <div style="text-align: center; padding: 26px 20px; background: #FFFBEB; border-radius: 18px; border: 1.5px dashed #FCD34D; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.08);">
+                <div style="margin-bottom: 8px;">{alert_svg}</div>
+                <div style="font-size: 18px; font-weight: 800; color: #92400E; margin-top: 4px;">{band}</div>
+                <div style="font-size: 12.5px; color: #B45309; margin-top: 4px;">Score v{version} • Missing > 2 core label values</div>
             </div>
             """,
             unsafe_allow_html=True
@@ -30,11 +32,11 @@ def render_score_ring(score: Optional[int], band: str, color_hex: str, version: 
         mode="gauge+number",
         value=score,
         domain={'x': [0, 1], 'y': [0, 1]},
-        title={'text': f"<b>{band}</b><br><span style='font-size:12px;color:gray'>Score v{version}</span>", 'font': {'size': 16, 'family': 'Plus Jakarta Sans'}},
+        title={'text': f"<b>{band}</b><br><span style='font-size:12px;color:#64748B'>Score v{version}</span>", 'font': {'size': 16, 'family': 'Plus Jakarta Sans', 'color': '#0F172A'}},
         gauge={
-            'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': "#9CA3AF"},
+            'axis': {'range': [0, 100], 'tickwidth': 1.5, 'tickcolor': "#94A3B8"},
             'bar': {'color': color_hex, 'thickness': 0.8},
-            'bgcolor': "#F3F4F6",
+            'bgcolor': "#F1F5F9",
             'borderwidth': 0,
             'steps': [
                 {'range': [0, 45], 'color': '#FEE2E2'},
@@ -56,4 +58,4 @@ def render_score_ring(score: Optional[int], band: str, color_hex: str, version: 
         font={'family': 'Plus Jakarta Sans'}
     )
 
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')

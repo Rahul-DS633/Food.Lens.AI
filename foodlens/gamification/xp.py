@@ -69,3 +69,4 @@ def calculate_xp_award(
 
     awarded = min(base_xp, available_daily, available_product)
     return awarded
+

@@ -35,6 +35,8 @@ ENV/
 data/foodlens.db
 *.sqlite3
 *.db-journal
+*.pth
+data/models/
 
 # Testing & Coverage
 .pytest_cache/
@@ -48,3 +50,4 @@ htmlcov/
 # OS specific
 .DS_Store
 Thumbs.db
+
