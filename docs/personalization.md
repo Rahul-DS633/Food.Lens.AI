@@ -51,3 +51,4 @@ Users can exercise statutory rights directly from the Profile page:
 
 ## 6. Mandatory Disclaimer
 > **Disclaimer**: General information, not medical advice. Verify on the pack.
+

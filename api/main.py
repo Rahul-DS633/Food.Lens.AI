@@ -7,7 +7,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from api.routes import scan, nutrition, products, compare, advice, quest, history, profile, personal_fit
+from api.routes import scan, nutrition, products, compare, advice, quest, history, profile, personal_fit, sugar
 from db.session import init_db
 
 # Initialize database schema on startup
@@ -39,6 +39,7 @@ app.include_router(quest.router)
 app.include_router(history.router)
 app.include_router(profile.router)
 app.include_router(personal_fit.router)
+app.include_router(sugar.router)
 
 
 @app.get("/")

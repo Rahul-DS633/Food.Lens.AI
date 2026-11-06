@@ -1,0 +1,137 @@
+# FoodLens AI - Sugar, Syrup, Sweetener & Carb Filler Alias Map
+# Version: 1.0.0
+# References: FSSAI Labelling and Display Regulations 2020 & US FDA 21 CFR 101.4
+
+version: "1.0.0"
+
+classes:
+  sugars:
+    display_name: "Sugars"
+    is_added: "yes"
+    entries:
+      - id: "sugar"
+        aliases: ["sugar", "white sugar", "table sugar", "refined sugar", "cheeni", "shakar", "sharkara"]
+        explanation: "Refined sucrose extracted from sugarcane or sugar beet."
+      - id: "cane_sugar"
+        aliases: ["cane sugar", "evaporated cane juice", "cane juice", "cane syrup crystals", "khandsari"]
+        explanation: "Sucrose derived directly from sugarcane juice with varying degrees of molasses."
+      - id: "brown_sugar"
+        aliases: ["brown sugar", "demerara sugar", "turbinado sugar", "muscovado"]
+        explanation: "Sucrose crystals retaining natural or added molasses for color and flavor."
+      - id: "jaggery"
+        aliases: ["jaggery", "gur", "gud", "panela", "unrefined cane sugar"]
+        explanation: "Traditional non-centrifugal concentrated sugarcane or palm juice."
+      - id: "sucrose"
+        aliases: ["sucrose", "beet sugar", "saccharose"]
+        explanation: "Disaccharide composed of equal parts glucose and fructose."
+      - id: "dextrose"
+        aliases: ["dextrose", "dextrose monohydrate", "d-glucose"]
+        explanation: "Purified form of glucose produced from cornstarch enzymatic breakdown."
+      - id: "glucose"
+        aliases: ["glucose", "grape sugar"]
+        explanation: "Simple monosaccharide used by cells as an immediate metabolic energy source."
+      - id: "fructose"
+        aliases: ["fructose", "crystalline fructose", "fruit sugar"]
+        explanation: "Naturally occurring monosaccharide found in fruits and honey, metabolised primarily by the liver."
+      - id: "maltose"
+        aliases: ["maltose", "malt sugar"]
+        explanation: "Disaccharide formed from two glucose molecules produced during grain germination."
+      - id: "galactose"
+        aliases: ["galactose"]
+        explanation: "Monosaccharide sugar component of dairy lactose."
+      - id: "honey"
+        aliases: ["honey", "shahad", "pure honey", "raw honey"]
+        explanation: "Natural viscous sweet substance produced by honeybees, composed mostly of fructose and glucose."
+
+  syrups:
+    display_name: "Syrups & Liquid Sugars"
+    is_added: "yes"
+    entries:
+      - id: "glucose_syrup"
+        aliases: ["glucose syrup", "liquid glucose", "corn syrup solids", "glucose-fructose syrup"]
+        explanation: "Concentrated aqueous solution of nutritive saccharides obtained from starch."
+      - id: "high_fructose_corn_syrup"
+        aliases: ["high fructose corn syrup", "hfcs", "hfcs-55", "hfcs-42", "isoglucose"]
+        explanation: "Starch-derived syrup enzymatically processed to convert glucose into sweeter fructose."
+      - id: "invert_sugar"
+        aliases: ["invert sugar", "invert syrup", "invert sugar syrup", "inverted sugar"]
+        explanation: "Equimolar mixture of glucose and fructose split by hydrolysis to retain moisture and prevent crystallization."
+      - id: "corn_syrup"
+        aliases: ["corn syrup", "maize syrup"]
+        explanation: "Food syrup made from cornstarch rich in maltose and higher oligosaccharides."
+      - id: "malt_syrup"
+        aliases: ["malt syrup", "barley malt syrup", "malt extract"]
+        explanation: "Sweet, viscous extract derived from sprouted, malted barley grains."
+      - id: "rice_syrup"
+        aliases: ["rice syrup", "brown rice syrup"]
+        explanation: "Sweetener derived from culturing cooked rice starch with enzymes."
+      - id: "golden_syrup"
+        aliases: ["golden syrup", "light treacle"]
+        explanation: "Thick, amber-colored syrup made during the refining of sugar cane or sugar beet juice."
+
+  concentrates:
+    display_name: "Fruit Juice & Plant Concentrates"
+    is_added: "yes"
+    entries:
+      - id: "fruit_juice_concentrate"
+        aliases: ["fruit juice concentrate", "apple juice concentrate", "pear juice concentrate", "concentrated fruit juice"]
+        explanation: "Fruit juice from which water has been removed; functions as a concentrated caloric sweetener."
+      - id: "date_paste_syrup"
+        aliases: ["date paste", "date syrup", "date sugar", "khajoor syrup"]
+        explanation: "Paste or syrup produced from pitted dates, high in intrinsic fructose and glucose."
+      - id: "grape_concentrate"
+        aliases: ["grape concentrate", "grape must", "deionized grape juice concentrate"]
+        explanation: "Concentrated clarifying grape extract used primarily as a sweetening substrate."
+
+  carb_fillers:
+    display_name: "Carbohydrate Fillers / Bulking Agents"
+    is_added: "no"
+    entries:
+      - id: "maltodextrin"
+        aliases: ["maltodextrin"]
+        explanation: "Hydrolyzed starch polysaccharide used for texture, mouthfeel, and bulking. Has a high glycemic index but is chemically classified as a complex carbohydrate."
+      - id: "dextrin"
+        aliases: ["dextrin", "roasted dextrin", "corn dextrin", "yellow dextrin"]
+        explanation: "Low-molecular-weight carbohydrate produced by starch hydrolysis, used as a thickening agent."
+
+  non_sugar_sweeteners:
+    display_name: "Non-Sugar Sweeteners"
+    is_added: "no"
+    entries:
+      - id: "aspartame"
+        aliases: ["aspartame", "ins 951", "e951"]
+        explanation: "Artificial non-saccharide intense sweetener approximately 200 times sweeter than sucrose."
+      - id: "sucralose"
+        aliases: ["sucralose", "ins 955", "e955"]
+        explanation: "Non-caloric chlorinated sucrose derivative approximately 600 times sweeter than sugar."
+      - id: "acesulfame_k"
+        aliases: ["acesulfame k", "acesulfame potassium", "ace-k", "ins 950", "e950"]
+        explanation: "Calorie-free artificial sweetener often blended with sucralose or aspartame."
+      - id: "stevia"
+        aliases: ["steviol glycosides", "stevia", "stevia extract", "ins 960", "e960", "reb-a"]
+        explanation: "Natural non-nutritive sweetener extracted from Stevia rebaudiana plant leaves."
+      - id: "polyols"
+        aliases: ["sorbitol", "maltitol", "erythritol", "xylitol", "isomalt", "lactitol", "ins 420", "ins 965", "ins 968"]
+        explanation: "Sugar alcohols used as bulk sugar replacers with lower caloric density and reduced insulin response."
+
+  ambiguous:
+    display_name: "Naturally Present or Ambiguous Dairy Components"
+    is_added: "ambiguous"
+    entries:
+      - id: "lactose"
+        aliases: ["lactose", "milk sugar"]
+        explanation: "Disaccharide naturally occurring in dairy milk. May be intrinsic to milk ingredients or isolated; not classified as added sugar without specific processing context."
+      - id: "milk_solids"
+        aliases: ["milk solids", "dairy solids", "skimmed milk powder", "whey powder", "demineralized whey"]
+        explanation: "Whole or skimmed dairy components containing intrinsic lactose alongside proteins and minerals."
+
+exclusions:
+  # Negative lookup terms that contain 'sugar' or 'cane' but are NOT caloric sweetening sugars
+  terms:
+    - "sugarcane vinegar"
+    - "cane vinegar"
+    - "sugar cane vinegar"
+    - "sugar beet fiber"
+    - "sugar beet pulp"
+    - "sugar snap peas"
+    - "sugar kelp"

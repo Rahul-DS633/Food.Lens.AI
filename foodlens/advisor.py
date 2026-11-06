@@ -421,3 +421,64 @@ class AIAdvisor:
             evidence_numbers_used=valid_nums,
             flagged_numbers=flagged_nums,
         )
+
+    def generate_sugar_explanation(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Generates 2-3 neutral, grounded sentences explaining hidden sugar detection results.
+        Refusal directives: zero disease claims, no good/bad moralizing, strictly verifies numbers.
+        """
+        prod_name = payload.get("product_name", "Packaged Product")
+        rep = payload.get("sugar_report", {})
+        distinct_cnt = rep.get("distinct_sugar_count", 0)
+        distinct_names = rep.get("distinct_sugar_names", [])
+        first_pos = rep.get("first_sugar_position")
+        splitting = rep.get("sugar_splitting", False)
+        sweeteners = rep.get("non_sugar_sweeteners", [])
+        fillers = rep.get("carb_fillers", [])
+        conflict = rep.get("label_conflict", False)
+        conflict_reason = rep.get("label_conflict_reason", "")
+        teaspoons = rep.get("portion_teaspoons")
+        basis = rep.get("teaspoon_basis", "sugar")
+
+        # Sentence 1: Sugar ingredients & positions
+        if distinct_cnt > 0:
+            names_str = ", ".join(distinct_names)
+            s1 = f"{prod_name} contains {distinct_cnt} distinct sugar-type ingredient{'s' if distinct_cnt > 1 else ''} ({names_str})."
+            if first_pos is not None:
+                s1 += f" The first sugar appears at position #{first_pos} in descending weight order."
+            if splitting:
+                s1 += " Multiple sugar sources are distributed across the ingredient statement (sugar splitting)."
+        else:
+            s1 = f"No added sugar-type ingredients identified in the readable ingredient statement for {prod_name}."
+
+        # Sentence 2: Teaspoons equivalent
+        if teaspoons is not None:
+            basis_disp = "added sugar" if basis == "added_sugar" else "total sugars"
+            s2 = f"One serving provides approximately {teaspoons} teaspoons of {basis_disp}."
+        else:
+            s2 = "Sugar content was not declared numerically on the scanned label."
+
+        # Sentence 3: Sweeteners, carb fillers & label conflicts
+        s3_parts = []
+        if sweeteners:
+            s3_parts.append(f"Non-nutritive sweeteners identified: {', '.join(sweeteners)}.")
+        if fillers:
+            s3_parts.append(f"Carbohydrate bulking agents identified: {', '.join(fillers)}.")
+        if conflict and conflict_reason:
+            s3_parts.append(f"Notice: {conflict_reason}")
+        s3 = " ".join(s3_parts)
+
+        full_text = f"{s1} {s2} {s3}".strip()
+        is_grounded, valid_nums, flagged_nums = self.verify_grounding(full_text, payload)
+
+        return {
+            "summary": full_text,
+            "distinct_sugar_count": distinct_cnt,
+            "portion_teaspoons": teaspoons,
+            "first_sugar_position": first_pos,
+            "sugar_splitting": splitting,
+            "label_conflict": conflict,
+            "is_grounded": is_grounded,
+            "evidence_numbers_used": valid_nums,
+            "flagged_numbers": flagged_nums,
+        }

@@ -290,3 +290,4 @@ class PersonalFitEngine:
             net_weight_g=profile.net_weight_g,
             is_beverage=profile.is_beverage,
         )
+

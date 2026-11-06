@@ -6,14 +6,16 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688.svg)](https://fastapi.tiangolo.com/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.38+-FF4B4B.svg)](https://streamlit.io/)
-[![Tests](https://img.shields.io/badge/tests-40%20passed-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-83%20passed-brightgreen.svg)](tests/)
 
 ---
 
 ## 🌟 Key Differentiators
 - 🇮🇳 **Indian Packaged-Food Focus:** Built-in EAN-13 India (890) validation and pre-seeded database of common Indian staples (Parle-G, Maggi, Haldiram's Bhujia, Amul Butter, Frooti).
 - ⚙️ **Deterministic Calculation:** Zero LLM hallucinations on math. All scaling, unit conversions (kJ↔kcal, salt↔sodium), and energy cross-checks run via pure Python.
-- 🧊 **Sugar in Teaspoons:** Instant visual conversion of total sugars into physical teaspoons/cubes (~4g each) to highlight hidden sugars.
+- 🔬 **Hidden Sugar & Sweetener Detector:** Categorizes sugars, syrups, concentrates, carb fillers, and non-sugar sweeteners. Detects 'sugar splitting' and nutrition table conflicts.
+- 🛡️ **Personalized Food Fit & Allergens:** Demographic-aware guidance (ICMR-NIN 2020 RDA) and deterministic allergen alerts with India DPDP Act 2023 compliance.
+- 🧊 **Sugar in Teaspoons:** Instant visual conversion of total/added sugars into physical teaspoons/cubes (~4g each, rounded to nearest 0.5) to highlight hidden sugars.
 - 📦 **"Eat the Whole Packet" Calculator:** One-click multiplier comparing single-serve claims against true whole-packet contents.
 - 🎯 **Transparent Scoring (v1.0):** 0–100 category-aware score with exact itemized reasons based on WHO & Nutri-Score standards.
 - 🛡️ **Grounded AI Explainer:** Language model explains validated data only, reinforced by a strict numeric verification post-check.
@@ -34,17 +36,23 @@ Client (Streamlit MVP / Web / Mobile)
   ├── /api/nutrition/calculate──> Portion Calculator (100g / Serving / Packet / Custom)
   ├── /api/compare            ──> Per-100g Side-by-Side Comparison Matrix
   ├── /api/advice             ──> Grounded AI Advisor (Strict Number Post-Check)
+  ├── /api/profile/*          ──> DPDP Act Profile, Minor Consent, Export, Erasure
+  ├── /api/personal-fit       ──> Demographic-Aware RDA Fit & Deterministic Allergen Alerts
+  ├── /api/sugar/analyze      ──> Hidden Sugar Detector, Sugar Splitting & Conflict Cross-Check
   └── /api/quest/*            ──> XP, Leveling, Streak Freezes, Badges, Mini-Games
        │
        ▼
  Pure Python Core Domain (`foodlens/`)
-  ├── units.py            (Deterministic conversions: kJ↔kcal, mg↔g, salt↔sodium)
+  ├── units.py            (Deterministic conversions: kJ↔kcal, mg↔g, salt↔sodium, teaspoons)
   ├── nutrition.py        (Nutrient dataclass, linear scaling, None preservation)
   ├── validation.py       (Ranges, subset relationships, Atwater energy cross-check)
   ├── barcode.py          (EAN-13 check digit, India 890 detection, OpenCV decoding)
   ├── parser.py           (Regex + nutrient dictionary, basis detection, comma decimals)
   ├── scoring.py          (Category thresholds, WHO/Nutri-score informed, versioned)
   ├── ingredients.py      (Ordered parsing, INS/E-number lookup, allergen detection)
+  ├── allergens.py        (100% deterministic allergen cross-check & regional synonyms)
+  ├── personal_fit.py     (ICMR-NIN 2020 RDA calculator & under-18 safety rules)
+  ├── sugar_detector.py   (Sugar aliases, rapidfuzz OCR typo tolerance, sugar splitting)
   ├── advisor.py          (Grounded explanations, strict hallucination guardrail)
   └── gamification/       (XP engine, streak freezes, badge unlock rules, mini-games)
        │

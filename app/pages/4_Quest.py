@@ -134,6 +134,17 @@ try:
 
                     progress.xp += xp_gain
                     db.add(XPEvent(user_id=1, event_type="minigame_guess_sugar", xp=xp_gain, ref_id=str(actual_sugar)))
+
+                    # Award 'Sugar Spotter' badge for completing the sugar literacy mini-game
+                    ach = db.query(Achievement).filter(Achievement.code == "SUGAR_SPOTTER").first()
+                    if ach:
+                        existing_ach = db.query(UserAchievement).filter(
+                            UserAchievement.user_id == progress.user_id,
+                            UserAchievement.achievement_id == ach.id
+                        ).first()
+                        if not existing_ach:
+                            db.add(UserAchievement(user_id=progress.user_id, achievement_id=ach.id))
+
                     db.commit()
 
         else:

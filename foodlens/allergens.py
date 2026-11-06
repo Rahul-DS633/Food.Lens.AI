@@ -283,3 +283,4 @@ class AllergenEngine:
             has_alert=has_alert,
             ocr_confidence=ocr_confidence,
         )
+

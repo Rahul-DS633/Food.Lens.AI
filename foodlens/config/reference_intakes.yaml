@@ -65,3 +65,4 @@ under_18_rules:
   disable_calorie_guidance: true
   disable_weight_based_protein: true
   notice: "Individualized caloric or weight-based targets are disabled for ages under 18 under safety guidelines."
+

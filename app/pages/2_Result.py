@@ -30,16 +30,19 @@ from foodlens.validation import validate_nutrition_profile
 from foodlens.ingredients import IngredientEngine
 from foodlens.allergens import AllergenEngine, AllergenStatus
 from foodlens.personal_fit import PersonalFitEngine, UserProfileData, PersonalFitVerdict
+from foodlens.sugar_detector import SugarDetector
 from foodlens.advisor import AIAdvisor
 from app.components.nutrient_card import render_nutrient_card
 from app.components.score_ring import render_score_ring
 from app.components.sugar_cubes import render_sugar_cubes
+from app.components.sugar_timeline import render_sugar_timeline
 from app.components.icons import get_icon_svg, icon_badge
 from app.components.images import get_product_image
 
 ingredient_engine = IngredientEngine()
 allergen_engine = AllergenEngine()
 personal_fit_engine = PersonalFitEngine()
+sugar_detector = SugarDetector()
 advisor = AIAdvisor()
 
 if "user_id" not in st.session_state:
@@ -403,6 +406,16 @@ try:
     )
 
     if prod.ingredients:
+        # Hidden Sugar & Sweetener Detection Timeline
+        sugar_report = sugar_detector.detect_sugars(
+            ingredients_text=ing_text,
+            added_sugar_g=active_profile.added_sugar_g.value if active_profile.added_sugar_g else None,
+            total_sugars_g=active_profile.sugars_g.value if active_profile.sugars_g else None,
+            portion_g=active_portion_grams,
+        )
+        raw_ing_names = [ing.name for ing in prod.ingredients]
+        render_sugar_timeline(sugar_report, portion_g=active_portion_grams, raw_tokens=raw_ing_names)
+
         categories = {}
         for ing in prod.ingredients:
             cat = ing.category or "ingredient"

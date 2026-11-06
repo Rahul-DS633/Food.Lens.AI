@@ -173,3 +173,4 @@ def test_disclaimer_always_present():
 
     assert "General information, not medical advice" in fit.disclaimer
     assert "Verify on the pack" in fit.disclaimer
+

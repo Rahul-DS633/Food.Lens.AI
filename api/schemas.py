@@ -145,3 +145,41 @@ class PersonalFitResponse(BaseModel):
     disclaimer: str
 
 
+# --- Hidden Sugar Detector Schemas ---
+
+class SugarAnalyzeRequest(BaseModel):
+    product_id: Optional[int] = None
+    ingredients_text: Optional[str] = None
+    portion_g: float = 100.0
+    added_sugar_g: Optional[float] = None
+    total_sugars_g: Optional[float] = None
+
+
+class SugarMatchSchema(BaseModel):
+    ingredient_text: str
+    normalized_alias: str
+    sugar_class: str
+    position: int
+    confidence: float
+    match_type: str
+    is_added: str
+    explanation: str
+
+
+class SugarReportResponse(BaseModel):
+    matches: List[SugarMatchSchema]
+    distinct_sugar_names: List[str]
+    first_sugar_position: Optional[int] = None
+    sugars_in_top3: bool
+    sugar_splitting: bool
+    non_sugar_sweeteners: List[str]
+    carb_fillers: List[str]
+    label_conflict: bool
+    label_conflict_reason: Optional[str] = None
+    portion_teaspoons: Optional[float] = None
+    teaspoon_basis: Optional[str] = None
+    ai_summary: str
+    status: str
+
+
+

@@ -178,3 +178,4 @@ def test_custom_allergen_text():
     )
     assert res.overall_status == AllergenStatus.CONTAINS_YOUR_ALLERGEN
     assert any("custom:" in r.allergen for r in res.allergen_results)
+

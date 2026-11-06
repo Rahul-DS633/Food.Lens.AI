@@ -66,6 +66,18 @@ def sugar_g_to_teaspoons(sugar_g: Optional[float]) -> Optional[float]:
     return round(sugar_g / 4.0, 1)
 
 
+def sugar_g_to_teaspoons_rounded(sugar_g: Optional[float], step: float = 0.5) -> Optional[float]:
+    """
+    Convert sugar in grams to standard teaspoons (approx 4g/tsp), rounded to the nearest step (default 0.5).
+    Example: 7g -> 1.75 -> 2.0; 6g -> 1.5; 2g -> 0.5.
+    Returns None if sugar_g is None.
+    """
+    if sugar_g is None:
+        return None
+    raw_tsp = sugar_g / 4.0
+    return round(raw_tsp / step) * step
+
+
 def normalize_nutrient_value(
     value: Optional[float], from_unit: str, target_unit: str
 ) -> Optional[float]:

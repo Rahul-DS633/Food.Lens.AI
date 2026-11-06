@@ -179,3 +179,4 @@ def calculate_personal_fit(
         ai_explanation=explanation.to_dict(),
         disclaimer=fit.disclaimer,
     )
+
