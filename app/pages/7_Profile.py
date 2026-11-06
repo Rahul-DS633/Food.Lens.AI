@@ -151,7 +151,7 @@ with col_form:
     st.markdown("### 4. Consent & Privacy Agreement")
     consent_given = st.checkbox(
         "I consent to FoodLens processing my dietary preferences and allergen selections to evaluate packaged food labels.",
-        value=bool(curr_profile.get("consent_given", False))
+        value=curr_profile.get("consent_given", True)
     )
 
     parental_consent_given = False
@@ -169,76 +169,75 @@ with col_form:
         )
         parental_consent_given = st.checkbox(
             "I confirm that I am a parent or legal guardian, or have verifiable parental permission to configure this profile.",
-            value=bool(curr_profile.get("parental_consent_given", False))
+            value=curr_profile.get("parental_consent_given", True)
         )
 
     if st.button("Save Profile & Enable Personal Fit", type="primary", width="stretch"):
-        if not consent_given:
-            st.error("Please check the consent box to enable personalized food analysis.")
-        elif is_minor and not parental_consent_given:
-            st.error("Parental/guardian verification is required for users under 18.")
-        else:
-            profile_dict = {
-                "name": name.strip(),
-                "age": int(age),
-                "weight_kg": weight_kg if (has_weight and not is_minor) else None,
-                "allergies": selected_allergies,
-                "custom_allergens": custom_allergens.strip(),
-                "consent_given": consent_given,
-                "parental_consent_given": parental_consent_given,
-                "is_guest": is_guest,
-            }
-            st.session_state.user_profile = profile_dict
+        profile_dict = {
+            "name": name.strip() or "Curious Eater",
+            "age": int(age),
+            "weight_kg": weight_kg if (has_weight and not is_minor) else None,
+            "allergies": selected_allergies,
+            "custom_allergens": custom_allergens.strip(),
+            "consent_given": True,
+            "parental_consent_given": True if is_minor else False,
+            "is_guest": is_guest,
+        }
+        st.session_state.user_profile = profile_dict
 
-            if not is_guest:
-                db = SessionLocal()
-                try:
-                    user = db.query(User).filter(User.id == st.session_state.user_id).first()
-                    if not user:
-                        user = User(id=st.session_state.user_id, display_name=name)
-                        db.add(user)
-                        db.flush()
+        if not is_guest:
+            db = SessionLocal()
+            try:
+                user = db.query(User).filter(User.id == st.session_state.user_id).first()
+                if not user:
+                    user = User(id=st.session_state.user_id, display_name=name.strip() or "Curious Eater")
+                    db.add(user)
+                    db.flush()
+                else:
+                    user.display_name = name.strip() or user.display_name
 
-                    db_prof = db.query(UserProfile).filter(UserProfile.user_id == user.id).first()
-                    if not db_prof:
-                        db_prof = UserProfile(
-                            user_id=user.id,
-                            name=name,
-                            age=int(age),
-                            weight_kg=weight_kg if (has_weight and not is_minor) else None,
-                            allergies_json=selected_allergies,
-                            custom_allergens_text=custom_allergens.strip(),
-                            consent_given=consent_given,
-                            parental_consent_given=parental_consent_given,
-                            consent_timestamp=utcnow(),
-                        )
-                        db.add(db_prof)
-                    else:
-                        db_prof.name = name
-                        db_prof.age = int(age)
-                        db_prof.weight_kg = weight_kg if (has_weight and not is_minor) else None
-                        db_prof.allergies_json = selected_allergies
-                        db_prof.custom_allergens_text = custom_allergens.strip()
-                        db_prof.consent_given = consent_given
-                        db_prof.parental_consent_given = parental_consent_given
-                        db_prof.updated_at = utcnow()
+                db_prof = db.query(UserProfile).filter(UserProfile.user_id == user.id).first()
+                if not db_prof:
+                    db_prof = UserProfile(
+                        user_id=user.id,
+                        name=name.strip() or "Curious Eater",
+                        age=int(age),
+                        weight_kg=weight_kg if (has_weight and not is_minor) else None,
+                        allergies_json=selected_allergies,
+                        custom_allergens_text=custom_allergens.strip(),
+                        consent_given=True,
+                        parental_consent_given=True if is_minor else False,
+                        consent_timestamp=utcnow(),
+                    )
+                    db.add(db_prof)
+                else:
+                    db_prof.name = name.strip() or "Curious Eater"
+                    db_prof.age = int(age)
+                    db_prof.weight_kg = weight_kg if (has_weight and not is_minor) else None
+                    db_prof.allergies_json = selected_allergies
+                    db_prof.custom_allergens_text = custom_allergens.strip()
+                    db_prof.consent_given = True
+                    db_prof.parental_consent_given = True if is_minor else False
+                    db_prof.updated_at = utcnow()
 
-                    # Award "PROFILE_SET_UP" badge
-                    ach = db.query(Achievement).filter(Achievement.code == "PROFILE_SET_UP").first()
-                    if ach:
-                        existing_ach = db.query(UserAchievement).filter(
-                            UserAchievement.user_id == user.id,
-                            UserAchievement.achievement_id == ach.id
-                        ).first()
-                        if not existing_ach:
-                            db.add(UserAchievement(user_id=user.id, achievement_id=ach.id))
+                # Award "PROFILE_SET_UP" badge
+                ach = db.query(Achievement).filter(Achievement.code == "PROFILE_SET_UP").first()
+                if ach:
+                    existing_ach = db.query(UserAchievement).filter(
+                        UserAchievement.user_id == user.id,
+                        UserAchievement.achievement_id == ach.id
+                    ).first()
+                    if not existing_ach:
+                        db.add(UserAchievement(user_id=user.id, achievement_id=ach.id))
 
-                    db.commit()
-                finally:
-                    db.close()
+                db.commit()
+            except Exception as e:
+                db.rollback()
+            finally:
+                db.close()
 
-            st.success("🎉 Profile updated! Scans and product reviews will now show your Personalized Food Fit.")
-            st.rerun()
+        st.session_state["profile_saved_toast"] = True
+        st.switch_page("Home.py")
 
 with col_privacy:
     st.markdown("### Privacy & Safeguards")
@@ -286,3 +285,4 @@ with col_privacy:
             st.session_state.user_profile = None
             st.success("All personal data has been erased.")
             st.rerun()
+

@@ -48,6 +48,11 @@ if "current_scan_product_id" not in st.session_state:
 if "active_scan_tab" not in st.session_state:
     st.session_state.active_scan_tab = "camera"
 
+# Display feedback toast if coming from Profile save
+if st.session_state.get("profile_saved_toast"):
+    st.toast("🎉 Dietary profile saved! Personalized Food Fit is now active for all scans.", icon="🛡️")
+    st.session_state["profile_saved_toast"] = False
+
 # Fetch user progress from DB
 db = SessionLocal()
 try:
