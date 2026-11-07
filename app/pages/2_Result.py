@@ -21,7 +21,7 @@ if CSS_PATH.exists():
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 from db.session import SessionLocal
-from db.models import Product, Nutrition, Ingredient, UserProfile
+from db.models import Product, Nutrition, Ingredient, UserProfile, Household, HouseholdMember
 from foodlens.nutrition import (
     NutritionProfile, create_nutrient, calculate_portion, scale_profile
 )
@@ -30,12 +30,14 @@ from foodlens.validation import validate_nutrition_profile
 from foodlens.ingredients import IngredientEngine
 from foodlens.allergens import AllergenEngine, AllergenStatus
 from foodlens.personal_fit import PersonalFitEngine, UserProfileData, PersonalFitVerdict
+from foodlens.family_fit import HouseholdFitEngine, FamilyMemberInput
 from foodlens.sugar_detector import SugarDetector
 from foodlens.advisor import AIAdvisor
 from app.components.nutrient_card import render_nutrient_card
 from app.components.score_ring import render_score_ring
 from app.components.sugar_cubes import render_sugar_cubes
 from app.components.sugar_timeline import render_sugar_timeline
+from app.components.allergen_matrix import render_allergen_matrix
 from app.components.icons import get_icon_svg, icon_badge
 from app.components.images import get_product_image
 from app.components.report_modal import render_report_issue_dialog
@@ -43,6 +45,7 @@ from app.components.report_modal import render_report_issue_dialog
 ingredient_engine = IngredientEngine()
 allergen_engine = AllergenEngine()
 personal_fit_engine = PersonalFitEngine()
+household_engine = HouseholdFitEngine()
 sugar_detector = SugarDetector()
 advisor = AIAdvisor()
 
@@ -107,8 +110,75 @@ try:
 
     ing_text = ", ".join([ing.name for ing in prod.ingredients]) if prod.ingredients else ""
 
-    # Top Allergen Banner (Red / Amber / Neutral)
-    if user_prof and (user_prof.get("allergies") or user_prof.get("custom_allergens")):
+    # Family Multi-Member Selector & Household Shield
+    hh = db.query(Household).filter(Household.owner_user_id == st.session_state.user_id).first()
+    family_members = hh.members if hh else []
+
+    if family_members:
+        st.markdown(
+            """
+            <div style="font-size: 14px; font-weight: 700; color: #1E293B; margin-bottom: 6px;">
+                👨‍👩‍👧‍👦 Who is eating this product?
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        selected_mem_ids = st.multiselect(
+            "Select family members",
+            options=[m.id for m in family_members],
+            default=[m.id for m in family_members],
+            format_func=lambda mid: next((f"{m.emoji_avatar} {m.display_name} (Age {m.age})" for m in family_members if m.id == mid), str(mid)),
+            label_visibility="collapsed",
+            key="selected_family_members"
+        )
+        selected_members = [m for m in family_members if m.id in selected_mem_ids]
+
+        if selected_members:
+            fam_inputs = [
+                FamilyMemberInput(
+                    id=m.id,
+                    display_name=m.display_name,
+                    age=m.age,
+                    weight_kg=m.weight_kg,
+                    allergies=m.allergies_json or [],
+                    emoji_avatar=m.emoji_avatar,
+                    dietary_prefs=m.dietary_prefs_json or [],
+                    is_minor=m.is_minor,
+                    consent_by_owner=m.consent_by_owner,
+                )
+                for m in selected_members
+            ]
+            fam_portions = {m.id: (prod.serving_size_g or 25.0) if not m.is_minor else min((prod.serving_size_g or 25.0), 25.0) for m in selected_members}
+            hh_result = household_engine.check_household(
+                members=fam_inputs,
+                portions_by_member=fam_portions,
+                nutrition=nutrition,
+                ingredients_text=ing_text,
+            )
+
+            # Render household banner
+            banner_bg = "#FEE2E2" if hh_result.worst_allergen_status == AllergenStatus.CONTAINS_YOUR_ALLERGEN else "#FEF3C7" if hh_result.worst_allergen_status in [AllergenStatus.MAY_CONTAIN_TRACES, AllergenStatus.UNKNOWN] else "#F0FDF4"
+            banner_color = "#991B1B" if hh_result.worst_allergen_status == AllergenStatus.CONTAINS_YOUR_ALLERGEN else "#92400E" if hh_result.worst_allergen_status in [AllergenStatus.MAY_CONTAIN_TRACES, AllergenStatus.UNKNOWN] else "#166534"
+            banner_border = "#EF4444" if hh_result.worst_allergen_status == AllergenStatus.CONTAINS_YOUR_ALLERGEN else "#F59E0B" if hh_result.worst_allergen_status in [AllergenStatus.MAY_CONTAIN_TRACES, AllergenStatus.UNKNOWN] else "#86EFAC"
+
+            st.markdown(
+                f"""
+                <div style="background: {banner_bg}; border: 2px solid {banner_border}; border-radius: 14px; padding: 12px 18px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="color: {banner_color}; font-weight: 800; font-size: 14.5px;">
+                        {hh_result.top_alert_banner}
+                    </div>
+                    <span style="font-size: 12px; color: {banner_color}; font-weight: 700;">Family Shield Active ({len(selected_members)} Members)</span>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+            with st.expander("👨‍👩‍👧‍👦 View Family Allergen Matrix & Dietary Breakdown", expanded=False):
+                render_allergen_matrix(selected_members, hh_result.allergen_matrix)
+                st.caption(hh_result.disclaimer)
+
+    # Top Allergen Banner (Red / Amber / Neutral for individual user if not in family mode)
+    elif user_prof and (user_prof.get("allergies") or user_prof.get("custom_allergens")):
         custom_algs = [c.strip() for c in user_prof.get("custom_allergens", "").split(",") if c.strip()]
         allergen_res = allergen_engine.check_allergens(
             ingredients_text=ing_text,
