@@ -247,5 +247,25 @@ try:
             unsafe_allow_html=True
         )
 
+        st.markdown(
+            """
+            <div class="foodlens-card-3d" style="background: linear-gradient(135deg, #EFF6FF 0%, #E0F2FE 100%); border: 1.5px solid #93C5FD; margin-bottom: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <span style="background: #0369A1; color: #FFFFFF !important; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 6px;">
+                            COOPERATIVE FAMILY CHALLENGE
+                        </span>
+                        <h3 style="margin: 6px 0 3px 0; color: #075985;">The Family Pantry Audit</h3>
+                        <div style="color: #334155; font-size: 14px;">Scan 5 packaged snacks together this week with your Family Profiles active to unlock shared dietary literacy.</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 24px; font-weight: 800; color: #0284C7; font-family: 'JetBrains Mono', monospace;">+25 XP</div>
+                    </div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
 finally:
     db.close()

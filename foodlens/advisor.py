@@ -482,3 +482,44 @@ class AIAdvisor:
             "evidence_numbers_used": valid_nums,
             "flagged_numbers": flagged_nums,
         }
+
+    def explain_family_fit(
+        self,
+        household_result_dict: Dict[str, Any],
+        product_name: str = "Packaged Product"
+    ) -> Dict[str, Any]:
+        """
+        Generates an anonymized, grounded summary for a multi-member household food check.
+        Strict Privacy: Member names and avatars are never transmitted or mentioned.
+        """
+        worst_status = household_result_dict.get("worst_allergen_status", "UNKNOWN")
+        member_count = len(household_result_dict.get("allergen_matrix", {}))
+        top_banner = household_result_dict.get("top_alert_banner", "")
+
+        # Anonymized summary
+        if "CONTAINS_YOUR_ALLERGEN" in worst_status:
+            s1 = f"Allergen Alert for household: Product contains declared allergen triggers for 1 or more evaluated members."
+        elif "MAY_CONTAIN_TRACES" in worst_status:
+            s1 = f"Precautionary notice: Product carries possible trace allergen warnings for 1 or more evaluated members."
+        elif "UNKNOWN" in worst_status:
+            s1 = f"Allergen status is unverified due to incomplete packaging ingredients statement."
+        else:
+            s1 = f"No declared allergen triggers detected in readable packaging text for any of the {member_count} evaluated members."
+
+        s2 = "Always verify the actual physical package before serving, as facility cross-contact rules can vary."
+        full_text = f"{s1} {s2}".strip()
+
+        payload = {
+            "member_count": float(member_count),
+            "worst_status": worst_status,
+        }
+        is_grounded, valid_nums, flagged_nums = self.verify_grounding(full_text, payload)
+
+        return {
+            "summary": full_text,
+            "worst_allergen_status": worst_status,
+            "member_count": member_count,
+            "is_grounded": is_grounded,
+            "evidence_numbers_used": valid_nums,
+            "flagged_numbers": flagged_nums,
+        }

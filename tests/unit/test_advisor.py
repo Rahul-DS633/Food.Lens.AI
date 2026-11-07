@@ -52,3 +52,18 @@ def test_advisor_detects_ungrounded_hallucinated_numbers():
     assert is_grounded is False
     assert 999.0 in flagged
 
+
+def test_explain_family_fit_anonymized_and_grounded():
+    advisor = AIAdvisor()
+    hh_res = {
+        "worst_allergen_status": "CONTAINS_YOUR_ALLERGEN",
+        "allergen_matrix": {"1": {"milk": "CONTAINS"}, "2": {"peanut": "NONE_DETECTED"}},
+        "top_alert_banner": "Alert for Aarav: contains milk",
+    }
+    exp = advisor.explain_family_fit(hh_res, product_name="Milk Cookie")
+    assert exp["is_grounded"] is True
+    # Invariant: Personal names are never in the explanation text
+    assert "Aarav" not in exp["summary"]
+    assert exp["member_count"] == 2
+
+
