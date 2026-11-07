@@ -83,6 +83,37 @@ class ImagePreprocessor:
         return deskewed
 
 
+def _get_gemini_api_key() -> Optional[str]:
+    """Resolves Gemini API key across os.environ, Streamlit Cloud secrets, and .env."""
+    # 1. Environment variable
+    key = os.getenv("GEMINI_API_KEY")
+    if key and "your_gemini" not in key.lower() and len(key.strip()) > 10:
+        return key.strip()
+
+    # 2. Streamlit Cloud Secrets (handles direct navigation to /Scan or any page)
+    try:
+        import streamlit as st
+        if hasattr(st, "secrets") and "GEMINI_API_KEY" in st.secrets:
+            k = str(st.secrets["GEMINI_API_KEY"]).strip()
+            if k and "your_gemini" not in k.lower() and len(k) > 10:
+                os.environ["GEMINI_API_KEY"] = k
+                return k
+    except Exception:
+        pass
+
+    # 3. python-dotenv fallback
+    try:
+        from dotenv import load_dotenv
+        load_dotenv()
+        key = os.getenv("GEMINI_API_KEY")
+        if key and "your_gemini" not in key.lower() and len(key.strip()) > 10:
+            return key.strip()
+    except Exception:
+        pass
+
+    return None
+
+
 class OCREngine:
     """
     Multi-engine OCR processor with intelligent fallback:
@@ -97,47 +128,90 @@ class OCREngine:
 
     def _extract_with_gemini_vision(self, img_bytes: bytes) -> List[OCRTextLine]:
         """
-        Uses Google Gemini Vision (Flash) to perform cloud-based OCR directly from packaging.
+        Uses Google Gemini Vision to perform cloud-based OCR directly from packaging.
+        Tries both Google GenAI SDK and direct HTTPS REST API fallback.
         Zero server RAM overhead and exceptional accuracy on Indian food labels and small tables.
         """
-        api_key = os.getenv("GEMINI_API_KEY")
-        if not api_key or "your_gemini" in api_key.lower() or len(api_key.strip()) < 10:
+        api_key = _get_gemini_api_key()
+        if not api_key:
             return []
 
-        try:
-            from google import genai
-            from google.genai import types
+        prompt = (
+            "You are an OCR extraction engine for packaged food labels. "
+            "Read this packaging image carefully and extract all printed text verbatim. "
+            "Include: Product Title, Brand, Net Weight, Serving Size, "
+            "all rows in the Nutrition Facts table with their exact values, units, and basis (e.g. Energy, Protein, Carbohydrate, Total Sugar, Added Sugar, Dietary Fibre, Total Fat, Saturated Fat, Trans Fat, Sodium), "
+            "and the complete Ingredients list. "
+            "Output one line per extracted item. Do not include markdown formatting or commentary."
+        )
 
+        # Method 1: Google GenAI SDK
+        try:
+            import io
+            from PIL import Image
+            from google import genai
+
+            pil_img = Image.open(io.BytesIO(img_bytes))
+            client = genai.Client(api_key=api_key)
+
+            for model_name in ["gemini-2.0-flash", "gemini-1.5-flash"]:
+                try:
+                    response = client.models.generate_content(
+                        model=model_name,
+                        contents=[pil_img, prompt]
+                    )
+                    if response and response.text:
+                        clean_lines = [
+                            l.strip()
+                            for l in response.text.replace("```", "").splitlines()
+                            if l.strip() and not l.strip().startswith("#")
+                        ]
+                        if clean_lines:
+                            return [OCRTextLine(text=l, confidence=0.96) for l in clean_lines]
+                except Exception:
+                    continue
+        except Exception:
+            pass
+
+        # Method 2: Direct HTTPS REST API (guaranteed to work across all Python versions and platforms)
+        try:
+            import base64
+            import requests
+
+            b64_image = base64.b64encode(img_bytes).decode("utf-8")
             mime_type = "image/jpeg"
             if img_bytes.startswith(b"\x89PNG"):
                 mime_type = "image/png"
             elif img_bytes.startswith(b"RIFF") and b"WEBP" in img_bytes[:16]:
                 mime_type = "image/webp"
 
-            client = genai.Client(api_key=api_key.strip())
-            part = types.Part.from_bytes(data=img_bytes, mime_type=mime_type)
-            prompt = (
-                "You are an OCR extraction engine for packaged food labels. "
-                "Read this packaging image carefully and extract all printed text verbatim. "
-                "Include: Product Title, Brand, Net Weight, Serving Size, "
-                "all rows in the Nutrition Facts table with their exact values, units, and basis (e.g. Energy, Protein, Carbohydrate, Total Sugar, Added Sugar, Dietary Fibre, Total Fat, Saturated Fat, Trans Fat, Sodium), "
-                "and the complete Ingredients list. "
-                "Output one line per extracted item. Do not include markdown formatting or commentary."
-            )
-            response = client.models.generate_content(
-                model="gemini-2.0-flash",
-                contents=[prompt, part]
-            )
-            if response and response.text:
-                clean_lines = [
-                    l.strip()
-                    for l in response.text.replace("```", "").splitlines()
-                    if l.strip() and not l.strip().startswith("#")
-                ]
-                if clean_lines:
-                    return [OCRTextLine(text=l, confidence=0.96) for l in clean_lines]
+            for model_name in ["gemini-1.5-flash", "gemini-2.0-flash"]:
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+                payload = {
+                    "contents": [{
+                        "parts": [
+                            {"text": prompt},
+                            {"inline_data": {"mime_type": mime_type, "data": b64_image}}
+                        ]
+                    }]
+                }
+                resp = requests.post(url, json=payload, timeout=25)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    candidates = data.get("candidates", [])
+                    if candidates:
+                        parts = candidates[0].get("content", {}).get("parts", [])
+                        text_content = "".join(p.get("text", "") for p in parts)
+                        clean_lines = [
+                            l.strip()
+                            for l in text_content.replace("```", "").splitlines()
+                            if l.strip() and not l.strip().startswith("#")
+                        ]
+                        if clean_lines:
+                            return [OCRTextLine(text=l, confidence=0.96) for l in clean_lines]
         except Exception:
             pass
+
         return []
 
     def _extract_with_tesseract(self, img_bytes: bytes) -> List[OCRTextLine]:
@@ -145,37 +219,64 @@ class OCREngine:
         Uses system Tesseract OCR binary (C++).
         Lightweight (~25 MB RAM), fast, and pre-installed on Linux Streamlit Cloud.
         """
+        import tempfile
+
         tess = shutil.which("tesseract")
         if not tess:
             return []
         try:
-            proc = subprocess.run(
-                [tess, "stdin", "stdout", "--oem", "1", "-l", "eng"],
-                input=img_bytes,
-                capture_output=True,
-                timeout=20
-            )
-            if proc.returncode == 0:
-                text = proc.stdout.decode("utf-8", errors="ignore")
-                lines = [l.strip() for l in text.splitlines() if l.strip()]
-                if lines:
-                    return [OCRTextLine(text=l, confidence=0.85) for l in lines]
+            suffix = ".jpg"
+            if img_bytes.startswith(b"\x89PNG"):
+                suffix = ".png"
+
+            with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tf:
+                tf.write(img_bytes)
+                tmp_path = tf.name
+
+            try:
+                proc = subprocess.run(
+                    [tess, tmp_path, "stdout", "-l", "eng"],
+                    capture_output=True,
+                    timeout=20
+                )
+                if proc.returncode == 0:
+                    text = proc.stdout.decode("utf-8", errors="ignore")
+                    lines = [l.strip() for l in text.splitlines() if l.strip()]
+                    if lines:
+                        return [OCRTextLine(text=l, confidence=0.85) for l in lines]
+            finally:
+                if os.path.exists(tmp_path):
+                    os.remove(tmp_path)
         except Exception:
             pass
         return []
 
     def _get_reader(self):
         if self._reader is None:
+            from pathlib import Path
+            model_dir = Path(__file__).resolve().parent.parent / "data" / "models" / "easyocr"
+            cached_models = list(model_dir.glob("*.pth")) if model_dir.exists() else []
+
+            # Check if running in a cloud/container environment
+            is_cloud = bool(
+                os.getenv("STREAMLIT_SERVER_PORT") or
+                "/mount/" in str(__file__) or
+                "/home/adminuser/" in str(__file__)
+            )
+
+            # If running in cloud and models are not cached, do NOT download 130MB (prevents OOM crashes)
+            if is_cloud and not cached_models:
+                return None
+
             try:
                 import easyocr  # type: ignore[import-untyped]
-                from pathlib import Path
-                model_dir = Path(__file__).resolve().parent.parent / "data" / "models" / "easyocr"
                 model_dir.mkdir(parents=True, exist_ok=True)
                 self._reader = easyocr.Reader(
                     self.languages,
                     gpu=self.use_gpu,
                     model_storage_directory=str(model_dir),
-                    user_network_directory=str(model_dir)
+                    user_network_directory=str(model_dir),
+                    download_enabled=not is_cloud
                 )
             except BaseException:
                 # Catch BaseException (MemoryError, SystemExit, socket errors) to prevent app crash

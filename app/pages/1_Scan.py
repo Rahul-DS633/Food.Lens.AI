@@ -6,14 +6,29 @@ OCR extraction, deterministic review, and ingredient decomposition.
 """
 
 import sys
+import os
 import time
 from pathlib import Path
+
+# Load environment variables & secrets
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except Exception:
+    pass
 
 _PROJECT_ROOT = str(Path(__file__).resolve().parent.parent.parent)
 if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
 
 import streamlit as st
+
+# Propagate Streamlit Cloud secrets to environment variables if present
+try:
+    if hasattr(st, "secrets") and "GEMINI_API_KEY" in st.secrets:
+        os.environ["GEMINI_API_KEY"] = str(st.secrets["GEMINI_API_KEY"]).strip()
+except Exception:
+    pass
 from db.session import SessionLocal, init_db
 from db.models import Product, Nutrition, Ingredient, Scan, UserProgress, XPEvent
 from foodlens.barcode import decode_barcode_from_image, clean_barcode
