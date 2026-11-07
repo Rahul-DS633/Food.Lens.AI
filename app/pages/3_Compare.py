@@ -29,6 +29,7 @@ from foodlens.ingredients import IngredientEngine
 from foodlens.gamification.xp import calculate_xp_award
 from app.components.icons import get_icon_svg
 from app.components.images import get_product_image
+from app.components.report_modal import render_report_issue_dialog
 
 ingredient_engine = IngredientEngine()
 
@@ -232,6 +233,13 @@ try:
                 st.markdown(f"- **{item.name}** ({item.category})")
         else:
             st.caption("No ingredients parsed yet.")
+
+    st.markdown("<hr style='border: none; border-top: 1.5px solid #E2E8F0; margin: 24px 0;'>", unsafe_allow_html=True)
+    c_r1, c_r2 = st.columns(2)
+    with c_r1:
+        render_report_issue_dialog(p1.id, p1.name, key_suffix="comp_1")
+    with c_r2:
+        render_report_issue_dialog(p2.id, p2.name, key_suffix="comp_2")
 
 finally:
     db.close()

@@ -23,6 +23,7 @@ from db.session import SessionLocal
 from db.models import Scan, Product
 from app.components.icons import get_icon_svg
 from app.components.images import get_product_image
+from app.components.report_modal import render_report_issue_dialog
 
 history_svg = get_icon_svg("history", size=26, color="#144730")
 st.markdown(
@@ -108,6 +109,7 @@ try:
                 st.session_state.current_scan_product_id = prod.id
                 st.switch_page("pages/2_Result.py")
 
+        render_report_issue_dialog(prod.id, prod.name, key_suffix=f"hist_{s.id}")
         st.markdown("<hr style='margin: 10px 0; border: none; border-top: 1px solid #E2E8F0;'>", unsafe_allow_html=True)
 
 finally:

@@ -38,6 +38,7 @@ from app.components.sugar_cubes import render_sugar_cubes
 from app.components.sugar_timeline import render_sugar_timeline
 from app.components.icons import get_icon_svg, icon_badge
 from app.components.images import get_product_image
+from app.components.report_modal import render_report_issue_dialog
 
 ingredient_engine = IngredientEngine()
 allergen_engine = AllergenEngine()
@@ -612,6 +613,9 @@ try:
             st.caption("Refusal rule active: No medical diagnosis, no weight goals, no commercial brand promotion.")
 
         st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("<hr style='border: none; border-top: 1.5px solid #E2E8F0; margin: 24px 0;'>", unsafe_allow_html=True)
+    render_report_issue_dialog(prod.id, prod.name, key_suffix="result")
 
 finally:
     db.close()
