@@ -5,6 +5,7 @@ Provides an accessible, interactive spoken audio player with speed and language 
 
 from typing import Dict, Any
 import streamlit as st
+import streamlit.components.v1 as components
 
 from foodlens.narration import generate_narration_script, NarrationMode
 from foodlens.tts.browser import BrowserSpeechProvider
@@ -53,14 +54,14 @@ def render_audio_narration_player(
         # Generate deterministic script
         script = generate_narration_script(product_data, language=lang_choice, mode=mode_choice)
 
-        # Render Browser Web Speech API player
+        # Render Browser Web Speech API player in clean component container
         player_html = browser_tts.generate_html_player(
             text=script.text,
             language=lang_choice,
             speed=speed_choice,
             player_id=f"player_{key_suffix}",
         )
-        st.markdown(player_html, unsafe_allow_html=True)
+        components.html(player_html, height=135)
 
         # Transcript Drawer
         with st.expander("📄 Spoken Transcript (Text)", expanded=False):

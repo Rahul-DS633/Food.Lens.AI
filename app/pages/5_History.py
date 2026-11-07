@@ -50,7 +50,20 @@ try:
     )
 
     if not scans:
-        st.info("No scan history recorded yet. Open the Scanner to analyze your first packaged food!")
+        history_empty_html = (
+            f'<div style="background: #F8FAFC; border: 1.5px dashed #CBD5E1; border-radius: 16px; padding: 36px 24px; text-align: center; margin: 16px 0 24px 0;">'
+            f'<div style="font-size: 38px; margin-bottom: 10px;">🧺</div>'
+            f'<h3 style="color: #144730; margin: 0 0 6px 0; font-size: 19px; font-weight: 700;">No Scan History Recorded Yet</h3>'
+            f'<p style="color: #475569; font-size: 14.5px; max-width: 500px; margin: 0 auto; line-height: 1.5;">'
+            f'You haven\'t scanned any packaged foods yet. Point your camera at a food label or explore sample products to build your verified product diary.'
+            f'</p>'
+            f'</div>'
+        )
+        if hasattr(st, "html"):
+            st.html(history_empty_html)
+        else:
+            st.markdown(history_empty_html, unsafe_allow_html=True)
+
         if st.button("Start Scanning →", width="stretch", type="primary"):
             st.switch_page("pages/1_Scan.py")
         st.stop()

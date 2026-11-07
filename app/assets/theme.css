@@ -485,7 +485,14 @@ section[data-testid="stSidebar"] * {
     font-weight: 700 !important;
 }
 
-/* Alerts */
+/* Alerts & Notifications */
+[data-testid="stAlert"] {
+    background: #F8FAFC !important;
+    border: 1.5px solid #CBD5E1 !important;
+    border-radius: 12px !important;
+    color: #0F172A !important;
+}
 .stAlert p, .stAlert span, .stAlert div {
-    color: var(--text-slate) !important;
+    color: #1E293B !important;
+    font-weight: 500 !important;
 }
