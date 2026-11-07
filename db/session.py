@@ -10,7 +10,8 @@ from typing import Dict, Any, List, Optional
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from db.models import (
-    Base, User, UserProgress, Achievement, Product, Nutrition, Ingredient, UserProfile, Scan, XPEvent, UserAchievement
+    Base, User, UserProgress, Achievement, Product, Nutrition, Ingredient, UserProfile, Scan, XPEvent, UserAchievement,
+    DataReport, ProductRevision, Household, HouseholdMember
 )
 from foodlens.off_client import PRESEEDED_INDIAN_PRODUCTS
 from foodlens.ingredients import IngredientEngine
@@ -89,6 +90,12 @@ INITIAL_ACHIEVEMENTS = [
         "title": "Dietary Guardian",
         "description": "Set up your personalized food profile and allergen preferences.",
         "icon": "🛡️",
+    },
+    {
+        "code": "FAMILY_PIONEER",
+        "title": "Family Pioneer",
+        "description": "Configured family members for multi-person food fit.",
+        "icon": "👨‍👩‍👧‍👦",
     },
 ]
 
@@ -242,6 +249,53 @@ def delete_user_data(user_id: int, db: Session) -> bool:
 
     # Reset user display name to default guest
     user.display_name = "Guest User"
+    db.commit()
+    return True
+
+
+def export_household_data(user_id: int, db: Session) -> Optional[Dict[str, Any]]:
+    """
+    Exports all household and member data for a given user account (DPDP Act right to portability).
+    """
+    household = db.query(Household).filter(Household.owner_user_id == user_id).first()
+    if not household:
+        return None
+
+    members_data = []
+    for m in household.members:
+        members_data.append({
+            "id": m.id,
+            "display_name": m.display_name,
+            "emoji_avatar": m.emoji_avatar,
+            "age": m.age,
+            "weight_kg": m.weight_kg,
+            "allergies": m.allergies_json or [],
+            "dietary_prefs": m.dietary_prefs_json or [],
+            "is_minor": m.is_minor,
+            "consent_by_owner": m.consent_by_owner,
+            "consent_at": m.consent_at.isoformat() if m.consent_at else None,
+            "created_at": m.created_at.isoformat() if m.created_at else None,
+        })
+
+    return {
+        "household_id": household.id,
+        "owner_user_id": household.owner_user_id,
+        "created_at": household.created_at.isoformat() if household.created_at else None,
+        "member_count": len(members_data),
+        "members": members_data,
+        "export_timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+def delete_household_data(user_id: int, db: Session) -> bool:
+    """
+    Deletes the user's household and all attached members (cascade delete).
+    """
+    household = db.query(Household).filter(Household.owner_user_id == user_id).first()
+    if not household:
+        return False
+
+    db.delete(household)
     db.commit()
     return True
 

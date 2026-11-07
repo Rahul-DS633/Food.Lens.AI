@@ -37,6 +37,8 @@ class Product(Base):
     nutrition = relationship("Nutrition", back_populates="product", uselist=False, cascade="all, delete-orphan")
     ingredients = relationship("Ingredient", back_populates="product", order_by="Ingredient.position", cascade="all, delete-orphan")
     scans = relationship("Scan", back_populates="product")
+    revisions = relationship("ProductRevision", back_populates="product", cascade="all, delete-orphan")
+    reports = relationship("DataReport", back_populates="product")
 
 
 class Nutrition(Base):
@@ -90,6 +92,7 @@ class User(Base):
     xp_events = relationship("XPEvent", back_populates="user")
     achievements = relationship("UserAchievement", back_populates="user")
     profile = relationship("UserProfile", back_populates="user", uselist=False, cascade="all, delete-orphan")
+    household = relationship("Household", back_populates="owner", uselist=False, cascade="all, delete-orphan")
 
 
 class UserProfile(Base):
@@ -213,6 +216,82 @@ class ChallengeAttempt(Base):
     created_at = Column(DateTime, default=utcnow)
 
 
+# --- Data Report & Audit Trail (Wrong Data & Admin Review) ---
+
+class DataReport(Base):
+    __tablename__ = "data_reports"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    product_id = Column(Integer, ForeignKey("products.id"), nullable=False, index=True)
+    field = Column(String(64), nullable=False)             # "name", "barcode", "protein_g", "ingredients", etc.
+    current_value = Column(Text, nullable=True)
+    proposed_value = Column(Text, nullable=False)
+    evidence_image_path = Column(String(512), nullable=True) # Stored outside web root
+    comment = Column(String(500), default="")
+    reporter_hash = Column(String(64), nullable=True, index=True) # SHA-256 of session/IP
+    status = Column(String(32), default="pending", index=True)    # pending, approved, rejected, needs_info, duplicate
+    priority_score = Column(Float, default=1.0)
+    auto_checks_json = Column(JSON, nullable=True)
+    created_at = Column(DateTime, default=utcnow, index=True)
+    reviewed_by = Column(String(64), nullable=True)
+    reviewed_at = Column(DateTime, nullable=True)
+    reviewer_note = Column(Text, default="")
+
+    product = relationship("Product", back_populates="reports")
+    revisions = relationship("ProductRevision", back_populates="report")
+
+
+class ProductRevision(Base):
+    __tablename__ = "product_revisions"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    product_id = Column(Integer, ForeignKey("products.id"), nullable=False, index=True)
+    field = Column(String(64), nullable=False)
+    old_value = Column(Text, nullable=True)
+    new_value = Column(Text, nullable=False)
+    source = Column(String(32), default="user_report")  # user_report, admin_edit
+    report_id = Column(Integer, ForeignKey("data_reports.id"), nullable=True)
+    changed_by = Column(String(64), default="admin")
+    changed_at = Column(DateTime, default=utcnow)
+
+    product = relationship("Product", back_populates="revisions")
+    report = relationship("DataReport", back_populates="revisions")
+
+
+# --- Family Profiles & Households ---
+
+class Household(Base):
+    __tablename__ = "households"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    owner_user_id = Column(Integer, ForeignKey("users.id"), unique=True, nullable=False, index=True)
+    created_at = Column(DateTime, default=utcnow)
+
+    owner = relationship("User", back_populates="household")
+    members = relationship("HouseholdMember", back_populates="household", cascade="all, delete-orphan", order_by="HouseholdMember.id")
+
+
+class HouseholdMember(Base):
+    __tablename__ = "household_members"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    household_id = Column(Integer, ForeignKey("households.id"), nullable=False, index=True)
+    display_name = Column(String(128), nullable=False)
+    emoji_avatar = Column(String(16), default="👤")
+    age = Column(Integer, nullable=False)
+    weight_kg = Column(Float, nullable=True)
+    allergies_json = Column(JSON, nullable=False)         # List[str]
+    dietary_prefs_json = Column(JSON, default=list)       # List[str]: "vegetarian", "vegan", "jain", "halal"
+    is_minor = Column(Boolean, nullable=False)            # Derived from age < 18
+    consent_by_owner = Column(Boolean, default=False)     # Verifiable parental consent under DPDP Act
+    consent_at = Column(DateTime, default=utcnow)
+    created_at = Column(DateTime, default=utcnow)
+
+    household = relationship("Household", back_populates="members")
+
+
+Index("idx_reports_prod_status", DataReport.product_id, DataReport.status)
+Index("idx_revisions_product", ProductRevision.product_id, ProductRevision.changed_at)
 Index("idx_scans_user_created", Scan.user_id, Scan.created_at)
 Index("idx_products_barcode", Product.barcode)
 
