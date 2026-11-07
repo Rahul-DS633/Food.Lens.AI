@@ -182,4 +182,49 @@ class SugarReportResponse(BaseModel):
     status: str
 
 
+# --- Data Reports & Admin Schemas ---
+
+class DataReportSubmitRequest(BaseModel):
+    product_id: int
+    field: str
+    current_value: Optional[str] = None
+    proposed_value: str
+    comment: Optional[str] = Field(None, max_length=500)
+    consent_no_personal_data: bool = True
+    reporter_hash: Optional[str] = None
+
+
+class DataReportResponse(BaseModel):
+    id: int
+    product_id: int
+    field: str
+    current_value: Optional[str] = None
+    proposed_value: str
+    evidence_image_path: Optional[str] = None
+    comment: Optional[str] = None
+    status: str
+    priority_score: float
+    auto_checks: Optional[Dict[str, Any]] = None
+    created_at: Optional[str] = None
+    reviewed_by: Optional[str] = None
+    reviewed_at: Optional[str] = None
+    reviewer_note: Optional[str] = None
+
+
+class AdminReportReviewRequest(BaseModel):
+    reviewer_note: Optional[str] = ""
+
+
+class AdminMetricsResponse(BaseModel):
+    pending_count: int
+    approved_count: int
+    rejected_count: int
+    duplicate_count: int
+    needs_info_count: int
+    total_reports: int
+    approval_rate_percent: float
+    most_reported_fields: List[Dict[str, Any]]
+
+
+
 
