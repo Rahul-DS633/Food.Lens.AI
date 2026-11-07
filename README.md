@@ -6,13 +6,16 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688.svg)](https://fastapi.tiangolo.com/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.38+-FF4B4B.svg)](https://streamlit.io/)
-[![Tests](https://img.shields.io/badge/tests-83%20passed-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-106%20passed-brightgreen.svg)](tests/)
 
 ---
 
 ## 🌟 Key Differentiators
 - 🇮🇳 **Indian Packaged-Food Focus:** Built-in EAN-13 India (890) validation and pre-seeded database of common Indian staples (Parle-G, Maggi, Haldiram's Bhujia, Amul Butter, Frooti).
 - ⚙️ **Deterministic Calculation:** Zero LLM hallucinations on math. All scaling, unit conversions (kJ↔kcal, salt↔sodium), and energy cross-checks run via pure Python.
+- 👨‍👩‍👧‍👦 **Family Dietary Profiles:** Multi-person allergen shields & interactive matrix for up to 8 household members with DPDP Act (2023) minor consent safeguards.
+- 🔊 **Hindi & English Read-Aloud:** Deterministic spoken audio narration (<45s) with browser SpeechSynthesis and phonetic units (grams/ग्राम, calories/किलोकैलोरी, tsp/चम्मच).
+- 🚩 **Report Wrong Data & Admin Review Queue:** Community-driven accuracy reporting with EXIF stripping, auto-checks, consensus priority, and immutable audit revisions (`product_revisions`).
 - 🔬 **Hidden Sugar & Sweetener Detector:** Categorizes sugars, syrups, concentrates, carb fillers, and non-sugar sweeteners. Detects 'sugar splitting' and nutrition table conflicts.
 - 🛡️ **Personalized Food Fit & Allergens:** Demographic-aware guidance (ICMR-NIN 2020 RDA) and deterministic allergen alerts with India DPDP Act 2023 compliance.
 - 🧊 **Sugar in Teaspoons:** Instant visual conversion of total/added sugars into physical teaspoons/cubes (~4g each, rounded to nearest 0.5) to highlight hidden sugars.
@@ -37,6 +40,10 @@ Client (Streamlit MVP / Web / Mobile)
   ├── /api/compare            ──> Per-100g Side-by-Side Comparison Matrix
   ├── /api/advice             ──> Grounded AI Advisor (Strict Number Post-Check)
   ├── /api/profile/*          ──> DPDP Act Profile, Minor Consent, Export, Erasure
+  ├── /api/household/*        ──> Family Profiles CRUD, Export, Erasure
+  ├── /api/family/check       ──> Multi-Member Family Food Fit & Allergen Matrix
+  ├── /api/reports/*          ──> Wrong Data Submissions, Consensus & Status Checks
+  ├── /api/admin/*            ──> Protected Review Queue, Revisions & Metrics
   ├── /api/personal-fit       ──> Demographic-Aware RDA Fit & Deterministic Allergen Alerts
   ├── /api/sugar/analyze      ──> Hidden Sugar Detector, Sugar Splitting & Conflict Cross-Check
   └── /api/quest/*            ──> XP, Leveling, Streak Freezes, Badges, Mini-Games
@@ -52,12 +59,17 @@ Client (Streamlit MVP / Web / Mobile)
   ├── ingredients.py      (Ordered parsing, INS/E-number lookup, allergen detection)
   ├── allergens.py        (100% deterministic allergen cross-check & regional synonyms)
   ├── personal_fit.py     (ICMR-NIN 2020 RDA calculator & under-18 safety rules)
+  ├── family_fit.py       (Multi-member household fit engine, allergen matrix, DPDP rules)
+  ├── narration.py        (Deterministic Hindi & English spoken audio script builder)
+  ├── tts/                (BrowserSpeechProvider Web Speech API & cached ServerTTSProvider)
+  ├── report_checks.py    (Plausibility, duplicate detection, consensus & priority scoring)
+  ├── image_security.py   (8MB limit, EXIF/GPS stripping, re-encoding)
   ├── sugar_detector.py   (Sugar aliases, rapidfuzz OCR typo tolerance, sugar splitting)
   ├── advisor.py          (Grounded explanations, strict hallucination guardrail)
   └── gamification/       (XP engine, streak freezes, badge unlock rules, mini-games)
        │
        ▼
- SQLite Database (`db/`)
+ SQLite Database (`db/`) with Alembic Migrations
 ```
 
 ---
