@@ -24,6 +24,9 @@ if CSS_PATH.exists():
 from db.session import SessionLocal, export_household_data, delete_household_data
 from db.models import Household, HouseholdMember
 from app.components.icons import get_icon_svg
+from app.components.sidebar import render_sidebar
+
+render_sidebar("Family")
 
 USER_ID = st.session_state.get("user_id", 1)
 

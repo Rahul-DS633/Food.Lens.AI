@@ -334,19 +334,139 @@ button[data-testid="stBaseButton-primary"]:hover,
     border: 1px solid #FCA5A5 !important;
 }
 
-/* Sidebar */
+/* ═══════════════════════════════════════════════════════════════
+   8. ULTRA-PREMIUM MODERN SIDEBAR NAVIGATION
+   ═══════════════════════════════════════════════════════════════ */
 section[data-testid="stSidebar"] {
-    background-color: #F0FDF4 !important;
-    border-right: 1px solid var(--border) !important;
+    background: linear-gradient(180deg, #F0FDF4 0%, #F8FCF9 40%, #E8F5EE 100%) !important;
+    border-right: 1.5px solid #D1E7DD !important;
+    box-shadow: 3px 0 24px rgba(20, 71, 48, 0.06) !important;
 }
 
 section[data-testid="stSidebar"] * {
-    color: var(--text-slate) !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
 }
 
-section[data-testid="stSidebar"] a:hover {
-    color: var(--primary) !important;
+/* Sidebar Nav Wrapper */
+[data-testid="stSidebarNav"] {
+    padding-top: 6px !important;
+    padding-bottom: 12px !important;
 }
+
+[data-testid="stSidebarNavItems"],
+[data-testid="stSidebarNav"] ul {
+    gap: 3px !important;
+    padding: 0 4px !important;
+}
+
+/* Individual Navigation Link Pills */
+[data-testid="stSidebarNavLink"],
+[data-testid="stSidebarNav"] a {
+    border-radius: 12px !important;
+    margin: 3px 6px !important;
+    padding: 9px 14px !important;
+    font-size: 14.5px !important;
+    font-weight: 600 !important;
+    color: #334155 !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    display: flex !important;
+    align-items: center !important;
+    text-decoration: none !important;
+}
+
+/* Navigation Link Hover */
+[data-testid="stSidebarNavLink"]:hover,
+[data-testid="stSidebarNav"] a:hover {
+    background: #DCFCE7 !important;
+    color: #144730 !important;
+    transform: translateX(4px) !important;
+    border-color: #86EFAC !important;
+    box-shadow: 0 3px 10px rgba(22, 101, 52, 0.08) !important;
+}
+
+[data-testid="stSidebarNavLink"]:hover span,
+[data-testid="stSidebarNav"] a:hover span {
+    color: #144730 !important;
+    font-weight: 700 !important;
+}
+
+/* Active Page Highlight */
+[data-testid="stSidebarNavLink"][aria-current="page"],
+[data-testid="stSidebarNav"] a[aria-current="page"],
+[data-testid="stSidebarNavLink"].active,
+[data-testid="stSidebarNav"] li.active a {
+    background: linear-gradient(90deg, #DCFCE7 0%, #BBF7D0 100%) !important;
+    color: #144730 !important;
+    font-weight: 800 !important;
+    border-left: 4px solid #166534 !important;
+    border-top: 1px solid #86EFAC !important;
+    border-right: 1px solid #86EFAC !important;
+    border-bottom: 1px solid #86EFAC !important;
+    box-shadow: 0 4px 14px rgba(22, 101, 52, 0.14) !important;
+    transform: translateX(3px) !important;
+}
+
+[data-testid="stSidebarNavLink"][aria-current="page"] span,
+[data-testid="stSidebarNav"] a[aria-current="page"] span {
+    color: #144730 !important;
+    font-weight: 800 !important;
+}
+
+/* Automatic Page Icons Injection */
+[data-testid="stSidebarNavLink"][href$="/"] span::before,
+[data-testid="stSidebarNavLink"][href*="Home"] span::before,
+[data-testid="stSidebarNav"] li:first-child a span::before {
+    content: "🏠  ";
+    font-size: 15px;
+}
+
+[data-testid="stSidebarNavLink"][href*="Scan"] span::before {
+    content: "📸  ";
+    font-size: 15px;
+}
+
+[data-testid="stSidebarNavLink"][href*="Result"] span::before {
+    content: "🔍  ";
+    font-size: 15px;
+}
+
+[data-testid="stSidebarNavLink"][href*="Compare"] span::before {
+    content: "⚖️  ";
+    font-size: 15px;
+}
+
+[data-testid="stSidebarNavLink"][href*="Quest"] span::before {
+    content: "🏆  ";
+    font-size: 15px;
+}
+
+[data-testid="stSidebarNavLink"][href*="History"] span::before {
+    content: "📜  ";
+    font-size: 15px;
+}
+
+[data-testid="stSidebarNavLink"][href*="Settings"] span::before {
+    content: "⚙️  ";
+    font-size: 15px;
+}
+
+[data-testid="stSidebarNavLink"][href*="Profile"] span::before {
+    content: "👤  ";
+    font-size: 15px;
+}
+
+[data-testid="stSidebarNavLink"][href*="Family"] span::before {
+    content: "👨‍👩‍👧‍👦  ";
+    font-size: 15px;
+}
+
+[data-testid="stSidebarNavLink"][href*="Admin"] span::before {
+    content: "🛡️  ";
+    font-size: 15px;
+}
+
 
 /* Metric values */
 [data-testid="stMetricValue"], [data-testid="stMetricValue"] * {

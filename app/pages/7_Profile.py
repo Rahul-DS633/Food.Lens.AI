@@ -24,6 +24,7 @@ if CSS_PATH.exists():
 from db.session import SessionLocal, export_user_data, delete_user_data
 from db.models import User, UserProfile, Achievement, UserAchievement, utcnow
 from app.components.icons import get_icon_svg
+from app.components.sidebar import render_sidebar
 
 if "user_id" not in st.session_state:
     st.session_state.user_id = 1
@@ -31,6 +32,8 @@ if "language" not in st.session_state:
     st.session_state.language = "en"
 if "user_profile" not in st.session_state:
     st.session_state.user_profile = None
+
+render_sidebar("Profile")
 
 # Header with vector iconography
 shield_icon = get_icon_svg("shield", size=28, color="#1B5E3F")

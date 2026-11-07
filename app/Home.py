@@ -37,6 +37,7 @@ from app.components.xp_bar import render_xp_header
 from app.components.icons import get_icon_svg, icon_badge
 from app.components.images import get_product_image
 from app.components.three_d import render_3d_hero
+from app.components.sidebar import render_sidebar
 
 # Initialize session state variables
 if "user_id" not in st.session_state:
@@ -47,6 +48,9 @@ if "current_scan_product_id" not in st.session_state:
     st.session_state.current_scan_product_id = None
 if "active_scan_tab" not in st.session_state:
     st.session_state.active_scan_tab = "camera"
+
+# Render custom sidebar
+render_sidebar("Home")
 
 # Display feedback toast if coming from Profile save
 if st.session_state.get("profile_saved_toast"):

@@ -27,6 +27,7 @@ from foodlens.nutrition import NutritionProfile, create_nutrient
 from foodlens.gamification.xp import calculate_xp_award
 
 from app.components.icons import get_icon_svg
+from app.components.sidebar import render_sidebar
 
 st.set_page_config(page_title="Scan Food — FoodLens AI", page_icon="🔍", layout="wide")
 
@@ -38,6 +39,8 @@ if CSS_PATH.exists():
 # ── Safe Session State Initialization ──
 if "user_id" not in st.session_state:
     st.session_state.user_id = 1
+
+render_sidebar("Scan")
 if "language" not in st.session_state:
     st.session_state.language = "en"
 if "current_scan_product_id" not in st.session_state:

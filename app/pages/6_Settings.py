@@ -22,6 +22,9 @@ if CSS_PATH.exists():
 from db.session import SessionLocal
 from db.models import Scan, XPEvent
 from app.components.icons import get_icon_svg
+from app.components.sidebar import render_sidebar
+
+render_sidebar("Settings")
 
 settings_svg = get_icon_svg("settings", size=26, color="#144730")
 st.markdown(

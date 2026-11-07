@@ -75,3 +75,4 @@ def test_explain_claim_check_rejects_hallucinated_numbers():
 
     explanation = advisor.explain_claim_check(summary, product_name="Generic Snack")
     assert explanation["is_grounded"] is True
+

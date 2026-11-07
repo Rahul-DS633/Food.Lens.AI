@@ -24,6 +24,9 @@ from db.models import Scan
 from app.components.icons import get_icon_svg
 from app.components.images import get_product_image
 from app.components.report_modal import render_report_issue_dialog
+from app.components.sidebar import render_sidebar
+
+render_sidebar("History")
 
 history_svg = get_icon_svg("history", size=26, color="#144730")
 st.markdown(

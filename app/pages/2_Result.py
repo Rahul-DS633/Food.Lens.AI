@@ -43,6 +43,7 @@ from app.components.images import get_product_image
 from app.components.report_modal import render_report_issue_dialog
 from app.components.audio_player import render_audio_narration_player
 from app.components.claim_chips import render_claims_section
+from app.components.sidebar import render_sidebar
 
 ingredient_engine = IngredientEngine()
 allergen_engine = AllergenEngine()
@@ -55,6 +56,8 @@ if "user_id" not in st.session_state:
     st.session_state.user_id = 1
 if "language" not in st.session_state:
     st.session_state.language = "en"
+
+render_sidebar("Result")
 
 # Get product ID from session state or default
 product_id = st.session_state.get("current_scan_product_id") or 1

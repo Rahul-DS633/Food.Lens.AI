@@ -32,6 +32,9 @@ from app.components.badge import render_badge_card
 from app.components.icons import get_icon_svg
 from app.components.images import get_product_image
 from app.components.sugar_cubes import render_sugar_cubes
+from app.components.sidebar import render_sidebar
+
+render_sidebar("Quest")
 
 trophy_svg = get_icon_svg("trophy", size=26, color="#144730")
 st.markdown(
