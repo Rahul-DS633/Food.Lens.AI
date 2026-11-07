@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.routes import (
-    scan, nutrition, products, compare, advice, quest, history, profile, personal_fit, sugar, reports, admin, household
+    scan, nutrition, products, compare, advice, quest, history, profile, personal_fit, sugar, reports, admin, household, claims
 )
 from db.session import init_db
 
@@ -43,6 +43,7 @@ app.include_router(sugar.router)
 app.include_router(reports.router)
 app.include_router(admin.router)
 app.include_router(household.router)
+app.include_router(claims.router)
 
 
 @app.get("/")

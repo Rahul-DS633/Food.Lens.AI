@@ -274,6 +274,47 @@ class FamilyCheckResponse(BaseModel):
     disclaimer: str
 
 
+# --- Claim Checker Schemas ---
+
+class ClaimCheckRequest(BaseModel):
+    product_id: Optional[int] = None
+    claims: List[str] = Field(..., min_length=1)
+    ingredients_text: Optional[str] = None
+
+
+class ClaimEvidenceSchema(BaseModel):
+    field: str
+    value: Any
+    basis: str
+
+
+class ClaimResultSchema(BaseModel):
+    claim_text: str
+    rule_id: str
+    status: str
+    evidence: List[ClaimEvidenceSchema] = Field(default_factory=list)
+    threshold_value: Optional[float] = None
+    threshold_operator: Optional[str] = None
+    threshold_source: str = ""
+    confidence: float = 1.0
+    missing_fields: List[str] = Field(default_factory=list)
+    neutral_explanation: str = ""
+    disclaimer: str = "Based on the label data we have; claim rules can differ by product category."
+
+
+class ClaimCheckResponse(BaseModel):
+    total_claims: int
+    supported_count: int
+    partly_supported_count: int
+    not_supported_count: int
+    cannot_verify_count: int
+    not_checkable_count: int
+    summary_sentence: str
+    results: List[ClaimResultSchema]
+    ai_summary: Optional[Dict[str, Any]] = None
+
+
+
 
 
 
