@@ -17,7 +17,20 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Dict, Any, Optional, Set, Tuple
 import yaml
-from rapidfuzz import fuzz
+
+try:
+    from rapidfuzz import fuzz
+except ImportError:  # pragma: no cover
+    from difflib import SequenceMatcher
+
+    class _FuzzFallback:
+        @staticmethod
+        def token_sort_ratio(s1: str, s2: str) -> float:
+            t1 = " ".join(sorted(s1.split()))
+            t2 = " ".join(sorted(s2.split()))
+            return SequenceMatcher(None, t1, t2).ratio() * 100.0
+
+    fuzz = _FuzzFallback()  # type: ignore[assignment]
 
 from foodlens.units import sugar_g_to_teaspoons_rounded
 
