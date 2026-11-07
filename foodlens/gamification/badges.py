@@ -46,5 +46,9 @@ def check_new_achievements(stats: Dict[str, Any], already_earned_codes: List[str
     if profile_set_up and "PROFILE_SET_UP" not in already_set:
         newly_earned.append("PROFILE_SET_UP")
 
+    claims_verified = stats.get("claims_verified_count", 0)
+    if claims_verified >= 1 and "MYTH_BUSTER" not in already_set:
+        newly_earned.append("MYTH_BUSTER")
+
     return newly_earned
 

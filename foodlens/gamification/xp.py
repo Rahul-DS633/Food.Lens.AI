@@ -33,6 +33,8 @@ ACTION_XP_VALUES = {
     "compare": 15,
     "minigame_easy": 10,
     "minigame_perfect": 25,
+    "claim_verified": 10,
+    "myth_buster": 15,
 }
 
 

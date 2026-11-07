@@ -70,10 +70,12 @@ def test_badges_unlock():
         "corrections_count": 0,
         "comparisons_count": 0,
         "used_sugar_cubes": True,
+        "claims_verified_count": 1,
     }
     new_badges = check_new_achievements(stats, already_earned_codes=[])
     assert "FIRST_SCAN" in new_badges
     assert "SUGAR_SPOTTER" in new_badges
+    assert "MYTH_BUSTER" in new_badges
 
 
 def test_mini_games():

@@ -103,8 +103,8 @@ def extract_numbers_from_payload(payload: Dict[str, Any]) -> Set[float]:
                 _recurse(v)
 
     _recurse(payload)
-    # Add common standard bases / denominators and guideline reference years (e.g. 2020, 2023)
-    ground_truth.update([100.0, 100, 1.0, 2.0, 3.0, 4.0, 5.0, 10.0, 24.0, 2000.0, 2020.0, 2023.0])
+    # Add common standard bases / denominators and guideline reference years (e.g. 2018, 2020, 2021, 2023)
+    ground_truth.update([100.0, 100, 1.0, 2.0, 3.0, 4.0, 5.0, 10.0, 24.0, 2000.0, 2018.0, 2020.0, 2021.0, 2023.0])
     return ground_truth
 
 
@@ -517,4 +517,82 @@ class AIAdvisor:
             "is_grounded": is_grounded,
             "evidence_numbers_used": valid_nums,
             "flagged_numbers": flagged_nums,
+        }
+
+    def explain_claim_check(
+        self,
+        summary: Any,
+        product_name: str = "Packaged Product"
+    ) -> Dict[str, Any]:
+        """
+        Generates a grounded, legally neutral explanation of marketing claim verification results.
+        Enforces:
+        - Strict numeric verification
+        - Rejection of banned aggressive/defamatory words
+        - Category disclaimer attachment
+        """
+        total = summary.total_claims
+        supported = summary.supported_count
+        partly = summary.partly_supported_count
+        not_supported = summary.not_supported_count
+        cannot = summary.cannot_verify_count
+        not_checkable = summary.not_checkable_count
+
+        sentences = [
+            f"Evaluated {total} front-of-pack claims for {product_name}: {summary.summary_sentence}"
+        ]
+
+        # Detail highlights
+        for res in summary.results:
+            st = res.status.value if hasattr(res.status, "value") else str(res.status)
+            if st == "SUPPORTED":
+                sentences.append(f"Claim '{res.claim_text}' is supported by label data.")
+            elif st == "PARTLY_SUPPORTED":
+                sentences.append(f"Claim '{res.claim_text}' is partly supported based on ingredient order.")
+            elif st == "NOT_SUPPORTED":
+                sentences.append(f"The label values do not appear to support the claim '{res.claim_text}'.")
+            elif st == "CANNOT_VERIFY":
+                sentences.append(f"Claim '{res.claim_text}' cannot be verified from available label numbers.")
+            elif st == "NOT_CHECKABLE":
+                sentences.append(f"Claim '{res.claim_text}' lacks statutory nutrition thresholds.")
+
+        full_text = " ".join(sentences).strip()
+
+        # Build payload for grounding check
+        payload_data: Dict[str, Any] = {
+            "total_claims": total,
+            "supported": supported,
+            "partly": partly,
+            "not_supported": not_supported,
+            "cannot_verify": cannot,
+            "not_checkable": not_checkable,
+            "results": [
+                {
+                    "claim_text": r.claim_text,
+                    "status": r.status.value if hasattr(r.status, "value") else str(r.status),
+                    "threshold_value": r.threshold_value,
+                    "evidence": [{"field": e.field, "value": e.value} for e in r.evidence],
+                }
+                for r in summary.results
+            ]
+        }
+
+        is_grounded, valid_nums, flagged_nums = self.verify_grounding(full_text, payload_data)
+
+        # Safety check: ensure no banned words
+        banned_words = ["false", "misleading", "fraud", "cheat", "fake"]
+        has_banned = any(w in full_text.lower() for w in banned_words)
+        if has_banned:
+            full_text = summary.summary_sentence
+
+        disclaimer = "Based on the label data we have; claim rules can differ by product category."
+
+        return {
+            "summary": full_text,
+            "is_grounded": is_grounded and not has_banned,
+            "evidence_numbers_used": valid_nums,
+            "flagged_numbers": flagged_nums,
+            "disclaimer": disclaimer,
+            "supported_count": supported,
+            "total_claims": total,
         }

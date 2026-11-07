@@ -97,6 +97,12 @@ INITIAL_ACHIEVEMENTS = [
         "description": "Configured family members for multi-person food fit.",
         "icon": "👨‍👩‍👧‍👦",
     },
+    {
+        "code": "MYTH_BUSTER",
+        "title": "Myth Buster",
+        "description": "Inspected marketing claims and verified real label evidence.",
+        "icon": "🔬",
+    },
 ]
 
 
