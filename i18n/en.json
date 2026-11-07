@@ -1,0 +1,12 @@
+{
+  "allergen_alert_prefix": "Allergen warning: {text}",
+  "no_allergen_alert": "No selected allergens detected in readable text.",
+  "product_basis": "For {name}, in a {grams} gram portion:",
+  "energy_line": "{val} calories.",
+  "sugar_line": "{grams} grams of sugar, which is about {teaspoons} teaspoons.",
+  "protein_line": "{val} grams of protein.",
+  "fat_line": "{val} grams of fat.",
+  "sodium_line": "{val} milligrams of sodium.",
+  "closing_disclaimer": "Please verify on the pack. This is general information, not medical advice.",
+  "unknown_val": "Not stated on label"
+}

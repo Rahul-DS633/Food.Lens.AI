@@ -30,6 +30,7 @@ from foodlens.gamification.xp import calculate_xp_award
 from app.components.icons import get_icon_svg
 from app.components.images import get_product_image
 from app.components.report_modal import render_report_issue_dialog
+from app.components.audio_player import render_audio_narration_player
 
 ingredient_engine = IngredientEngine()
 
@@ -235,6 +236,34 @@ try:
             st.caption("No ingredients parsed yet.")
 
     st.markdown("<hr style='border: none; border-top: 1.5px solid #E2E8F0; margin: 24px 0;'>", unsafe_allow_html=True)
+    c_a1, c_a2 = st.columns(2)
+    with c_a1:
+        data_p1 = {
+            "name": p1.name,
+            "portion_grams": 100.0,
+            "portion_basis": "per_100g",
+            "energy_kcal": p1.nutrition.energy_kcal if p1.nutrition else None,
+            "sugars_g": p1.nutrition.sugars_g if p1.nutrition else None,
+            "sugar_teaspoons": round(p1.nutrition.sugars_g / 4.0, 1) if (p1.nutrition and p1.nutrition.sugars_g) else None,
+            "protein_g": p1.nutrition.protein_g if p1.nutrition else None,
+            "fat_g": p1.nutrition.fat_g if p1.nutrition else None,
+            "sodium_mg": p1.nutrition.sodium_mg if p1.nutrition else None,
+        }
+        render_audio_narration_player(data_p1, default_lang="en", key_suffix="comp_p1")
+    with c_a2:
+        data_p2 = {
+            "name": p2.name,
+            "portion_grams": 100.0,
+            "portion_basis": "per_100g",
+            "energy_kcal": p2.nutrition.energy_kcal if p2.nutrition else None,
+            "sugars_g": p2.nutrition.sugars_g if p2.nutrition else None,
+            "sugar_teaspoons": round(p2.nutrition.sugars_g / 4.0, 1) if (p2.nutrition and p2.nutrition.sugars_g) else None,
+            "protein_g": p2.nutrition.protein_g if p2.nutrition else None,
+            "fat_g": p2.nutrition.fat_g if p2.nutrition else None,
+            "sodium_mg": p2.nutrition.sodium_mg if p2.nutrition else None,
+        }
+        render_audio_narration_player(data_p2, default_lang="en", key_suffix="comp_p2")
+
     c_r1, c_r2 = st.columns(2)
     with c_r1:
         render_report_issue_dialog(p1.id, p1.name, key_suffix="comp_1")

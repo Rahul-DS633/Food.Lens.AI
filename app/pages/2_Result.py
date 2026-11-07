@@ -41,6 +41,7 @@ from app.components.allergen_matrix import render_allergen_matrix
 from app.components.icons import get_icon_svg, icon_badge
 from app.components.images import get_product_image
 from app.components.report_modal import render_report_issue_dialog
+from app.components.audio_player import render_audio_narration_player
 
 ingredient_engine = IngredientEngine()
 allergen_engine = AllergenEngine()
@@ -442,6 +443,23 @@ try:
         render_sugar_cubes(sug_val, portion_label=portion_label)
 
     with col_side:
+        # Read-Aloud Audio Player
+        narration_data = {
+            "name": prod.name,
+            "portion_grams": portion_g,
+            "portion_basis": portion_type,
+            "energy_kcal": active_profile.energy_kcal.value if active_profile.energy_kcal else None,
+            "sugars_g": active_profile.sugars_g.value if active_profile.sugars_g else None,
+            "sugar_teaspoons": active_profile.sugar_teaspoons,
+            "protein_g": active_profile.protein_g.value if active_profile.protein_g else None,
+            "fat_g": active_profile.fat_g.value if active_profile.fat_g else None,
+            "sodium_mg": active_profile.sodium_mg.value if active_profile.sodium_mg else None,
+            "has_allergen_alert": allergen_res.has_alert if 'allergen_res' in locals() else False,
+            "allergen_text": allergen_res.banner_text if 'allergen_res' in locals() else "",
+            "notable_flags": [],
+        }
+        render_audio_narration_player(narration_data, default_lang=st.session_state.get("language", "en"), key_suffix="result")
+
         st.markdown("#### Category Score (v1.0)")
         render_score_ring(score_res.score, score_res.band, score_res.color_hex, version=score_res.scoring_version)
 

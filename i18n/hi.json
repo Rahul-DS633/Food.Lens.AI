@@ -1,0 +1,12 @@
+{
+  "allergen_alert_prefix": "एलर्जी चेतावनी: {text} शामिल है।",
+  "no_allergen_alert": "पठनीय सामग्री में कोई चयनित एलर्जी कारक नहीं मिला।",
+  "product_basis": "{name} के {grams} ग्राम हिस्से के लिए:",
+  "energy_line": "{val} किलोकैलोरी।",
+  "sugar_line": "{grams} ग्राम चीनी, जो लगभग {teaspoons} चम्मच के बराबर है।",
+  "protein_line": "{val} ग्राम प्रोटीन।",
+  "fat_line": "{val} ग्राम वसा।",
+  "sodium_line": "{val} मिलीग्राम सोडियम।",
+  "closing_disclaimer": "कृपया पैकेट पर स्वयं जांचें। यह सामान्य जानकारी है, कोई चिकित्सीय सलाह नहीं।",
+  "unknown_val": "लेबल पर जानकारी उपलब्ध नहीं"
+}
