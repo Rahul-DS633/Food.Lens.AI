@@ -21,9 +21,9 @@ if CSS_PATH.exists():
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 from db.session import SessionLocal
-from db.models import Product, Nutrition, Ingredient, UserProfile, Household, HouseholdMember
+from db.models import Product, Ingredient, UserProfile, Household
 from foodlens.nutrition import (
-    NutritionProfile, create_nutrient, calculate_portion, scale_profile
+    NutritionProfile, create_nutrient, calculate_portion
 )
 from foodlens.scoring import calculate_foodlens_score
 from foodlens.validation import validate_nutrition_profile
@@ -38,10 +38,11 @@ from app.components.score_ring import render_score_ring
 from app.components.sugar_cubes import render_sugar_cubes
 from app.components.sugar_timeline import render_sugar_timeline
 from app.components.allergen_matrix import render_allergen_matrix
-from app.components.icons import get_icon_svg, icon_badge
+from app.components.icons import get_icon_svg
 from app.components.images import get_product_image
 from app.components.report_modal import render_report_issue_dialog
 from app.components.audio_player import render_audio_narration_player
+from app.components.claim_chips import render_claims_section
 
 ingredient_engine = IngredientEngine()
 allergen_engine = AllergenEngine()
@@ -153,7 +154,7 @@ try:
             hh_result = household_engine.check_household(
                 members=fam_inputs,
                 portions_by_member=fam_portions,
-                nutrition=nutrition,
+                nutrition=base_profile,
                 ingredients_text=ing_text,
             )
 
@@ -446,8 +447,8 @@ try:
         # Read-Aloud Audio Player
         narration_data = {
             "name": prod.name,
-            "portion_grams": portion_g,
-            "portion_basis": portion_type,
+            "portion_grams": active_portion_grams,
+            "portion_basis": portion_label,
             "energy_kcal": active_profile.energy_kcal.value if active_profile.energy_kcal else None,
             "sugars_g": active_profile.sugars_g.value if active_profile.sugars_g else None,
             "sugar_teaspoons": active_profile.sugar_teaspoons,
@@ -565,6 +566,14 @@ try:
                         ))
                     db.commit()
                     st.rerun()
+
+    # Front-of-Pack Claim Checker & Verification
+    render_claims_section(
+        product=prod,
+        profile=active_profile,
+        ingredients_text=ing_text,
+        key_prefix="result_claims"
+    )
 
     # Personal Food Fit & Grounded AI Section
     st.markdown("<hr style='border: none; border-top: 1.5px solid #E2E8F0; margin: 24px 0;'>", unsafe_allow_html=True)
@@ -696,7 +705,7 @@ try:
 
         with st.expander("🛡️ Evidence Panel & Grounding Post-Check", expanded=False):
             st.markdown(f"**Groundedness:** {'✅ 100% Numbers Match Input' if fit_explanation.is_grounded else '⚠️ Flagged'}")
-            st.markdown(f"**Verified Evidence Numbers:**")
+            st.markdown("**Verified Evidence Numbers:**")
             st.json(fit_explanation.evidence_numbers_used)
             st.caption("Refusal rule active: No medical diagnosis, no weight goals, no commercial brand promotion.")
 

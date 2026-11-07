@@ -4,7 +4,6 @@ Embeds interactive Three.js 3D scenes, holographic food crystals,
 and dynamic 3D card tilt effects that respond to mouse movements.
 """
 
-import streamlit as st
 import streamlit.components.v1 as components
 
 

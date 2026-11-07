@@ -9,7 +9,7 @@ Tests:
 """
 
 from foodlens.nutrition import NutritionProfile, create_nutrient
-from foodlens.validation import validate_nutrition_profile, Severity
+from foodlens.validation import validate_nutrition_profile
 
 
 def test_valid_profile_grade_a():

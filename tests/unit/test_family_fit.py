@@ -14,7 +14,6 @@ import pytest
 from foodlens.family_fit import (
     FamilyMemberInput,
     HouseholdFitEngine,
-    HouseholdFitResult,
     check_dietary_preference,
 )
 from foodlens.allergens import AllergenStatus

@@ -3,7 +3,6 @@ Unit tests for AI Advisor Hidden Sugar explanation extension in foodlens/advisor
 Validates strict number grounding, neutral wording, and refusal of disease claims.
 """
 
-import pytest
 from foodlens.sugar_detector import SugarDetector
 from foodlens.advisor import AIAdvisor
 

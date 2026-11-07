@@ -5,9 +5,8 @@ sweetener vs sugar distinctions, lactose ambiguity, sugar splitting heuristics,
 label conflict cross-check, teaspoon rounding, and property monotonicity.
 """
 
-import pytest
 from hypothesis import given, strategies as st
-from foodlens.sugar_detector import SugarDetector, SugarReport, SugarMatch
+from foodlens.sugar_detector import SugarDetector
 
 
 def test_all_sugar_classes_covered():

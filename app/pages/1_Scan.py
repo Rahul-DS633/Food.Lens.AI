@@ -16,17 +16,17 @@ if _PROJECT_ROOT not in sys.path:
 import streamlit as st
 from db.session import SessionLocal
 from db.models import Product, Nutrition, Ingredient, Scan, UserProgress, XPEvent
-from foodlens.barcode import decode_barcode_from_image, clean_barcode, validate_ean13
+from foodlens.barcode import decode_barcode_from_image, clean_barcode
 from foodlens.off_client import OpenFoodFactsClient
 from foodlens.ocr import OCREngine
 from foodlens.parser import parse_ocr_text, extract_ingredients_from_lines, extract_product_and_brand
 from foodlens.validation import validate_nutrition_profile
 from foodlens.scoring import calculate_foodlens_score
 from foodlens.ingredients import IngredientEngine
-from foodlens.nutrition import Nutrient, NutritionProfile, create_nutrient
+from foodlens.nutrition import NutritionProfile, create_nutrient
 from foodlens.gamification.xp import calculate_xp_award
 
-from app.components.icons import get_icon_svg, icon_badge
+from app.components.icons import get_icon_svg
 
 st.set_page_config(page_title="Scan Food — FoodLens AI", page_icon="🔍", layout="wide")
 
@@ -174,9 +174,9 @@ def process_images_batch(image_bytes_list):
         status_text.text(f"Extracting text from photo {idx + 1} of {len(image_bytes_list)}...")
 
         ocr_lines = ocr_engine.extract_text_from_image(img_bytes)
-        for l in ocr_lines:
-            all_lines.append(l.text)
-            all_confs.append(l.confidence)
+        for ocr_line in ocr_lines:
+            all_lines.append(ocr_line.text)
+            all_confs.append(ocr_line.confidence)
 
     progress_bar.progress(0.9)
     status_text.text("Parsing nutritional facts & ingredients...")
@@ -356,7 +356,7 @@ if st.session_state.scan_step == "capture":
         pasted_text = st.text_area("Paste label text (e.g. Energy 450 kcal, Protein 7g, Sugars 24g)", height=120)
         if st.button("Parse Label Text", key="btn_parse_text"):
             if pasted_text:
-                lines = [l.strip() for l in pasted_text.splitlines() if l.strip()]
+                lines = [line.strip() for line in pasted_text.splitlines() if line.strip()]
                 parsed_prof, details = parse_ocr_text(lines)
                 detected_ing = extract_ingredients_from_lines(lines)
 

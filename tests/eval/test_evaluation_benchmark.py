@@ -12,7 +12,6 @@ from pathlib import Path
 from foodlens.nutrition import NutritionProfile, create_nutrient, calculate_portion
 from foodlens.validation import validate_nutrition_profile
 from foodlens.advisor import AIAdvisor
-from foodlens.parser import parse_ocr_text
 
 DATA_PATH = Path(__file__).parent.parent.parent / "data" / "sample_products.csv"
 

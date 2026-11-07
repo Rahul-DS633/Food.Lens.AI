@@ -13,7 +13,6 @@ from foodlens.report_checks import (
     detect_duplicate_report,
     calculate_priority_score,
     validate_state_transition,
-    ReportAutoCheckResult,
 )
 
 

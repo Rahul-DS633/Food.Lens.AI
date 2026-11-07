@@ -6,13 +6,14 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688.svg)](https://fastapi.tiangolo.com/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.38+-FF4B4B.svg)](https://streamlit.io/)
-[![Tests](https://img.shields.io/badge/tests-106%20passed-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-135%20passed-brightgreen.svg)](tests/)
 
 ---
 
 ## 🌟 Key Differentiators
 - 🇮🇳 **Indian Packaged-Food Focus:** Built-in EAN-13 India (890) validation and pre-seeded database of common Indian staples (Parle-G, Maggi, Haldiram's Bhujia, Amul Butter, Frooti).
 - ⚙️ **Deterministic Calculation:** Zero LLM hallucinations on math. All scaling, unit conversions (kJ↔kcal, salt↔sodium), and energy cross-checks run via pure Python.
+- 🔬 **Front-of-Pack Claim Checker:** Compares marketing claims against verified label numbers and ordered ingredients using statutory FSSAI (2018) & Codex benchmarks with strict legal neutrality.
 - 👨‍👩‍👧‍👦 **Family Dietary Profiles:** Multi-person allergen shields & interactive matrix for up to 8 household members with DPDP Act (2023) minor consent safeguards.
 - 🔊 **Hindi & English Read-Aloud:** Deterministic spoken audio narration (<45s) with browser SpeechSynthesis and phonetic units (grams/ग्राम, calories/किलोकैलोरी, tsp/चम्मच).
 - 🚩 **Report Wrong Data & Admin Review Queue:** Community-driven accuracy reporting with EXIF stripping, auto-checks, consensus priority, and immutable audit revisions (`product_revisions`).
@@ -46,6 +47,7 @@ Client (Streamlit MVP / Web / Mobile)
   ├── /api/admin/*            ──> Protected Review Queue, Revisions & Metrics
   ├── /api/personal-fit       ──> Demographic-Aware RDA Fit & Deterministic Allergen Alerts
   ├── /api/sugar/analyze      ──> Hidden Sugar Detector, Sugar Splitting & Conflict Cross-Check
+  ├── /api/claims/check       ──> Front-of-Pack Claim Checker & Verification Engine
   └── /api/quest/*            ──> XP, Leveling, Streak Freezes, Badges, Mini-Games
        │
        ▼
@@ -58,6 +60,7 @@ Client (Streamlit MVP / Web / Mobile)
   ├── scoring.py          (Category thresholds, WHO/Nutri-score informed, versioned)
   ├── ingredients.py      (Ordered parsing, INS/E-number lookup, allergen detection)
   ├── allergens.py        (100% deterministic allergen cross-check & regional synonyms)
+  ├── claims.py           (Deterministic FSSAI & Codex marketing claims evaluation)
   ├── personal_fit.py     (ICMR-NIN 2020 RDA calculator & under-18 safety rules)
   ├── family_fit.py       (Multi-member household fit engine, allergen matrix, DPDP rules)
   ├── narration.py        (Deterministic Hindi & English spoken audio script builder)

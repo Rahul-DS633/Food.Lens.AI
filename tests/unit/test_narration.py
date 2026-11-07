@@ -17,8 +17,6 @@ import re
 import pytest
 
 from foodlens.narration import generate_narration_script, NarrationMode
-from foodlens.nutrition import NutritionProfile, create_nutrient
-from foodlens.allergens import AllergenStatus, AllergenCheckResult, AllergenAnalysisResult
 
 
 I18N_DIR = Path(__file__).resolve().parent.parent.parent / "i18n"

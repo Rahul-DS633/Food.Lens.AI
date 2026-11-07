@@ -22,8 +22,8 @@ if CSS_PATH.exists():
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 from db.session import SessionLocal
-from db.models import User, UserProgress, Achievement, UserAchievement, Product, XPEvent
-from foodlens.gamification.xp import get_level_for_xp, calculate_xp_award
+from db.models import User, Achievement, UserAchievement, Product, XPEvent
+from foodlens.gamification.xp import get_level_for_xp
 from foodlens.gamification.challenges import (
     get_daily_challenge, evaluate_sugar_guess, evaluate_serving_trap_answer
 )
@@ -260,6 +260,26 @@ try:
                     </div>
                     <div style="text-align: right;">
                         <div style="font-size: 24px; font-weight: 800; color: #0284C7; font-family: 'JetBrains Mono', monospace;">+25 XP</div>
+                    </div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        st.markdown(
+            """
+            <div class="foodlens-card-3d" style="background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); border: 1.5px solid #FCD34D; margin-bottom: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <span style="background: #92400E; color: #FFFFFF !important; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 6px;">
+                            LITERACY CHALLENGE
+                        </span>
+                        <h3 style="margin: 6px 0 3px 0; color: #78350F;">Front-of-Pack Myth Buster</h3>
+                        <div style="color: #451A03; font-size: 14px;">Inspect marketing claims against real nutrition numbers and ingredients to reveal verified label facts.</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 24px; font-weight: 800; color: #92400E; font-family: 'JetBrains Mono', monospace;">+15 XP</div>
                     </div>
                 </div>
             </div>

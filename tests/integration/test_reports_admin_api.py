@@ -11,7 +11,7 @@ from fastapi import HTTPException
 from db.session import SessionLocal, init_db
 from db.models import Product, DataReport, ProductRevision
 from api.routes.reports import submit_data_report, get_report_status
-from api.routes.admin import list_reports_queue, approve_report, reject_report, get_admin_metrics, verify_admin_auth
+from api.routes.admin import approve_report, get_admin_metrics, verify_admin_auth
 from api.schemas import DataReportSubmitRequest, AdminReportReviewRequest
 
 

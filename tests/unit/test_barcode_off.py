@@ -3,7 +3,7 @@ Unit tests for foodlens/barcode.py and foodlens/off_client.py
 """
 
 from foodlens.barcode import (
-    clean_barcode, calculate_ean13_checksum, validate_ean13, is_indian_product
+    clean_barcode, validate_ean13, is_indian_product
 )
 from foodlens.off_client import OpenFoodFactsClient
 

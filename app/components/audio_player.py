@@ -3,12 +3,11 @@ FoodLens UI Component: Read-Aloud Audio Player
 Provides an accessible, interactive spoken audio player with speed and language controls.
 """
 
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 import streamlit as st
 
 from foodlens.narration import generate_narration_script, NarrationMode
 from foodlens.tts.browser import BrowserSpeechProvider
-from app.components.icons import get_icon_svg
 
 browser_tts = BrowserSpeechProvider()
 
@@ -21,8 +20,6 @@ def render_audio_narration_player(
     """
     Renders the Read-Aloud speech player with speed, language, and mode controls.
     """
-    speaker_svg = get_icon_svg("speaker", size=18, color="#1B5E3F")
-    
     with st.expander("🔊 Listen to Summary (Hindi / English Read-Aloud)", expanded=False):
         c_lang, c_mode, c_spd = st.columns([1.2, 1.2, 1.2])
 

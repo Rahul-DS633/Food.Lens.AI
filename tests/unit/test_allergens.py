@@ -4,7 +4,6 @@ Deterministic allergen cross-checking, regional synonym resolution,
 precautionary trace detection, and strict safety wording rules.
 """
 
-import pytest
 from foodlens.allergens import AllergenEngine, AllergenStatus
 
 

@@ -74,7 +74,6 @@ def render_sugar_cubes(sugar_grams: Optional[float], portion_label: str = "this 
         cubes_html += render_3d_cube_svg(size=28, is_half=True)
 
     cube_icon = get_icon_svg("cubes", size=18, color="#2563EB")
-    spoon_icon = get_icon_svg("sodium", size=16, color="#1E40AF")
 
     st.markdown(
         f"""

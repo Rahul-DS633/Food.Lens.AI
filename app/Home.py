@@ -30,7 +30,7 @@ if CSS_PATH.exists():
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 from db.session import SessionLocal
-from db.models import User, UserProgress, Scan, Product
+from db.models import User, Product
 from foodlens.gamification.xp import get_level_for_xp
 from foodlens.gamification.challenges import get_daily_challenge
 from app.components.xp_bar import render_xp_header

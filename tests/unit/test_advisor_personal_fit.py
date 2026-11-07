@@ -4,7 +4,6 @@ Validates user name exclusion (privacy), prompt-injection safety,
 strict number verification, and offline fallback template.
 """
 
-import pytest
 from foodlens.nutrition import NutritionProfile, create_nutrient
 from foodlens.personal_fit import (
     PersonalFitEngine, UserProfileData, PersonalFit

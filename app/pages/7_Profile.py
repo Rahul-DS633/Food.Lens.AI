@@ -7,7 +7,6 @@ in full compliance with India's DPDP Act 2023.
 import sys
 import json
 from pathlib import Path
-from datetime import datetime, timezone
 
 _PROJECT_ROOT = str(Path(__file__).resolve().parent.parent.parent)
 if _PROJECT_ROOT not in sys.path:
@@ -231,7 +230,7 @@ with col_form:
                         db.add(UserAchievement(user_id=user.id, achievement_id=ach.id))
 
                 db.commit()
-            except Exception as e:
+            except Exception:
                 db.rollback()
             finally:
                 db.close()

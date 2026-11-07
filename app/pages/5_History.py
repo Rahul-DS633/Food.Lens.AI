@@ -20,7 +20,7 @@ if CSS_PATH.exists():
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 from db.session import SessionLocal
-from db.models import Scan, Product
+from db.models import Scan
 from app.components.icons import get_icon_svg
 from app.components.images import get_product_image
 from app.components.report_modal import render_report_issue_dialog

@@ -5,7 +5,6 @@ Renders an interactive, accessible grid of family members vs allergens.
 
 from typing import Dict, List, Any
 import streamlit as st
-from foodlens.allergens import AllergenStatus
 
 
 STATUS_STYLES = {

@@ -10,12 +10,10 @@ Rules:
 
 import pytest
 from db.session import SessionLocal, init_db, export_household_data, delete_household_data
-from db.models import User, Household, HouseholdMember, Product
+from db.models import Household, HouseholdMember, Product
 from api.routes.household import (
     create_or_get_household,
     add_household_member,
-    update_household_member,
-    delete_household_member,
     check_family_food_fit,
 )
 from api.schemas import HouseholdMemberCreate, FamilyCheckRequest

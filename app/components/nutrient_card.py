@@ -6,7 +6,7 @@ reference percentage bar, and data provenance chip.
 
 import streamlit as st
 from typing import Optional
-from app.components.icons import get_icon_svg, icon_badge
+from app.components.icons import get_icon_svg
 
 
 # Map nutrient label strings to vector icon keys and distinct accent colors

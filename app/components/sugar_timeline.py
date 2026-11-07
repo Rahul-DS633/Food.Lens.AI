@@ -5,7 +5,7 @@ syrups, bulking agents, and non-sugar sweeteners appear in descending weight ord
 """
 
 import streamlit as st
-from typing import Dict, Any, List
+from typing import List
 from foodlens.sugar_detector import SugarReport
 from app.components.icons import get_icon_svg
 

@@ -19,8 +19,6 @@ import pytest
 from foodlens.claims import (
     ClaimChecker,
     ClaimStatus,
-    ClaimResult,
-    ClaimCheckSummary,
 )
 from foodlens.nutrition import NutritionProfile, create_nutrient
 

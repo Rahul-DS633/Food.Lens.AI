@@ -4,13 +4,12 @@ Allows users and guests to report inaccurate label data with validation and evid
 """
 
 from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Dict, Any
 import streamlit as st
 from db.session import SessionLocal
 from db.models import Product, DataReport
-from foodlens.report_checks import validate_proposed_field, calculate_priority_score
+from foodlens.report_checks import validate_proposed_field
 from foodlens.image_security import sanitize_and_save_evidence_image, ImageValidationError
-from app.components.icons import get_icon_svg
 
 DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "uploads" / "evidence"
 
@@ -39,8 +38,6 @@ def render_report_issue_dialog(product_id: int, product_name: str, key_suffix: s
     """
     Renders an expandable or dialog-style reporting form for an issue on the current product.
     """
-    flag_icon = get_icon_svg("alert_triangle", size=16, color="#B45309")
-    
     with st.expander(f"🚩 Report Incorrect Data for {product_name}", expanded=False):
         st.markdown(
             """
