@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from api.routes import (
-    scan, nutrition, products, compare, advice, quest, history, profile, personal_fit, sugar, reports, admin
+    scan, nutrition, products, compare, advice, quest, history, profile, personal_fit, sugar, reports, admin, household
 )
 from db.session import init_db
 
@@ -44,6 +44,7 @@ app.include_router(personal_fit.router)
 app.include_router(sugar.router)
 app.include_router(reports.router)
 app.include_router(admin.router)
+app.include_router(household.router)
 
 
 @app.get("/")

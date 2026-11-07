@@ -226,5 +226,54 @@ class AdminMetricsResponse(BaseModel):
     most_reported_fields: List[Dict[str, Any]]
 
 
+# --- Family Profiles & Household Schemas ---
+
+class HouseholdMemberCreate(BaseModel):
+    display_name: str
+    emoji_avatar: str = "👤"
+    age: int = Field(..., ge=1, le=120)
+    weight_kg: Optional[float] = Field(None, ge=5.0, le=300.0)
+    allergies: List[str] = Field(default_factory=list)
+    dietary_prefs: List[str] = Field(default_factory=list)
+    consent_by_owner: bool = True
+
+
+class HouseholdMemberResponse(BaseModel):
+    id: int
+    household_id: int
+    display_name: str
+    emoji_avatar: str
+    age: int
+    weight_kg: Optional[float] = None
+    allergies: List[str]
+    dietary_prefs: List[str]
+    is_minor: bool
+    consent_by_owner: bool
+    created_at: Optional[str] = None
+
+
+class HouseholdResponse(BaseModel):
+    id: int
+    owner_user_id: int
+    members: List[HouseholdMemberResponse]
+    created_at: Optional[str] = None
+
+
+class FamilyCheckRequest(BaseModel):
+    product_id: int
+    member_ids: List[int] = Field(..., min_length=1, max_length=8)
+    portions: Dict[int, float] = Field(default_factory=dict)
+
+
+class FamilyCheckResponse(BaseModel):
+    worst_allergen_status: str
+    top_alert_banner: str
+    summary_sentence: str
+    members_evaluated: List[int]
+    allergen_matrix: Dict[str, Dict[str, str]]
+    disclaimer: str
+
+
+
 
 
