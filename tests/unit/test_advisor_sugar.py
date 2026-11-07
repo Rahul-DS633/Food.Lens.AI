@@ -48,3 +48,4 @@ def test_sugar_explanation_detects_ungrounded_hallucinations():
     assert is_grounded is False
     assert 999.0 in flagged
     assert 88.0 in flagged
+

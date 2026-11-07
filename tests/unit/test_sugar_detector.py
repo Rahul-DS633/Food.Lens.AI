@@ -194,3 +194,4 @@ def test_matches_positions_are_monotonic(ingredients_list):
     positions = [m.position for m in rep.matches]
     # Invariant: Output match positions must be monotonically non-decreasing
     assert positions == sorted(positions)
+

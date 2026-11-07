@@ -91,3 +91,4 @@ def analyze_hidden_sugars(
         ai_summary=ai_explanation.get("summary", ""),
         status=report.status,
     )
+

@@ -55,3 +55,4 @@ To accommodate real-world mobile OCR typos (e.g. `dextroze`, `invertt syrup`, `g
 - **FSSAI (2020)**: Food Safety and Standards (Labelling and Display) Regulations.
 - **US FDA 21 CFR 101.4**: Designation of ingredients in order of predominance.
 - **WHO (2015)**: Guideline on Sugars Intake for Adults and Children.
+

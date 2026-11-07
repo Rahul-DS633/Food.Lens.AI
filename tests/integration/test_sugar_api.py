@@ -53,3 +53,4 @@ def test_sugar_analyze_route_with_custom_text():
         assert resp.portion_teaspoons == 3.0  # 12 / 4 = 3.0
     finally:
         db.close()
+

@@ -203,3 +203,4 @@ def render_sugar_timeline(report: SugarReport, portion_g: float = 100.0, raw_tok
                     """,
                     unsafe_allow_html=True
                 )
+
