@@ -9,6 +9,9 @@ Supports:
 - Fallback mock extractor for unit tests / CPU environments
 """
 
+import os
+import shutil
+import subprocess
 from dataclasses import dataclass
 from typing import List, Optional, Any, Dict
 import cv2
@@ -82,13 +85,84 @@ class ImagePreprocessor:
 
 class OCREngine:
     """
-    Wrapper around EasyOCR with lazy model loading, local caching,
-    image preprocessing, and 2D table row reassembly.
+    Multi-engine OCR processor with intelligent fallback:
+    1. Gemini Vision OCR (if GEMINI_API_KEY is available: 0 MB server RAM, ultra accurate on Indian packaged foods)
+    2. System Tesseract OCR (if installed on server: ~25 MB RAM, fast, preinstalled on Streamlit Cloud)
+    3. EasyOCR with table row reassembly (local PyTorch fallback with memory safety)
     """
     def __init__(self, languages: Optional[List[str]] = None, use_gpu: bool = False):
         self.languages = languages or ["en"]
         self.use_gpu = use_gpu
         self._reader = None
+
+    def _extract_with_gemini_vision(self, img_bytes: bytes) -> List[OCRTextLine]:
+        """
+        Uses Google Gemini Vision (Flash) to perform cloud-based OCR directly from packaging.
+        Zero server RAM overhead and exceptional accuracy on Indian food labels and small tables.
+        """
+        api_key = os.getenv("GEMINI_API_KEY")
+        if not api_key or "your_gemini" in api_key.lower() or len(api_key.strip()) < 10:
+            return []
+
+        try:
+            from google import genai
+            from google.genai import types
+
+            mime_type = "image/jpeg"
+            if img_bytes.startswith(b"\x89PNG"):
+                mime_type = "image/png"
+            elif img_bytes.startswith(b"RIFF") and b"WEBP" in img_bytes[:16]:
+                mime_type = "image/webp"
+
+            client = genai.Client(api_key=api_key.strip())
+            part = types.Part.from_bytes(data=img_bytes, mime_type=mime_type)
+            prompt = (
+                "You are an OCR extraction engine for packaged food labels. "
+                "Read this packaging image carefully and extract all printed text verbatim. "
+                "Include: Product Title, Brand, Net Weight, Serving Size, "
+                "all rows in the Nutrition Facts table with their exact values, units, and basis (e.g. Energy, Protein, Carbohydrate, Total Sugar, Added Sugar, Dietary Fibre, Total Fat, Saturated Fat, Trans Fat, Sodium), "
+                "and the complete Ingredients list. "
+                "Output one line per extracted item. Do not include markdown formatting or commentary."
+            )
+            response = client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=[prompt, part]
+            )
+            if response and response.text:
+                clean_lines = [
+                    l.strip()
+                    for l in response.text.replace("```", "").splitlines()
+                    if l.strip() and not l.strip().startswith("#")
+                ]
+                if clean_lines:
+                    return [OCRTextLine(text=l, confidence=0.96) for l in clean_lines]
+        except Exception:
+            pass
+        return []
+
+    def _extract_with_tesseract(self, img_bytes: bytes) -> List[OCRTextLine]:
+        """
+        Uses system Tesseract OCR binary (C++).
+        Lightweight (~25 MB RAM), fast, and pre-installed on Linux Streamlit Cloud.
+        """
+        tess = shutil.which("tesseract")
+        if not tess:
+            return []
+        try:
+            proc = subprocess.run(
+                [tess, "stdin", "stdout", "--oem", "1", "-l", "eng"],
+                input=img_bytes,
+                capture_output=True,
+                timeout=20
+            )
+            if proc.returncode == 0:
+                text = proc.stdout.decode("utf-8", errors="ignore")
+                lines = [l.strip() for l in text.splitlines() if l.strip()]
+                if lines:
+                    return [OCRTextLine(text=l, confidence=0.85) for l in lines]
+        except Exception:
+            pass
+        return []
 
     def _get_reader(self):
         if self._reader is None:
@@ -103,8 +177,8 @@ class OCREngine:
                     model_storage_directory=str(model_dir),
                     user_network_directory=str(model_dir)
                 )
-            except Exception:
-                # If model download fails or EasyOCR unavailable, keep None
+            except BaseException:
+                # Catch BaseException (MemoryError, SystemExit, socket errors) to prevent app crash
                 self._reader = None
         return self._reader
 
@@ -190,21 +264,51 @@ class OCREngine:
     def extract_text_from_image(self, image_input: Any) -> List[OCRTextLine]:
         """
         Takes image bytes, path, or numpy array.
-        Applies smart upscaling, gentle contrast enhancement, and 2D table row reassembly.
+        Uses a resilient multi-tier OCR strategy:
+        1. Gemini Vision OCR (if API key available - 0 MB server RAM, ultra accurate)
+        2. System Tesseract OCR (if installed on server - 25 MB RAM, ultra lightweight)
+        3. Local EasyOCR (with memory & crash protection)
         """
+        raw_bytes: Optional[bytes] = None
         img = None
-        if isinstance(image_input, str):
-            img = cv2.imread(image_input)
-        elif isinstance(image_input, (bytes, bytearray)):
-            nparr = np.frombuffer(image_input, np.uint8)
+
+        if isinstance(image_input, (bytes, bytearray)):
+            raw_bytes = bytes(image_input)
+            nparr = np.frombuffer(raw_bytes, np.uint8)
             img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        elif isinstance(image_input, str):
+            try:
+                with open(image_input, "rb") as f:
+                    raw_bytes = f.read()
+            except Exception:
+                pass
+            img = cv2.imread(image_input)
         elif isinstance(image_input, np.ndarray):
             img = image_input
+            try:
+                success, enc = cv2.imencode(".jpg", img)
+                if success:
+                    raw_bytes = enc.tobytes()
+            except Exception:
+                pass
+
+        # Tier 1: Gemini Vision OCR (cloud, 0 MB server RAM, highest accuracy)
+        if raw_bytes:
+            gemini_results = self._extract_with_gemini_vision(raw_bytes)
+            if gemini_results:
+                return gemini_results
+
+        # Tier 2: System Tesseract OCR (lightweight, ~25 MB RAM, native C++)
+        if raw_bytes:
+            tess_results = self._extract_with_tesseract(raw_bytes)
+            if tess_results:
+                return tess_results
 
         if img is None:
             return []
 
-        # Smart upscale: if image resolution is modest, upscale so small table numbers (14.1g, 3.1g) become sharp
+        # Tier 3: Local EasyOCR
+        # Smart upscale: if image resolution is modest, upscale so small table numbers become sharp
         h, w = img.shape[:2]
         if max(h, w) < 2000:
             scale = min(2.2, 2000.0 / max(h, w))

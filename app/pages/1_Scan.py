@@ -14,7 +14,7 @@ if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
 
 import streamlit as st
-from db.session import SessionLocal
+from db.session import SessionLocal, init_db
 from db.models import Product, Nutrition, Ingredient, Scan, UserProgress, XPEvent
 from foodlens.barcode import decode_barcode_from_image, clean_barcode
 from foodlens.off_client import OpenFoodFactsClient
@@ -56,6 +56,7 @@ if "temp_product_meta" not in st.session_state:
 if "camera_batch_images" not in st.session_state:
     st.session_state.camera_batch_images = []
 
+init_db()
 off_client = OpenFoodFactsClient()
 ingredient_engine = IngredientEngine()
 ocr_engine = OCREngine()
@@ -76,7 +77,7 @@ def process_images_batch(image_bytes_list):
     """
     Processes a list of image bytes (e.g. front photo, nutrition table, ingredients panel).
     1. Checks for barcode in ANY photo.
-    2. Runs OCR across ALL photos and aggregates text lines in sequence.
+    2. Runs multi-tier OCR across ALL photos and aggregates text lines in sequence.
     3. Extracts nutrition values and ingredient statements.
     """
     if not image_bytes_list:
@@ -86,132 +87,137 @@ def process_images_batch(image_bytes_list):
     progress_bar = st.progress(0.0)
     status_text = st.empty()
 
-    # Step 1: Barcode Scan across all images
-    status_text.text("🔍 Scanning images for barcodes...")
-    progress_bar.progress(0.2)
+    try:
+        # Step 1: Barcode Scan across all images
+        status_text.text("🔍 Scanning images for barcodes...")
+        progress_bar.progress(0.2)
 
-    detected_barcode = None
-    for img_bytes in image_bytes_list:
-        code, _ = decode_barcode_from_image(img_bytes)
-        if code:
-            detected_barcode = clean_barcode(code)
-            break
+        detected_barcode = None
+        for img_bytes in image_bytes_list:
+            code, _ = decode_barcode_from_image(img_bytes)
+            if code:
+                detected_barcode = clean_barcode(code)
+                break
 
-    if detected_barcode:
-        status_text.text(f"✅ Barcode recognized: {detected_barcode}. Looking up product...")
-        progress_bar.progress(0.5)
+        if detected_barcode:
+            status_text.text(f"✅ Barcode recognized: {detected_barcode}. Looking up product...")
+            progress_bar.progress(0.5)
 
-        db = SessionLocal()
-        try:
-            existing = db.query(Product).filter(Product.barcode == detected_barcode).first()
-            if existing:
-                st.session_state.current_scan_product_id = existing.id
-                progress_bar.progress(1.0)
-                st.success(f"Recognized Product: {existing.name} ({existing.brand})")
-                st.switch_page("pages/2_Result.py")
-                return
+            db = SessionLocal()
+            try:
+                existing = db.query(Product).filter(Product.barcode == detected_barcode).first()
+                if existing:
+                    st.session_state.current_scan_product_id = existing.id
+                    progress_bar.progress(1.0)
+                    st.success(f"Recognized Product: {existing.name} ({existing.brand})")
+                    st.switch_page("pages/2_Result.py")
+                    return
 
-            # Check Open Food Facts
-            info, off_prof = off_client.fetch_product(detected_barcode)
-            if info and off_prof:
-                new_prod = Product(
-                    barcode=detected_barcode,
-                    name=info["name"],
-                    brand=info["brand"],
-                    category=info.get("category", "general"),
-                    net_weight_g=info.get("net_weight_g"),
-                    serving_size_g=info.get("serving_size_g"),
-                    source="api",
-                    verification_status="verified",
-                    quality_grade="A"
-                )
-                db.add(new_prod)
-                db.flush()
+                # Check Open Food Facts
+                info, off_prof = off_client.fetch_product(detected_barcode)
+                if info and off_prof:
+                    new_prod = Product(
+                        barcode=detected_barcode,
+                        name=info["name"],
+                        brand=info["brand"],
+                        category=info.get("category", "general"),
+                        net_weight_g=info.get("net_weight_g"),
+                        serving_size_g=info.get("serving_size_g"),
+                        source="api",
+                        verification_status="verified",
+                        quality_grade="A"
+                    )
+                    db.add(new_prod)
+                    db.flush()
 
-                nutr = info.get("nutrients", {})
-                db.add(Nutrition(
-                    product_id=new_prod.id,
-                    energy_kcal=nutr.get("energy_kcal"),
-                    protein_g=nutr.get("protein_g"),
-                    carbs_g=nutr.get("carbs_g"),
-                    sugars_g=nutr.get("sugars_g"),
-                    added_sugar_g=nutr.get("added_sugar_g"),
-                    fat_g=nutr.get("fat_g"),
-                    sat_fat_g=nutr.get("sat_fat_g"),
-                    trans_fat_g=nutr.get("trans_fat_g"),
-                    fibre_g=nutr.get("fibre_g"),
-                    sodium_mg=nutr.get("sodium_mg"),
-                ))
+                    nutr = info.get("nutrients", {})
+                    db.add(Nutrition(
+                        product_id=new_prod.id,
+                        energy_kcal=nutr.get("energy_kcal"),
+                        protein_g=nutr.get("protein_g"),
+                        carbs_g=nutr.get("carbs_g"),
+                        sugars_g=nutr.get("sugars_g"),
+                        added_sugar_g=nutr.get("added_sugar_g"),
+                        fat_g=nutr.get("fat_g"),
+                        sat_fat_g=nutr.get("sat_fat_g"),
+                        trans_fat_g=nutr.get("trans_fat_g"),
+                        fibre_g=nutr.get("fibre_g"),
+                        sodium_mg=nutr.get("sodium_mg"),
+                    ))
 
-                # Save ingredients if provided
-                ing_text = info.get("ingredients_text", "")
-                if ing_text:
-                    ing_analysis = ingredient_engine.analyze(ing_text)
-                    for ing in ing_analysis.ingredients:
-                        db.add(Ingredient(
-                            product_id=new_prod.id,
-                            position=ing.position,
-                            name=ing.cleaned_name,
-                            category=ing.category,
-                            explanation=ing.explanation,
-                            allergen_flag=ing.allergen_tag or "none"
-                        ))
+                    # Save ingredients if provided
+                    ing_text = info.get("ingredients_text", "")
+                    if ing_text:
+                        ing_analysis = ingredient_engine.analyze(ing_text)
+                        for ing in ing_analysis.ingredients:
+                            db.add(Ingredient(
+                                product_id=new_prod.id,
+                                position=ing.position,
+                                name=ing.cleaned_name,
+                                category=ing.category,
+                                explanation=ing.explanation,
+                                allergen_flag=ing.allergen_tag or "none"
+                            ))
 
-                db.commit()
-                st.session_state.current_scan_product_id = new_prod.id
-                progress_bar.progress(1.0)
-                st.success(f"Fetched from Open Food Facts: {new_prod.name}")
-                st.switch_page("pages/2_Result.py")
-                return
-        finally:
-            db.close()
+                    db.commit()
+                    st.session_state.current_scan_product_id = new_prod.id
+                    progress_bar.progress(1.0)
+                    st.success(f"Fetched from Open Food Facts: {new_prod.name}")
+                    st.switch_page("pages/2_Result.py")
+                    return
+            finally:
+                db.close()
 
-    # Step 2: Multi-Image OCR
-    status_text.text(f"📸 Running OCR on {len(image_bytes_list)} photo(s)...")
-    all_lines = []
-    all_confs = []
+        # Step 2: Multi-Image OCR
+        status_text.text(f"📸 Running OCR on {len(image_bytes_list)} photo(s)...")
+        all_lines = []
+        all_confs = []
 
-    for idx, img_bytes in enumerate(image_bytes_list):
-        step_progress = 0.3 + (0.5 * (idx + 1) / len(image_bytes_list))
-        progress_bar.progress(step_progress)
-        status_text.text(f"Extracting text from photo {idx + 1} of {len(image_bytes_list)}...")
+        for idx, img_bytes in enumerate(image_bytes_list):
+            step_progress = 0.3 + (0.5 * (idx + 1) / len(image_bytes_list))
+            progress_bar.progress(step_progress)
+            status_text.text(f"Extracting text from photo {idx + 1} of {len(image_bytes_list)}...")
 
-        ocr_lines = ocr_engine.extract_text_from_image(img_bytes)
-        for ocr_line in ocr_lines:
-            all_lines.append(ocr_line.text)
-            all_confs.append(ocr_line.confidence)
+            ocr_lines = ocr_engine.extract_text_from_image(img_bytes)
+            for ocr_line in ocr_lines:
+                all_lines.append(ocr_line.text)
+                all_confs.append(ocr_line.confidence)
 
-    progress_bar.progress(0.9)
-    status_text.text("Parsing nutritional facts & ingredients...")
+        progress_bar.progress(0.9)
+        status_text.text("Parsing nutritional facts & ingredients...")
 
-    if all_lines:
-        parsed_prof, details = parse_ocr_text(all_lines, all_confs)
-        detected_ingredients = extract_ingredients_from_lines(all_lines)
+        if all_lines:
+            parsed_prof, details = parse_ocr_text(all_lines, all_confs)
+            detected_ingredients = extract_ingredients_from_lines(all_lines)
 
-        st.session_state.extracted_profile_dict = parsed_prof.to_dict()
-        st.session_state.low_confidence_fields = details["low_confidence_fields"]
+            st.session_state.extracted_profile_dict = parsed_prof.to_dict()
+            st.session_state.low_confidence_fields = details["low_confidence_fields"]
 
-        # Intelligently detect brand, product name, and category
-        guessed_name, guessed_brand, guessed_cat = extract_product_and_brand(all_lines)
-        detected_serve_sz = details.get("serving_size_g") or 20.0
-        detected_net_wt = details.get("detected_net_weight_g") or 100.0
+            # Intelligently detect brand, product name, and category
+            guessed_name, guessed_brand, guessed_cat = extract_product_and_brand(all_lines)
+            detected_serve_sz = details.get("serving_size_g") or 20.0
+            detected_net_wt = details.get("detected_net_weight_g") or 100.0
 
-        st.session_state.temp_product_meta = {
-            "name": guessed_name,
-            "brand": guessed_brand,
-            "category": guessed_cat,
-            "serving_size_g": detected_serve_sz,
-            "net_weight_g": detected_net_wt,
-            "ingredients_text": detected_ingredients if detected_ingredients else "",
-        }
-        progress_bar.progress(1.0)
-        status_text.empty()
-        st.session_state.scan_step = "review"
-        st.rerun()
-    else:
+            st.session_state.temp_product_meta = {
+                "name": guessed_name,
+                "brand": guessed_brand,
+                "category": guessed_cat,
+                "serving_size_g": detected_serve_sz,
+                "net_weight_g": detected_net_wt,
+                "ingredients_text": detected_ingredients if detected_ingredients else "",
+            }
+            progress_bar.progress(1.0)
+            status_text.empty()
+            st.session_state.scan_step = "review"
+            st.rerun()
+        else:
+            progress_bar.empty()
+            status_text.empty()
+            st.error("No readable barcode or text detected in the uploaded photo(s). Please ensure good lighting and clear text, or choose from sample products below.")
+    except Exception as exc:
         progress_bar.empty()
         status_text.empty()
-        st.error("No readable barcode or text detected in the uploaded photo(s). Please ensure good lighting and clear text.")
+        st.error(f"Image analysis notice: {exc}. Please try another photo or choose a pre-loaded product from the 'Sample Products' tab.")
 
 
 # ═════════════════ STEP 1: CAPTURE / UPLOAD ═════════════════
@@ -227,10 +233,11 @@ if st.session_state.scan_step == "capture":
         unsafe_allow_html=True
     )
 
-    tab_upload, tab_camera, tab_manual = st.tabs([
+    tab_upload, tab_camera, tab_manual, tab_samples = st.tabs([
         "Upload Packaging Photos (Multiple)",
         "Live Camera (Multi-Shot)",
-        "Direct Barcode Lookup"
+        "Direct Barcode Lookup",
+        "Sample Products (Demo)"
     ])
 
     # ── TAB 1: UPLOAD PHOTOS FROM DEVICE ──
@@ -375,6 +382,35 @@ if st.session_state.scan_step == "capture":
                 }
                 st.session_state.scan_step = "review"
                 st.rerun()
+
+    # ── TAB 4: SAMPLE INDIAN PRODUCTS (DEMO) ──
+    with tab_samples:
+        st.markdown("#### Test Instantly with Popular Indian Packaged Foods")
+        st.caption("Select any verified Indian staple product to explore nutrition breakdown, sugar spoons, claims, and scoring.")
+
+        db = SessionLocal()
+        try:
+            sample_prods = db.query(Product).all()
+            if sample_prods:
+                cols = st.columns(2)
+                for idx, sp in enumerate(sample_prods):
+                    with cols[idx % 2]:
+                        with st.container():
+                            st.markdown(
+                                f"""
+                                <div style="border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px; margin-bottom: 10px; background: #FFFFFF;">
+                                    <div style="font-weight: 700; color: #144730; font-size: 15px;">{sp.name}</div>
+                                    <div style="color: #64748B; font-size: 13px;">Brand: {sp.brand} | Category: {sp.category}</div>
+                                    <div style="color: #475569; font-size: 12px; margin-top: 4px;">Barcode: {sp.barcode}</div>
+                                </div>
+                                """,
+                                unsafe_allow_html=True
+                            )
+                            if st.button(f"Analyze {sp.name[:24]}", key=f"btn_sample_{sp.id}", width="stretch"):
+                                st.session_state.current_scan_product_id = sp.id
+                                st.switch_page("pages/2_Result.py")
+        finally:
+            db.close()
 
 
 # ═════════════════ STEP 2: REVIEW & CORRECTION ═════════════════

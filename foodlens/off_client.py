@@ -136,6 +136,30 @@ PRESEEDED_INDIAN_PRODUCTS: Dict[str, Dict[str, Any]] = {
             "sodium_mg": 18.0,
         },
     },
+    # Kurkure Masala Munch
+    "8901499010029": {
+        "barcode": "8901499010029",
+        "name": "Kurkure Masala Munch",
+        "brand": "PepsiCo",
+        "category": "snacks",
+        "net_weight_g": 90.0,
+        "serving_size_g": 30.0,
+        "image_url": "https://images.openfoodfacts.org/images/products/890/149/901/0029/front_en.3.400.jpg",
+        "ingredients_text": "Rice Meal (43.2%), Edible Vegetable Oil (Palmolein Oil), Corn Meal (20%), Gram Meal (3.3%), Spices and Condiments (Chilli Powder, Onion Powder, Garlic Powder, Coriander Powder, Turmeric Powder, Fenugreek Powder, Black Pepper Powder, Clove Powder, Cumin Powder, Cinnamon Powder, Nutmeg Powder), Salt, Sugar, Tartaric Acid (334), Citric Acid (330).",
+        "allergens": [],
+        "nutrients": {
+            "energy_kcal": 560.0,
+            "protein_g": 6.2,
+            "carbs_g": 54.8,
+            "sugars_g": 1.8,
+            "added_sugar_g": 0.0,
+            "fat_g": 35.5,
+            "sat_fat_g": 15.2,
+            "trans_fat_g": 0.1,
+            "fibre_g": 2.2,
+            "sodium_mg": 890.0,
+        },
+    },
 }
 
 
