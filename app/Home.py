@@ -5,7 +5,15 @@ and realistic packaged food visual showcase.
 """
 
 import sys
+import os
 from pathlib import Path
+
+# Load environment variables from .env
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except Exception:
+    pass
 
 # Ensure project root is on sys.path so 'db' and 'foodlens' packages resolve
 _PROJECT_ROOT = str(Path(__file__).resolve().parent.parent)
@@ -13,6 +21,13 @@ if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
 
 import streamlit as st
+
+# Propagate Streamlit Cloud secrets to environment variables if present
+try:
+    if hasattr(st, "secrets") and "GEMINI_API_KEY" in st.secrets:
+        os.environ["GEMINI_API_KEY"] = str(st.secrets["GEMINI_API_KEY"])
+except Exception:
+    pass
 from datetime import date
 
 # Setup page configuration

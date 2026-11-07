@@ -2,6 +2,15 @@
 FoodLens AI - FastAPI Application
 """
 
+import os
+from pathlib import Path
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except Exception:
+    pass
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
