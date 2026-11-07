@@ -1,0 +1,218 @@
+# FoodLens AI — Statutory Claims & Benchmarks Configuration
+# Sources:
+# 1. Food Safety and Standards (Advertising and Claims) Regulations, 2018 (amended 2021)
+# 2. Codex Alimentarius CAC/GL 23-1997 (Guidelines for Use of Nutrition and Health Claims)
+# All regulatory numbers tagged with TODO(verify) for auditability.
+
+rules:
+  # --- SUGAR CLAIMS ---
+  sugar_free:
+    id: "sugar_free"
+    type: "nutrient_content"
+    claim_names: ["sugar free", "zero sugar", "0% sugar", "no sugar", "sugarless", "sugar-free"]
+    hindi_names: ["चीनी मुक्त", "बिना चीनी", "शून्य चीनी", "शुगर फ्री"]
+    basis: "per_100g"
+    nutrient_field: "sugars_g"
+    threshold: 0.5 # g per 100g (or 100ml)
+    operator: "<="
+    source: "FSSAI Claims Reg 2018 Schedule-I, Codex CAC/GL 23-1997" # TODO(verify: FSSAI 2018 Schedule-I)
+    explanation: "Total sugars must not exceed 0.5 g per 100 g (or 100 ml)."
+
+  low_sugar:
+    id: "low_sugar"
+    type: "nutrient_content"
+    claim_names: ["low sugar", "low in sugar", "kam cheeni", "less sugar"]
+    hindi_names: ["कम चीनी", "कम शुगर"]
+    basis: "per_100g"
+    nutrient_field: "sugars_g"
+    threshold_solid: 5.0 # g per 100g
+    threshold_liquid: 2.5 # g per 100ml
+    operator: "<="
+    source: "FSSAI Claims Reg 2018 Schedule-I, Codex CAC/GL 23-1997" # TODO(verify: FSSAI 2018 Schedule-I)
+    explanation: "Sugars must not exceed 5 g per 100 g for solids, or 2.5 g per 100 ml for liquids."
+
+  no_added_sugar:
+    id: "no_added_sugar"
+    type: "ingredient_and_nutrient"
+    claim_names: ["no added sugar", "without added sugar", "no sugar added", "zero added sugar"]
+    hindi_names: ["बिना मिलाई गई चीनी", "नो ऐडेड शुगर"]
+    basis: "per_100g"
+    nutrient_field: "added_sugar_g"
+    threshold: 0.0 # g
+    requires_sugar_report: true
+    source: "FSSAI Claims Reg 2018 Schedule-I" # TODO(verify: FSSAI 2018 Schedule-I)
+    explanation: "Must contain no added sugars, syrups, concentrates, or honey, and 0 g added sugar declared on the nutrition panel."
+
+  # --- PROTEIN CLAIMS ---
+  source_of_protein:
+    id: "source_of_protein"
+    type: "nutrient_content"
+    claim_names: ["source of protein", "provides protein", "contains protein"]
+    hindi_names: ["प्रोटीन का स्रोत", "प्रोटीन युक्त"]
+    basis: "per_100g"
+    nutrient_field: "protein_g"
+    threshold_solid: 6.0 # g per 100g (10% of RDA in FSSAI, approx 6g)
+    threshold_liquid: 3.0 # g per 100ml (5% of RDA)
+    operator: ">="
+    source: "FSSAI Claims Reg 2018 Schedule-I (10% RDA / 100g)" # TODO(verify: FSSAI 2018 Schedule-I)
+    explanation: "Provides at least 10% of daily reference value (approx 6 g per 100 g)."
+
+  high_protein:
+    id: "high_protein"
+    type: "nutrient_content"
+    claim_names: ["high protein", "rich in protein", "protein rich", "high in protein"]
+    hindi_names: ["उच्च प्रोटीन", "प्रोटीन से भरपूर"]
+    basis: "per_100g"
+    nutrient_field: "protein_g"
+    threshold_solid: 12.0 # g per 100g (20% of RDA)
+    threshold_liquid: 6.0 # g per 100ml (10% of RDA)
+    operator: ">="
+    source: "FSSAI Claims Reg 2018 Schedule-I (20% RDA / 100g)" # TODO(verify: FSSAI 2018 Schedule-I)
+    explanation: "Provides at least 20% of daily reference value (approx 12 g per 100 g)."
+
+  # --- FIBRE CLAIMS ---
+  source_of_fibre:
+    id: "source_of_fibre"
+    type: "nutrient_content"
+    claim_names: ["source of fibre", "contains fibre", "source of dietary fiber", "source of fiber"]
+    hindi_names: ["फाइबर का स्रोत"]
+    basis: "per_100g"
+    nutrient_field: "fibre_g"
+    threshold_solid: 3.0 # g per 100g
+    threshold_liquid: 1.5 # g per 100ml
+    operator: ">="
+    source: "FSSAI Claims Reg 2018 Schedule-I, Codex CAC/GL 23-1997" # TODO(verify: FSSAI 2018 Schedule-I)
+    explanation: "Must contain at least 3 g fibre per 100 g (or 1.5 g per 100 ml)."
+
+  high_fibre:
+    id: "high_fibre"
+    type: "nutrient_content"
+    claim_names: ["high fibre", "rich in fibre", "high in fibre", "high fiber", "fiber rich"]
+    hindi_names: ["उच्च फाइबर", "फाइबर से भरपूर"]
+    basis: "per_100g"
+    nutrient_field: "fibre_g"
+    threshold_solid: 6.0 # g per 100g
+    threshold_liquid: 3.0 # g per 100ml
+    operator: ">="
+    source: "FSSAI Claims Reg 2018 Schedule-I, Codex CAC/GL 23-1997" # TODO(verify: FSSAI 2018 Schedule-I)
+    explanation: "Must contain at least 6 g fibre per 100 g (or 3 g per 100 ml)."
+
+  # --- FAT & CHOLESTEROL CLAIMS ---
+  fat_free:
+    id: "fat_free"
+    type: "nutrient_content"
+    claim_names: ["fat free", "0% fat", "zero fat", "no fat", "fat-free"]
+    hindi_names: ["वसा मुक्त", "फैट फ्री"]
+    basis: "per_100g"
+    nutrient_field: "fat_g"
+    threshold: 0.5 # g per 100g
+    operator: "<="
+    source: "FSSAI Claims Reg 2018 Schedule-I, Codex CAC/GL 23-1997" # TODO(verify: FSSAI 2018 Schedule-I)
+    explanation: "Total fat must not exceed 0.5 g per 100 g."
+
+  low_fat:
+    id: "low_fat"
+    type: "nutrient_content"
+    claim_names: ["low fat", "low in fat", "low-fat"]
+    hindi_names: ["कम वसा", "कम फैट"]
+    basis: "per_100g"
+    nutrient_field: "fat_g"
+    threshold_solid: 3.0 # g per 100g
+    threshold_liquid: 1.5 # g per 100ml
+    operator: "<="
+    source: "FSSAI Claims Reg 2018 Schedule-I, Codex CAC/GL 23-1997" # TODO(verify: FSSAI 2018 Schedule-I)
+    explanation: "Fat must not exceed 3 g per 100 g for solids, or 1.5 g per 100 ml for liquids."
+
+  low_saturated_fat:
+    id: "low_saturated_fat"
+    type: "nutrient_content"
+    claim_names: ["low saturated fat", "low sat fat", "low in saturated fat"]
+    hindi_names: ["कम संतृप्त वसा"]
+    basis: "per_100g"
+    nutrient_field: "sat_fat_g"
+    threshold_solid: 1.5 # g per 100g
+    threshold_liquid: 0.75 # g per 100ml
+    operator: "<="
+    source: "FSSAI Claims Reg 2018 Schedule-I" # TODO(verify: FSSAI 2018 Schedule-I)
+    explanation: "Saturated fat must not exceed 1.5 g per 100 g for solids (or 0.75 g per 100 ml for liquids)."
+
+  no_trans_fat:
+    id: "no_trans_fat"
+    type: "nutrient_content"
+    claim_names: ["trans fat free", "no trans fat", "zero trans fat", "0g trans fat"]
+    hindi_names: ["ट्रांस फैट मुक्त", "शून्य ट्रांस फैट"]
+    basis: "per_100g"
+    nutrient_field: "trans_fat_g"
+    threshold: 0.2 # g per 100g
+    operator: "<="
+    source: "FSSAI Claims Reg 2018 Schedule-I" # TODO(verify: FSSAI 2018 Schedule-I)
+    explanation: "Trans fat must not exceed 0.2 g per 100 g (or 100 ml)."
+
+  # --- SODIUM / SALT CLAIMS ---
+  low_sodium:
+    id: "low_sodium"
+    type: "nutrient_content"
+    claim_names: ["low sodium", "low salt", "kam namak", "low in sodium"]
+    hindi_names: ["कम सोडियम", "कम नमक"]
+    basis: "per_100g"
+    nutrient_field: "sodium_mg"
+    threshold: 120.0 # mg per 100g
+    operator: "<="
+    source: "FSSAI Claims Reg 2018 Schedule-I, Codex CAC/GL 23-1997" # TODO(verify: FSSAI 2018 Schedule-I)
+    explanation: "Sodium must not exceed 120 mg per 100 g (equivalent to approx 0.3 g salt)."
+
+  # --- INGREDIENT-BASED CLAIMS ---
+  whole_grain:
+    id: "whole_grain"
+    type: "ingredient_position"
+    claim_names: ["whole grain", "100% whole grain", "whole wheat", "100% whole wheat", "made with whole grain", "atta"]
+    hindi_names: ["साबुत अनाज", "होल ग्रेन", "100% आटा", "साबुत गेहूं"]
+    target_ingredients: ["whole wheat", "whole grain", "atta", "whole rye", "whole oats", "brown rice", "millets", "साबुत गेहूं"]
+    disqualifying_ingredients: ["refined wheat flour", "maida", "मैदा"]
+    source: "FSSAI Advertising and Claims Regulations (2018)" # TODO(verify: FSSAI 2018)
+    explanation: "Evaluates whether whole grains are the primary flour source and whether refined flour is absent or secondary."
+
+  multigrain:
+    id: "multigrain"
+    type: "ingredient_position"
+    claim_names: ["multigrain", "multi-grain", "seven grain", "panchratna", "multi grain"]
+    hindi_names: ["मल्टीग्रेन", "बहूअनाज"]
+    grains: ["wheat", "oats", "ragi", "barley", "maize", "corn", "millet", "bajra", "jowar", "rice", "rye"]
+    min_grains_count: 2
+    source: "FSSAI Advertising and Claims Regulations (2018)" # TODO(verify: FSSAI 2018)
+    explanation: "Must contain two or more distinct edible grains. Evaluates whether grains are predominant."
+
+  no_maida:
+    id: "no_maida"
+    type: "ingredient_exclusion"
+    claim_names: ["no maida", "0% maida", "zero maida", "no refined flour"]
+    hindi_names: ["बिना मैदा", "मैदा मुक्त", "नो मैदा"]
+    banned_keywords: ["maida", "refined wheat flour", "all purpose flour", "मैदा"]
+    source: "FSSAI Labelling Standards" # TODO(verify: FSSAI 2018)
+    explanation: "Refined wheat flour (maida) must not appear anywhere in the ingredient list."
+
+  baked_not_fried:
+    id: "baked_not_fried"
+    type: "process_claim"
+    claim_names: ["baked not fried", "baked never fried", "air baked"]
+    hindi_names: ["बेक्ड फ्राइड नहीं", "तला हुआ नहीं"]
+    source: "Pack statement verification" # TODO(verify: Pack verification standard)
+    explanation: "Processing methods cannot be independently verified from the nutrition panel alone without explicit manufacturing process certification."
+
+  # --- VAGUE / NON-CHECKABLE MARKETING BUZZWORDS ---
+  vague_marketing_terms:
+    id: "vague_terms"
+    type: "not_checkable"
+    terms:
+      - "natural"
+      - "100% natural"
+      - "healthy"
+      - "wholesome"
+      - "pure"
+      - "goodness of"
+      - "fresh"
+      - "guilt free"
+      - "guilt-free"
+      - "detox"
+    hindi_terms: ["प्राकृतिक", "हेल्दी", "शुद्ध", "ताज़ा"]
+    explanation: "Marketing terms such as 'natural' or 'healthy' do not have fixed statutory nutrition thresholds under food labelling regulations."
