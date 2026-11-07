@@ -9,7 +9,7 @@ import streamlit as st
 from db.models import Product
 from foodlens.claims import ClaimChecker, ClaimResult, ClaimStatus
 from foodlens.nutrition import NutritionProfile
-from foodlens.units import get_icon_svg
+from app.components.icons import get_icon_svg
 
 
 STATUS_STYLES = {
