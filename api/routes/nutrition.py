@@ -9,7 +9,7 @@ from api.deps import get_db
 from api.schemas import CalculatePortionRequest
 from db.models import Product
 from foodlens.nutrition import (
-    NutritionProfile, create_nutrient, calculate_portion, scale_profile
+    NutritionProfile, create_nutrient, calculate_portion
 )
 
 router = APIRouter(prefix="/api/nutrition", tags=["Nutrition"])

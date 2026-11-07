@@ -15,10 +15,10 @@ Safety Invariants:
 """
 
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import List, Dict, Any, Optional, Set
+from typing import List, Dict, Any, Optional
 import yaml
 
 CONFIG_PATH = Path(__file__).parent / "config" / "allergen_synonyms.yaml"

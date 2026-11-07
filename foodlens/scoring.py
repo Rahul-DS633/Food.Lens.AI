@@ -10,7 +10,7 @@ Guarantees:
 4. Disclaimer attached to every score.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Any, List, Optional
 import yaml

@@ -10,7 +10,7 @@ Rules:
 """
 
 import re
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Any
 import cv2
 import numpy as np
 
@@ -92,7 +92,15 @@ def decode_barcode_from_image(image_input) -> Tuple[Optional[str], Optional[str]
     # Use OpenCV's BarcodeDetector
     try:
         detector = cv2.barcode.BarcodeDetector()
-        ok, decoded_info, decoded_type, _ = detector.detectAndDecode(img)
+        res = detector.detectAndDecode(img)
+        ok = False
+        decoded_info: Any = None
+        decoded_type: Any = None
+        if len(res) == 4:
+            ok, decoded_info, decoded_type, _ = res  # type: ignore[misc]
+        elif len(res) == 3:
+            decoded_info, decoded_type, _ = res
+            ok = bool(decoded_info)
         if ok and decoded_info:
             # decoded_info might be a tuple or string depending on OpenCV version
             info = decoded_info[0] if isinstance(decoded_info, (list, tuple)) else decoded_info
@@ -107,7 +115,15 @@ def decode_barcode_from_image(image_input) -> Tuple[Optional[str], Optional[str]
     try:
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         detector = cv2.barcode.BarcodeDetector()
-        ok, decoded_info, decoded_type, _ = detector.detectAndDecode(gray)
+        res = detector.detectAndDecode(gray)
+        ok = False
+        decoded_info = None
+        decoded_type = None
+        if len(res) == 4:
+            ok, decoded_info, decoded_type, _ = res  # type: ignore[misc]
+        elif len(res) == 3:
+            decoded_info, decoded_type, _ = res
+            ok = bool(decoded_info)
         if ok and decoded_info:
             info = decoded_info[0] if isinstance(decoded_info, (list, tuple)) else decoded_info
             btype = decoded_type[0] if isinstance(decoded_type, (list, tuple)) else decoded_type

@@ -3,7 +3,7 @@ FoodLens Quest Streak Engine
 Tracks daily activity streaks with gentle wording and protective streak freezes.
 """
 
-from datetime import date, timedelta
+from datetime import date
 from typing import Tuple
 
 

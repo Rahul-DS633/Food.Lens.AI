@@ -5,7 +5,6 @@ Deterministic dietary cross-checking and grounded AI advice.
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from typing import Optional, List
 
 from api.deps import get_db
 from api.schemas import PersonalFitRequest, PersonalFitResponse

@@ -2,7 +2,6 @@
 FoodLens Scan Routes: Barcode Lookup, OCR Label Extraction, and Confirmation
 """
 
-import json
 from datetime import datetime, timezone
 from typing import Optional, List
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
@@ -13,7 +12,7 @@ from api.schemas import (
     BarcodeScanRequest, BarcodeScanResponse, ConfirmScanRequest, LabelExtractionResponse
 )
 from db.models import Product, Nutrition, Ingredient, Scan, UserProgress, XPEvent
-from foodlens.barcode import decode_barcode_from_image, clean_barcode, validate_ean13
+from foodlens.barcode import decode_barcode_from_image, clean_barcode
 from foodlens.off_client import OpenFoodFactsClient
 from foodlens.ocr import OCREngine
 from foodlens.parser import parse_ocr_text
@@ -21,7 +20,7 @@ from foodlens.validation import validate_nutrition_profile
 from foodlens.scoring import calculate_foodlens_score
 from foodlens.ingredients import IngredientEngine
 from foodlens.gamification.xp import calculate_xp_award, get_level_for_xp
-from foodlens.nutrition import Nutrient, NutritionProfile, create_nutrient
+from foodlens.nutrition import NutritionProfile, create_nutrient
 
 router = APIRouter(prefix="/api/scan", tags=["Scan"])
 

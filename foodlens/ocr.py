@@ -10,7 +10,7 @@ Supports:
 """
 
 from dataclasses import dataclass
-from typing import List, Tuple, Optional, Any
+from typing import List, Optional, Any, Dict
 import cv2
 import numpy as np
 
@@ -93,7 +93,7 @@ class OCREngine:
     def _get_reader(self):
         if self._reader is None:
             try:
-                import easyocr
+                import easyocr  # type: ignore[import-untyped]
                 from pathlib import Path
                 model_dir = Path(__file__).resolve().parent.parent / "data" / "models" / "easyocr"
                 model_dir.mkdir(parents=True, exist_ok=True)
@@ -103,7 +103,7 @@ class OCREngine:
                     model_storage_directory=str(model_dir),
                     user_network_directory=str(model_dir)
                 )
-            except Exception as e:
+            except Exception:
                 # If model download fails or EasyOCR unavailable, keep None
                 self._reader = None
         return self._reader
@@ -148,7 +148,7 @@ class OCREngine:
         items.sort(key=lambda it: it["y_center"])
 
         rows = []
-        current_row = []
+        current_row: List[Dict[str, Any]] = []
         current_y = None
         current_h = None
 

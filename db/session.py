@@ -6,12 +6,12 @@ Handles SQLite database connection, sessionmaker, and table seeding.
 import os
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, Optional
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from db.models import (
-    Base, User, UserProgress, Achievement, Product, Nutrition, Ingredient, UserProfile, Scan, XPEvent, UserAchievement,
-    DataReport, ProductRevision, Household, HouseholdMember
+    Base, User, UserProgress, Achievement, Product, Nutrition, Ingredient, Scan, XPEvent, UserAchievement,
+    Household
 )
 from foodlens.off_client import PRESEEDED_INDIAN_PRODUCTS
 from foodlens.ingredients import IngredientEngine

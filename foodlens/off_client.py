@@ -8,11 +8,10 @@ Features:
 - Pre-seeded with popular Indian products for reliable testing and demos
 """
 
-import time
 import requests
 from typing import Optional, Dict, Any, Tuple
-from foodlens.nutrition import Nutrient, NutritionProfile, create_nutrient
-from foodlens.barcode import validate_ean13, clean_barcode
+from foodlens.nutrition import NutritionProfile, create_nutrient
+from foodlens.barcode import clean_barcode
 from foodlens.units import salt_g_to_sodium_mg
 
 # Curated pre-seeded Indian packaged food dataset for instant offline lookup and gold testing

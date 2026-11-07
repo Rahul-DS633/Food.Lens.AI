@@ -11,7 +11,7 @@ Key Architectural Guarantees:
 
 from dataclasses import dataclass, replace
 from typing import Dict, Any, Optional
-from foodlens.units import sugar_g_to_teaspoons, salt_g_to_sodium_mg, sodium_mg_to_salt_g
+from foodlens.units import sugar_g_to_teaspoons, sodium_mg_to_salt_g
 
 
 @dataclass(frozen=True)

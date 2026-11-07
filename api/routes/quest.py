@@ -6,9 +6,9 @@ from datetime import date
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from api.deps import get_db
-from api.schemas import QuestProgressResponse, QuestAttemptRequest, QuestAttemptResponse
+from api.schemas import QuestAttemptRequest
 from db.models import User, UserProgress, Achievement, UserAchievement, XPEvent
-from foodlens.gamification.xp import get_level_for_xp, calculate_xp_award
+from foodlens.gamification.xp import get_level_for_xp
 from foodlens.gamification.streaks import update_user_streak
 from foodlens.gamification.badges import check_new_achievements
 from foodlens.gamification.challenges import (

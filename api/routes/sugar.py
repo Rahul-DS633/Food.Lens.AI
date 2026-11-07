@@ -4,9 +4,8 @@ Analyzes ingredient lists for hidden sugars, syrups, concentrates, sweeteners,
 sugar splitting, and label conflicts.
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import Optional
 
 from api.deps import get_db
 from api.schemas import SugarAnalyzeRequest, SugarReportResponse, SugarMatchSchema

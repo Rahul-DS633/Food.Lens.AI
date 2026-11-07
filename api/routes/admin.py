@@ -6,6 +6,7 @@ Enforces immutable revision history and audit logging.
 
 import os
 from datetime import datetime, timezone
+from typing import Any, List
 
 from fastapi import APIRouter, Depends, Header, HTTPException, status
 from sqlalchemy import func
@@ -117,9 +118,9 @@ def approve_report(
         try:
             curr = getattr(prod, field_name)
             target_type = type(curr) if curr is not None else str
-            if target_type == float:
+            if target_type is float:
                 setattr(prod, field_name, float(new_val))
-            elif target_type == int:
+            elif target_type is int:
                 setattr(prod, field_name, int(new_val))
             else:
                 setattr(prod, field_name, str(new_val))
@@ -203,7 +204,7 @@ def get_admin_metrics(
 
     approval_rate = round((approved / total * 100.0), 1) if total > 0 else 0.0
 
-    field_counts = (
+    field_counts: List[Any] = (
         db.query(DataReport.field, func.count(DataReport.id).label("count"))
         .group_by(DataReport.field)
         .order_by(func.count(DataReport.id).desc())

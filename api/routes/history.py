@@ -5,7 +5,7 @@ FoodLens Scan History Route
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from api.deps import get_db
-from db.models import Scan, Product
+from db.models import Scan
 
 router = APIRouter(prefix="/api/history", tags=["History"])
 

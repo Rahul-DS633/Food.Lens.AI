@@ -14,7 +14,7 @@ import json
 import re
 from pathlib import Path
 from typing import Dict, Any, List, Optional, Tuple
-from foodlens.nutrition import Nutrient, NutritionProfile, create_nutrient
+from foodlens.nutrition import Nutrient, NutritionProfile
 from foodlens.units import normalize_nutrient_value, salt_g_to_sodium_mg
 
 CONFIG_PATH = Path(__file__).parent / "config" / "nutrient_dictionary.json"
@@ -273,7 +273,7 @@ def parse_ocr_text(
                     default_unit = "mg" if nutrient_key == "sodium_mg" else ("kcal" if nutrient_key == "energy_kcal" else "g")
                     final_unit = unit if unit else default_unit
 
-                    normalized_val = val
+                    normalized_val: Optional[float] = val
                     if nutrient_key == "energy_kcal" and final_unit in ("kj",):
                         normalized_val = normalize_nutrient_value(val, "kj", "kcal")
                         final_unit = "kcal"

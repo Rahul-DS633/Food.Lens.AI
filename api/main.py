@@ -2,10 +2,8 @@
 FoodLens AI - FastAPI Application
 """
 
-import uuid
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 
 from api.routes import (
     scan, nutrition, products, compare, advice, quest, history, profile, personal_fit, sugar, reports, admin, household

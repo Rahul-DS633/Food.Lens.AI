@@ -13,13 +13,11 @@ Guarantees:
 
 import os
 import re
-import json
 from dataclasses import dataclass, field
 from typing import Dict, Any, List, Optional, Set, Tuple
 from foodlens.nutrition import NutritionProfile
 from foodlens.scoring import ScoreResult
 from foodlens.ingredients import IngredientAnalysisResult
-from foodlens.personal_fit import PersonalFit
 
 
 @dataclass
@@ -196,7 +194,6 @@ class AIAdvisor:
         fat = _val("fat_g")
         sf = _val("sat_fat_g")
         sod = _val("sodium_mg")
-        fib = _val("fibre_g")
 
         # Summary
         summary_parts = [f"{p_name} ({brand}) is evaluated on a {basis} basis."]
@@ -223,7 +220,7 @@ class AIAdvisor:
             if added_sug is not None:
                 sugar_text += f" Includes {added_sug} g of declared added sugar."
         else:
-            sugar_text = f"Sugar quantity was not reported on the packaging label."
+            sugar_text = "Sugar quantity was not reported on the packaging label."
 
         # Fat section
         if fat is not None:
@@ -231,7 +228,7 @@ class AIAdvisor:
             if sf is not None:
                 fat_text += f" Saturated fat accounts for {sf} g."
         else:
-            fat_text = f"Fat details were not declared on this label."
+            fat_text = "Fat details were not declared on this label."
 
         # Sodium section
         if sod is not None:
@@ -239,7 +236,7 @@ class AIAdvisor:
             if sod > 600.0:
                 sodium_text += " This is on the higher side for packaged foods."
         else:
-            sodium_text = f"Sodium levels were not stated on the available label text."
+            sodium_text = "Sodium levels were not stated on the available label text."
 
         # Ingredients & Allergens
         ing_data = payload.get("ingredients") or {}
@@ -337,7 +334,6 @@ class AIAdvisor:
         allergen_status = payload.get("allergen_status", "")
         allergen_banner = payload.get("allergen_banner", "")
         flags = payload.get("nutrient_flags", [])
-        age_band = payload.get("age_band", "adult_18_plus")
 
         # 1. Summary
         summary_sentences = [
@@ -494,15 +490,14 @@ class AIAdvisor:
         """
         worst_status = household_result_dict.get("worst_allergen_status", "UNKNOWN")
         member_count = len(household_result_dict.get("allergen_matrix", {}))
-        top_banner = household_result_dict.get("top_alert_banner", "")
 
         # Anonymized summary
         if "CONTAINS_YOUR_ALLERGEN" in worst_status:
-            s1 = f"Allergen Alert for household: Product contains declared allergen triggers for 1 or more evaluated members."
+            s1 = "Allergen Alert for household: Product contains declared allergen triggers for 1 or more evaluated members."
         elif "MAY_CONTAIN_TRACES" in worst_status:
-            s1 = f"Precautionary notice: Product carries possible trace allergen warnings for 1 or more evaluated members."
+            s1 = "Precautionary notice: Product carries possible trace allergen warnings for 1 or more evaluated members."
         elif "UNKNOWN" in worst_status:
-            s1 = f"Allergen status is unverified due to incomplete packaging ingredients statement."
+            s1 = "Allergen status is unverified due to incomplete packaging ingredients statement."
         else:
             s1 = f"No declared allergen triggers detected in readable packaging text for any of the {member_count} evaluated members."
 

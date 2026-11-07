@@ -13,7 +13,7 @@ Rules:
    - 1000+ XP: Food Intelligence Pro
 """
 
-from typing import Dict, Any, Tuple
+from typing import Tuple
 
 DAILY_XP_CAP = 150
 PRODUCT_XP_CAP = 45
