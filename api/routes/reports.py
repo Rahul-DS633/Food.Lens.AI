@@ -4,18 +4,18 @@ Enables users and guests to report inaccurate product or nutrition information.
 """
 
 import hashlib
-from datetime import datetime, timezone
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from typing import Any
+
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
-from typing import Optional, Dict, Any, List
 
 from api.deps import get_db
-from api.schemas import DataReportSubmitRequest, DataReportResponse
-from db.models import Product, DataReport, Nutrition
+from api.schemas import DataReportResponse, DataReportSubmitRequest
+from db.models import DataReport, Product
 from foodlens.report_checks import (
-    validate_proposed_field,
-    detect_duplicate_report,
     calculate_priority_score,
+    detect_duplicate_report,
+    validate_proposed_field,
 )
 
 router = APIRouter(prefix="/api/reports", tags=["Data Reports"])
@@ -44,10 +44,10 @@ def submit_data_report(
     # Determine reporter hash from header, IP, or user-agent
     client_ip = request.client.host if request.client else "127.0.0.1"
     ua = request.headers.get("user-agent", "")
-    reporter_hash = req.reporter_hash or hashlib.sha256(f"{client_ip}:{ua}".encode("utf-8")).hexdigest()[:16]
+    reporter_hash = req.reporter_hash or hashlib.sha256(f"{client_ip}:{ua}".encode()).hexdigest()[:16]
 
     # Contextual nutrients for validation
-    current_nutrients: Dict[str, Any] = {}
+    current_nutrients: dict[str, Any] = {}
     if prod.nutrition:
         n = prod.nutrition
         current_nutrients = {

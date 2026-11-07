@@ -15,16 +15,15 @@ Key Architectural Guarantees:
 
 import re
 from dataclasses import dataclass, field
-from typing import List, Dict, Any, Optional
+from typing import Any
 
-from foodlens.allergens import AllergenEngine, AllergenStatus, AllergenCheckResult
+from foodlens.allergens import AllergenEngine, AllergenStatus
+from foodlens.nutrition import NutritionProfile
 from foodlens.personal_fit import (
+    PersonalFit,
     PersonalFitEngine,
     UserProfileData,
-    PersonalFit,
-    PersonalFitVerdict,
 )
-from foodlens.nutrition import NutritionProfile
 
 SEVERITY_ORDER = {
     AllergenStatus.CONTAINS_YOUR_ALLERGEN: 4,
@@ -53,10 +52,10 @@ class FamilyMemberInput:
     id: int
     display_name: str
     age: int
-    allergies: List[str]
-    weight_kg: Optional[float] = None
+    allergies: list[str]
+    weight_kg: float | None = None
     emoji_avatar: str = "👤"
-    dietary_prefs: List[str] = field(default_factory=list)
+    dietary_prefs: list[str] = field(default_factory=list)
     is_minor: bool = False
     consent_by_owner: bool = False
 
@@ -70,10 +69,10 @@ class MemberFitSummary:
     portion_g: float
     allergen_status: AllergenStatus
     allergen_banner: str
-    calorie_guidance: Optional[Dict[str, Any]]
-    weight_guidance: Optional[Dict[str, Any]]
-    dietary_pref_status: Dict[str, str]
-    guidance_notes: List[str]
+    calorie_guidance: dict[str, Any] | None
+    weight_guidance: dict[str, Any] | None
+    dietary_pref_status: dict[str, str]
+    guidance_notes: list[str]
     personal_fit: PersonalFit
 
 
@@ -81,8 +80,8 @@ class MemberFitSummary:
 class HouseholdFitResult:
     worst_allergen_status: AllergenStatus
     top_alert_banner: str
-    allergen_matrix: Dict[str, Dict[str, str]]  # member_id -> {allergen: status}
-    per_member_fits: Dict[int, MemberFitSummary]
+    allergen_matrix: dict[str, dict[str, str]]  # member_id -> {allergen: status}
+    per_member_fits: dict[int, MemberFitSummary]
     summary_sentence: str
     disclaimer: str = (
         "Based on readable packaging text. Never assume a product is safe for everyone. Always verify on the pack."
@@ -136,8 +135,8 @@ class HouseholdFitEngine:
 
     def check_household(
         self,
-        members: List[FamilyMemberInput],
-        portions_by_member: Dict[int, float],
+        members: list[FamilyMemberInput],
+        portions_by_member: dict[int, float],
         nutrition: NutritionProfile,
         ingredients_text: str = "",
     ) -> HouseholdFitResult:
@@ -151,8 +150,8 @@ class HouseholdFitEngine:
         worst_member_name = ""
         worst_trigger = ""
 
-        per_member_fits: Dict[int, MemberFitSummary] = {}
-        allergen_matrix: Dict[str, Dict[str, str]] = {}
+        per_member_fits: dict[int, MemberFitSummary] = {}
+        allergen_matrix: dict[str, dict[str, str]] = {}
 
         for m in members:
             portion_g = portions_by_member.get(m.id, 25.0)

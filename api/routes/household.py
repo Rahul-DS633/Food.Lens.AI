@@ -4,22 +4,22 @@ CRUD management of family members and multi-person product fit checks.
 """
 
 from datetime import datetime, timezone
-from fastapi import APIRouter, Depends, HTTPException, status
+
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List, Dict, Any, Optional
 
 from api.deps import get_db
 from api.schemas import (
-    HouseholdResponse,
-    HouseholdMemberCreate,
-    HouseholdMemberResponse,
     FamilyCheckRequest,
     FamilyCheckResponse,
+    HouseholdMemberCreate,
+    HouseholdMemberResponse,
+    HouseholdResponse,
 )
-from db.models import Household, HouseholdMember, Product, Nutrition
+from db.models import Household, HouseholdMember, Product
 from foodlens.family_fit import (
-    HouseholdFitEngine,
     FamilyMemberInput,
+    HouseholdFitEngine,
 )
 from foodlens.nutrition import NutritionProfile, create_nutrient
 

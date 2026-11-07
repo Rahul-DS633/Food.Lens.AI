@@ -6,14 +6,22 @@ Enforces immutable revision history and audit logging.
 
 import os
 from datetime import datetime, timezone
-from fastapi import APIRouter, Depends, HTTPException, Header, status
-from sqlalchemy.orm import Session
+
+from fastapi import APIRouter, Depends, Header, HTTPException, status
 from sqlalchemy import func
-from typing import Optional, List, Dict, Any
+from sqlalchemy.orm import Session
 
 from api.deps import get_db
-from api.schemas import DataReportResponse, AdminReportReviewRequest, AdminMetricsResponse
-from db.models import Product, Nutrition, DataReport, ProductRevision, XPEvent, UserAchievement, Achievement
+from api.schemas import (
+    AdminMetricsResponse,
+    AdminReportReviewRequest,
+    DataReportResponse,
+)
+from db.models import (
+    DataReport,
+    Product,
+    ProductRevision,
+)
 from foodlens.report_checks import validate_state_transition
 
 router = APIRouter(prefix="/api/admin", tags=["Admin Portal"])
@@ -21,7 +29,7 @@ router = APIRouter(prefix="/api/admin", tags=["Admin Portal"])
 ADMIN_SECRET_KEY = os.getenv("FOODLENS_ADMIN_PASSWORD_HASH", "foodlens_admin_secret")
 
 
-def verify_admin_auth(x_admin_key: Optional[str] = Header(None)):
+def verify_admin_auth(x_admin_key: str | None = Header(None)):
     """Verifies that the caller has provided valid admin credentials."""
     if not x_admin_key or x_admin_key != ADMIN_SECRET_KEY:
         raise HTTPException(
@@ -31,11 +39,11 @@ def verify_admin_auth(x_admin_key: Optional[str] = Header(None)):
     return True
 
 
-@router.get("/reports", response_model=List[DataReportResponse])
+@router.get("/reports", response_model=list[DataReportResponse])
 def list_reports_queue(
-    status_filter: Optional[str] = None,
-    field_filter: Optional[str] = None,
-    product_id: Optional[int] = None,
+    status_filter: str | None = None,
+    field_filter: str | None = None,
+    product_id: int | None = None,
     limit: int = 50,
     db: Session = Depends(get_db),
     authorized: bool = Depends(verify_admin_auth),
