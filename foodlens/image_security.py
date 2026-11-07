@@ -11,7 +11,7 @@ Key Principles:
 
 import io
 from pathlib import Path
-from typing import Tuple, Optional
+
 from PIL import Image
 
 MAX_IMAGE_SIZE_BYTES = 8 * 1024 * 1024  # 8 MB
@@ -20,14 +20,13 @@ ALLOWED_FORMATS = {"JPEG", "PNG", "WEBP"}
 
 class ImageValidationError(Exception):
     """Raised when an uploaded evidence image fails security or format validation."""
-    pass
 
 
 def sanitize_and_save_evidence_image(
     raw_bytes: bytes,
     filename: str,
-    output_path: Optional[Path] = None
-) -> Tuple[bytes, str]:
+    output_path: Path | None = None
+) -> tuple[bytes, str]:
     """
     Validates image, strips all EXIF/GPS tags, re-encodes, and optionally writes to output_path.
     Returns (cleaned_bytes, file_extension).
@@ -40,8 +39,8 @@ def sanitize_and_save_evidence_image(
     try:
         img = Image.open(io.BytesIO(raw_bytes))
         img_format = img.format
-    except Exception as e:
-        raise ImageValidationError(f"Invalid image format or corrupted file: {e}")
+    except (OSError, ValueError) as e:
+        raise ImageValidationError(f"Invalid image format or corrupted file: {e}") from e
 
     if not img_format or img_format.upper() not in ALLOWED_FORMATS:
         raise ImageValidationError(

@@ -40,3 +40,7 @@ python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 
+[tool.ruff.lint]
+ignore = ["B008", "E501"]
+
+

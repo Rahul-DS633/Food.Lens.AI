@@ -13,10 +13,10 @@ Key Guarantees:
 """
 
 import json
+from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from dataclasses import dataclass
-from typing import Dict, Any, Optional, List
+from typing import Any
 
 I18N_DIR = Path(__file__).resolve().parent.parent / "i18n"
 
@@ -35,7 +35,7 @@ class NarrationScript:
     duration_seconds: float
 
 
-def _load_i18n_dict(language: str) -> Dict[str, str]:
+def _load_i18n_dict(language: str) -> dict[str, str]:
     lang_file = I18N_DIR / f"{language.lower()}.json"
     if not lang_file.exists():
         lang_file = I18N_DIR / "en.json"
@@ -45,7 +45,7 @@ def _load_i18n_dict(language: str) -> Dict[str, str]:
 
 
 def generate_narration_script(
-    data: Dict[str, Any],
+    data: dict[str, Any],
     language: str = "en",
     mode: NarrationMode = NarrationMode.DETAILED,
 ) -> NarrationScript:
@@ -55,7 +55,7 @@ def generate_narration_script(
     lang = language.lower() if language.lower() in ("en", "hi") else "en"
     i18n = _load_i18n_dict(lang)
 
-    sentences: List[str] = []
+    sentences: list[str] = []
 
     # 1. Allergen alert MUST be first
     has_allergen_alert = data.get("has_allergen_alert", False)
@@ -65,10 +65,8 @@ def generate_narration_script(
         # Strip potential personal names or greetings
         clean_allergen = allergen_text.replace("Alert for ", "").replace("के लिए चेतावनी", "").strip()
         sentences.append(i18n["allergen_alert_prefix"].format(text=clean_allergen))
-    elif not has_allergen_alert:
-        # Only in detailed mode speak no-allergen note
-        if mode == NarrationMode.DETAILED:
-            sentences.append(i18n["no_allergen_alert"])
+    elif not has_allergen_alert and mode == NarrationMode.DETAILED:
+        sentences.append(i18n["no_allergen_alert"])
 
     # 2. Product Name & Portion Basis
     name = data.get("name", "Packaged Product")
@@ -116,8 +114,7 @@ def generate_narration_script(
     sentences.append(i18n["closing_disclaimer"])
 
     # Combine into speech text
-    sep = " " if lang == "en" else " "
-    full_text = sep.join(sentences)
+    full_text = " ".join(sentences)
 
     words = full_text.split()
     word_count = len(words)

@@ -9,10 +9,9 @@ Key Principles:
 4. Enforces strict state-machine transitions (approved is terminal).
 """
 
-from dataclasses import dataclass, field
-from typing import List, Dict, Any, Optional
 import math
-
+from dataclasses import dataclass
+from typing import Any
 
 VALID_STATUS_TRANSITIONS = {
     "pending": {"approved", "rejected", "needs_info", "duplicate"},
@@ -31,21 +30,21 @@ NUTRIENT_FIELDS = {
 @dataclass(frozen=True)
 class ReportAutoCheckResult:
     is_plausible: bool
-    flags: List[str]
+    flags: list[str]
     ocr_match_score: float
-    duplicate_of_id: Optional[int] = None
+    duplicate_of_id: int | None = None
     priority_score: float = 1.0
 
 
 def validate_proposed_field(
     field_name: str,
     proposed_value: str,
-    current_nutrients: Optional[Dict[str, Any]] = None
+    current_nutrients: dict[str, Any] | None = None
 ) -> ReportAutoCheckResult:
     """
     Checks proposed nutrient or text values for basic plausibility and subset rules.
     """
-    flags: List[str] = []
+    flags: list[str] = []
     current_nutrients = current_nutrients or {}
 
     if field_name in NUTRIENT_FIELDS:
@@ -60,18 +59,15 @@ def validate_proposed_field(
             total_sugars = current_nutrients.get("sugars_g")
             carbs = current_nutrients.get("carbs_g")
 
-            if field_name == "added_sugar_g" and total_sugars is not None:
-                if val > total_sugars:
-                    flags.append(f"Proposed added sugar cannot exceed total sugars ({val}g > {total_sugars}g).")
+            if field_name == "added_sugar_g" and total_sugars is not None and val > total_sugars:
+                flags.append(f"Proposed added sugar cannot exceed total sugars ({val}g > {total_sugars}g).")
 
-            if field_name == "sugars_g" and carbs is not None:
-                if val > carbs:
-                    flags.append(f"Proposed total sugars cannot exceed total carbohydrates ({val}g > {carbs}g).")
+            if field_name == "sugars_g" and carbs is not None and val > carbs:
+                flags.append(f"Proposed total sugars cannot exceed total carbohydrates ({val}g > {carbs}g).")
 
-            if field_name == "sat_fat_g" and current_nutrients.get("fat_g") is not None:
+            if field_name == "sat_fat_g" and current_nutrients.get("fat_g") is not None and val > current_nutrients["fat_g"]:
                 total_fat = current_nutrients["fat_g"]
-                if val > total_fat:
-                    flags.append(f"Proposed saturated fat cannot exceed total fat ({val}g > {total_fat}g).")
+                flags.append(f"Proposed saturated fat cannot exceed total fat ({val}g > {total_fat}g).")
 
         except ValueError:
             flags.append(f"Invalid numeric format for nutrient {field_name}: '{proposed_value}'.")
@@ -95,8 +91,8 @@ def validate_proposed_field(
 def detect_duplicate_report(
     field_name: str,
     proposed_value: str,
-    existing_reports: List[Dict[str, Any]]
-) -> Optional[Dict[str, Any]]:
+    existing_reports: list[dict[str, Any]]
+) -> dict[str, Any] | None:
     """
     Identifies whether a matching report on the same field exists among pending reports.
     Handles exact string match and float tolerance.
@@ -150,5 +146,5 @@ def validate_state_transition(from_state: str, to_state: str) -> bool:
     """
     allowed = VALID_STATUS_TRANSITIONS.get(from_state, set())
     if to_state not in allowed:
-        raise ValueError(f"Illegal state transition from '{from_state}' to '{to_state}'. Allowed: {sorted(list(allowed))}")
+        raise ValueError(f"Illegal state transition from '{from_state}' to '{to_state}'. Allowed: {sorted(allowed)}")
     return True
