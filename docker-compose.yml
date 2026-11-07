@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  streamlit-ui:
+    build: .
+    container_name: foodlens-streamlit
+    environment:
+      - APP_MODE=streamlit
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    ports:
+      - "8501:8501"
+    volumes:
+      - foodlens-data:/app/data
+    restart: unless-stopped
+
+  fastapi-backend:
+    build: .
+    container_name: foodlens-api
+    environment:
+      - APP_MODE=api
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    ports:
+      - "8000:8000"
+    volumes:
+      - foodlens-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  foodlens-data:

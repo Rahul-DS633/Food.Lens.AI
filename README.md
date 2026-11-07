@@ -2,7 +2,7 @@
 
 > **Point your camera at any packaged food and discover what is really inside, how much you are actually eating, and how it compares — with every number traceable to its source.**
 
-[![CI](https://github.com/foodlens-ai/foodlens-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/foodlens-ai/foodlens-ai)
+[![CI](https://github.com/Rahul-DS633/Food.Lens.AI/actions/workflows/ci.yml/badge.svg)](https://github.com/Rahul-DS633/Food.Lens.AI)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688.svg)](https://fastapi.tiangolo.com/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.38+-FF4B4B.svg)](https://streamlit.io/)
@@ -105,9 +105,24 @@ Explore interactive Swagger documentation at `http://localhost:8000/docs`.
 
 ---
 
+## 🚢 Deployment
+
+FoodLens AI can be deployed with zero cost or self-hosted via Docker:
+
+- **Streamlit Community Cloud (Free & Quickest)**: Deploy the UI directly from GitHub with 3 clicks on [share.streamlit.io](https://share.streamlit.io) using `app/Home.py` as entrypoint.
+- **Render / Railway / Hugging Face Spaces**: Deploy UI and API services with automatic SSL.
+- **Docker & Docker Compose**: Production multi-container deployment:
+  ```bash
+  docker compose up -d --build
+  ```
+
+📖 See the full step-by-step instructions in the [Deployment Guide](docs/deployment.md).
+
+---
+
 ## 🧪 Running Tests & Evaluation Benchmarks
 
-Run the complete 40-test suite:
+Run the complete 135-test suite:
 ```bash
 pytest
 ```
