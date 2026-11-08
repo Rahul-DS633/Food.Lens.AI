@@ -10,28 +10,35 @@ authors = [{ name = "FoodLens Team" }]
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "fastapi",
-    "uvicorn",
-    "pydantic",
-    "streamlit",
-    "plotly",
-    "sqlalchemy",
-    "pillow",
-    "opencv-python",
-    "easyocr",
-    "pandas",
-    "numpy",
-    "pyyaml",
-    "requests",
-    "httpx",
-    "python-dotenv",
+    "fastapi>=0.115.0",
+    "uvicorn>=0.30.0",
+    "pydantic>=2.8.0",
+    "streamlit>=1.38.0",
+    "plotly>=5.22.0",
+    "sqlalchemy>=2.0.0",
+    "alembic>=1.13.0",
+    "pillow>=10.4.0",
+    "opencv-python-headless>=4.10.0",
+    "google-genai>=0.1.0",
+    "pandas>=2.2.0",
+    "numpy>=1.26.0",
+    "pyyaml>=6.0.1",
+    "requests>=2.32.0",
+    "httpx>=0.27.0",
+    "rapidfuzz>=3.8.0",
+    "python-dotenv>=1.0.0",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "pytest",
-    "hypothesis",
+    "pytest>=8.3.0",
+    "hypothesis>=6.110.0",
 ]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["foodlens*", "api*", "db*"]
+exclude = ["tests*", "docs*", "data*", "app*", "i18n*", "alembic*"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
