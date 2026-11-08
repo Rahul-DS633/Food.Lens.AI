@@ -1,0 +1,9 @@
+app/
+tests/
+docs/
+data/
+.github/
+.devcontainer/
+*.md
+.mypy_cache/
+.pytest_cache/
