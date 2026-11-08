@@ -19,9 +19,15 @@ from foodlens.ingredients import IngredientEngine
 ingredient_engine = IngredientEngine()
 
 DATA_DIR = Path(__file__).parent.parent / "data"
-DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-DEFAULT_DB_PATH = DATA_DIR / "foodlens.db"
+# On Vercel / Serverless environments, /var/task is read-only; use /tmp for SQLite unless external DATABASE_URL provided
+is_serverless = bool(os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"))
+if is_serverless and "DATABASE_URL" not in os.environ:
+    DEFAULT_DB_PATH = Path("/tmp/foodlens.db")
+else:
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    DEFAULT_DB_PATH = DATA_DIR / "foodlens.db"
+
 DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{DEFAULT_DB_PATH.as_posix()}")
 
 engine = create_engine(
