@@ -19,8 +19,11 @@ from api.routes import (
 )
 from db.session import init_db
 
-# Initialize database schema on startup
-init_db()
+# Initialize database schema on startup safely
+try:
+    init_db()
+except Exception as _e:
+    print(f"Warning: Database initialization during startup: {_e}", flush=True)
 
 app = FastAPI(
     title="FoodLens AI API",

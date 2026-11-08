@@ -7,3 +7,4 @@ data/
 *.md
 .mypy_cache/
 .pytest_cache/
+

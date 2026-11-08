@@ -43,6 +43,10 @@ where = ["."]
 include = ["foodlens*", "api*", "db*"]
 exclude = ["tests*", "docs*", "data*", "app*", "i18n*", "alembic*"]
 
+[tool.setuptools.package-data]
+foodlens = ["config/*"]
+
+
 [tool.pytest.ini_options]
 pythonpath = ["."]
 testpaths = ["tests"]

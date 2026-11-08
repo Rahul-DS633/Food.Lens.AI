@@ -21,12 +21,22 @@ ingredient_engine = IngredientEngine()
 DATA_DIR = Path(__file__).parent.parent / "data"
 
 # On Vercel / Serverless environments, /var/task is read-only; use /tmp for SQLite unless external DATABASE_URL provided
-is_serverless = bool(os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"))
+is_serverless = bool(
+    os.getenv("VERCEL")
+    or os.getenv("VERCEL_ENV")
+    or os.getenv("VERCEL_REGION")
+    or os.getenv("AWS_LAMBDA_FUNCTION_NAME")
+    or os.getenv("LAMBDA_TASK_ROOT")
+)
+
 if is_serverless and "DATABASE_URL" not in os.environ:
     DEFAULT_DB_PATH = Path("/tmp/foodlens.db")
 else:
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    DEFAULT_DB_PATH = DATA_DIR / "foodlens.db"
+    try:
+        DATA_DIR.mkdir(parents=True, exist_ok=True)
+        DEFAULT_DB_PATH = DATA_DIR / "foodlens.db"
+    except OSError:
+        DEFAULT_DB_PATH = Path("/tmp/foodlens.db")
 
 DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{DEFAULT_DB_PATH.as_posix()}")
 
@@ -114,7 +124,12 @@ INITIAL_ACHIEVEMENTS = [
 
 def init_db():
     """Creates tables and populates default demo data if missing."""
-    Base.metadata.create_all(bind=engine)
+    try:
+        Base.metadata.create_all(bind=engine)
+    except Exception as e:
+        print(f"Warning: Base.metadata.create_all failed: {e}")
+        return
+
     db: Session = SessionLocal()
     try:
         # 1. Seed Achievements
@@ -181,27 +196,27 @@ def init_db():
 
             # Seed ingredients if missing
             if target_prod and not target_prod.ingredients and prod.get("ingredients_text"):
-                ing_analysis = ingredient_engine.analyze(prod["ingredients_text"])
-                for ing in ing_analysis.ingredients:
-                    db.add(Ingredient(
-                        product_id=target_prod.id,
-                        position=ing.position,
-                        name=ing.cleaned_name,
-                        category=ing.category,
-                        explanation=ing.explanation,
-                        allergen_flag=ing.allergen_tag or "none",
-                    ))
+                try:
+                    ing_analysis = ingredient_engine.analyze(prod["ingredients_text"])
+                    for ing in ing_analysis.ingredients:
+                        db.add(Ingredient(
+                            product_id=target_prod.id,
+                            position=ing.position,
+                            name=ing.cleaned_name,
+                            category=ing.category,
+                            explanation=ing.explanation,
+                            allergen_flag=ing.allergen_tag or "none",
+                        ))
+                except Exception as ex:
+                    print(f"Warning: could not seed ingredients for {prod.get('name')}: {ex}")
 
         db.commit()
     except Exception as e:
         db.rollback()
-        raise e
+        print(f"Warning: init_db database seeding encountered: {e}")
     finally:
         db.close()
 
-
-# Ensure DB is initialized when session module is loaded
-init_db()
 
 
 def export_user_data(user_id: int, db: Session) -> Dict[str, Any]:
