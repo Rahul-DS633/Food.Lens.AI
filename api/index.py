@@ -12,7 +12,21 @@ if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
 
 try:
+    from fastapi import Request
     from api.main import app
+
+    @app.middleware("http")
+    async def fix_vercel_path(request: Request, call_next):
+        # Normalize paths rewritten by Vercel serverless routing
+        path = request.scope.get("path", "")
+        for prefix in ["/api/index.py", "/api/index"]:
+            if path == prefix:
+                request.scope["path"] = "/"
+                break
+            elif path.startswith(prefix + "/"):
+                request.scope["path"] = path[len(prefix):]
+                break
+        return await call_next(request)
 except Exception as e:
     from fastapi import FastAPI
     from fastapi.responses import JSONResponse

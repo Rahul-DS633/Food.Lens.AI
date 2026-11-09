@@ -59,6 +59,8 @@ app.include_router(claims.router)
 
 
 @app.get("/")
+@app.get("/api/index.py")
+@app.get("/api/index")
 def root():
     return {
         "app": "FoodLens AI",
