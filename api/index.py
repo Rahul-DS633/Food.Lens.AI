@@ -18,13 +18,17 @@ try:
     @app.middleware("http")
     async def fix_vercel_path(request: Request, call_next):
         # Normalize paths rewritten by Vercel serverless routing
-        matched = (
-            request.headers.get("x-matched-path")
-            or request.headers.get("x-invoke-path")
-            or request.headers.get("x-forwarded-uri")
-        )
-        if matched and not matched.startswith("/api/index"):
-            request.scope["path"] = matched
+        raw_path = request.query_params.get("__path__")
+        if raw_path is not None:
+            clean_path = "/" + raw_path.lstrip("/")
+            request.scope["path"] = clean_path
+            qs = request.scope.get("query_string", b"").decode("utf-8")
+            if qs:
+                filtered_qs = "&".join(
+                    param for param in qs.split("&")
+                    if not param.startswith("__path__=")
+                )
+                request.scope["query_string"] = filtered_qs.encode("utf-8")
         else:
             path = request.scope.get("path", "")
             for prefix in ["/api/index.py", "/api/index"]:
