@@ -21,6 +21,8 @@ try:
         raw_path = request.query_params.get("__path__")
         if raw_path is not None:
             clean_path = "/" + raw_path.lstrip("/")
+            if clean_path in ["/api/index.py", "/api/index"]:
+                clean_path = "/"
             request.scope["path"] = clean_path
             qs = request.scope.get("query_string", b"").decode("utf-8")
             if qs:
