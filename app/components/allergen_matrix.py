@@ -88,25 +88,17 @@ def render_allergen_matrix(
             else:
                 cfg = STATUS_STYLES.get(st_key, STATUS_STYLES["NONE_DETECTED_IN_READABLE_TEXT"])
                 cell_tds.append(
-                    f"""
-                    <td style='padding: 8px 12px; text-align: center;'>
-                        <span style='background: {cfg["bg"]}; color: {cfg["color"]}; border: 1px solid {cfg["border"]}; border-radius: 6px; padding: 3px 8px; font-size: 11.5px; font-weight: 700; white-space: nowrap;'>
-                            {cfg["icon"]} {cfg["text"]}
-                        </span>
-                    </td>
-                    """
+                    f"<td style='padding: 8px 12px; text-align: center;'>"
+                    f"<span style='background: {cfg['bg']}; color: {cfg['color']}; border: 1px solid {cfg['border']}; border-radius: 6px; padding: 3px 8px; font-size: 11.5px; font-weight: 700; white-space: nowrap;'>"
+                    f"{cfg['icon']} {cfg['text']}</span></td>"
                 )
 
         row_cells = "".join(cell_tds)
         rows_html.append(
-            f"""
-            <tr style='border-bottom: 1px solid #E2E8F0;'>
-                <td style='padding: 8px 12px; font-weight: 700; color: #0F172A; white-space: nowrap;'>
-                    {avatar} {name}{minor_tag}
-                </td>
-                {row_cells}
-            </tr>
-            """
+            f"<tr style='border-bottom: 1px solid #E2E8F0;'>"
+            f"<td style='padding: 8px 12px; font-weight: 700; color: #0F172A; white-space: nowrap;'>"
+            f"{avatar} {name}{minor_tag}</td>"
+            f"{row_cells}</tr>"
         )
 
     table_body = "".join(rows_html)

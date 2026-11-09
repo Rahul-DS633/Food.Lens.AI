@@ -148,37 +148,34 @@ def render_sugar_timeline(report: SugarReport, portion_g: float = 100.0, raw_tok
         if m:
             style = _CLASS_STYLE_MAP.get(m.sugar_class, _CLASS_STYLE_MAP["sugars"])
             fuzzy_badge = "<span style='font-size: 9.5px; opacity: 0.8;'> (OCR typo)</span>" if m.match_type == "fuzzy" else ""
-            timeline_items_html.append(
-                f"""
-                <span style="display: inline-flex; align-items: center; gap: 5px; background: {style['bg']}; border: 1.5px solid {style['border']}; color: {style['color']}; padding: 4px 10px; border-radius: 10px; font-size: 12.5px; font-weight: 700; margin: 3px;">
-                    <span style="background: {style['border']}; color: white; border-radius: 50%; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800;">#{idx}</span>
-                    <span>{token}</span>
-                    <span style="font-size: 10px; opacity: 0.85; text-transform: uppercase;">[{style['label']}]</span>
-                    {fuzzy_badge}
-                </span>
-                """
+            badge_html = (
+                f'<span style="display: inline-flex; align-items: center; gap: 5px; background: {style["bg"]}; border: 1.5px solid {style["border"]}; color: {style["color"]}; padding: 4px 10px; border-radius: 10px; font-size: 12.5px; font-weight: 700; margin: 3px;">'
+                f'<span style="background: {style["border"]}; color: white; border-radius: 50%; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800;">#{idx}</span>'
+                f'<span>{token}</span>'
+                f'<span style="font-size: 10px; opacity: 0.85; text-transform: uppercase;">[{style["label"]}]</span>'
+                f'{fuzzy_badge}'
+                f'</span>'
             )
+            timeline_items_html.append(badge_html)
         else:
-            timeline_items_html.append(
-                f"""
-                <span style="display: inline-flex; align-items: center; gap: 4px; background: #F8FAFC; border: 1px solid #E2E8F0; color: #475569; padding: 4px 8px; border-radius: 8px; font-size: 12px; margin: 3px;">
-                    <span style="color: #94A3B8; font-size: 10px; font-weight: 700;">#{idx}</span>
-                    <span>{token}</span>
-                </span>
-                """
+            neutral_html = (
+                f'<span style="display: inline-flex; align-items: center; gap: 4px; background: #F8FAFC; border: 1px solid #E2E8F0; color: #475569; padding: 4px 8px; border-radius: 8px; font-size: 12px; margin: 3px;">'
+                f'<span style="color: #94A3B8; font-size: 10px; font-weight: 700;">#{idx}</span>'
+                f'<span>{token}</span>'
+                f'</span>'
             )
+            timeline_items_html.append(neutral_html)
 
+    joined_timeline = "".join(timeline_items_html)
     st.markdown(
-        f"""
-        <div class="foodlens-card-3d" style="padding: 14px; margin-bottom: 14px;">
-            <div style="font-size: 12px; font-weight: 800; color: #144730; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.4px;">
-                Ordered Ingredient Track (Descending Weight)
-            </div>
-            <div style="line-height: 2.2;">
-                {''.join(timeline_items_html)}
-            </div>
-        </div>
-        """,
+        f'<div class="foodlens-card-3d" style="padding: 14px; margin-bottom: 14px;">'
+        f'<div style="font-size: 12px; font-weight: 800; color: #144730; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.4px;">'
+        f'Ordered Ingredient Track (Descending Weight)'
+        f'</div>'
+        f'<div style="line-height: 2.2;">'
+        f'{joined_timeline}'
+        f'</div>'
+        f'</div>',
         unsafe_allow_html=True
     )
 
@@ -188,19 +185,17 @@ def render_sugar_timeline(report: SugarReport, portion_g: float = 100.0, raw_tok
             for m in report.matches:
                 style = _CLASS_STYLE_MAP.get(m.sugar_class, _CLASS_STYLE_MAP["sugars"])
                 st.markdown(
-                    f"""
-                    <div style="margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #F1F5F9;">
-                        <span style="font-weight: 800; color: {style['color']}; font-size: 13.5px;">
-                            #{m.position} {m.ingredient_text}
-                        </span>
-                        <span style="font-size: 11px; background: {style['bg']}; color: {style['color']}; padding: 2px 6px; border-radius: 4px; margin-left: 6px; font-weight: 700;">
-                            {style['label']}
-                        </span>
-                        <div style="font-size: 12px; color: #475569; margin-top: 3px; line-height: 1.4;">
-                            {m.explanation}
-                        </div>
-                    </div>
-                    """,
+                    f'<div style="margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #F1F5F9;">'
+                    f'<span style="font-weight: 800; color: {style["color"]}; font-size: 13.5px;">'
+                    f'#{m.position} {m.ingredient_text}'
+                    f'</span>'
+                    f'<span style="font-size: 11px; background: {style["bg"]}; color: {style["color"]}; padding: 2px 6px; border-radius: 4px; margin-left: 6px; font-weight: 700;">'
+                    f'{style["label"]}'
+                    f'</span>'
+                    f'<div style="font-size: 12px; color: #475569; margin-top: 3px; line-height: 1.4;">'
+                    f'{m.explanation}'
+                    f'</div>'
+                    f'</div>',
                     unsafe_allow_html=True
                 )
 

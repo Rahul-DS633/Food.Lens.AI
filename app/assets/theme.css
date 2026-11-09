@@ -353,6 +353,27 @@ section[data-testid="stSidebar"] * {
     padding-bottom: 12px !important;
 }
 
+/* Hide unwanted section headers or stray 'key' header text in sidebar navigation */
+[data-testid="stNavSectionHeader"],
+[data-testid="stNavSectionHeader"] *,
+[data-testid="stSidebarNavSectionHeader"],
+[data-testid="stSidebarNav"] header,
+[data-testid="stSidebarNav"] > div:first-child:not([data-testid="stSidebarNavItems"]) header,
+[data-testid="stSidebarNav"] > div > div > header,
+div[class*="NavSectionHeader"],
+span[class*="NavSectionHeader"],
+div[class*="StyledSidebarNavSectionHeader"],
+header[class*="StyledSidebarNavSectionHeader"] {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    font-size: 0 !important;
+}
+
 [data-testid="stSidebarNavItems"],
 [data-testid="stSidebarNav"] ul {
     gap: 3px !important;

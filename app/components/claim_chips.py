@@ -53,28 +53,14 @@ STATUS_STYLES = {
 
 def render_claim_chip_html(result: ClaimResult) -> str:
     cfg = STATUS_STYLES.get(result.status, STATUS_STYLES[ClaimStatus.NOT_CHECKABLE])
-    return f"""
-    <div style="
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: {cfg['bg']};
-        border: 1px solid {cfg['border']};
-        color: {cfg['text']};
-        padding: 5px 12px;
-        border-radius: 9999px;
-        font-size: 13px;
-        font-weight: 700;
-        margin: 4px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.03);
-    ">
-        <span>{cfg['icon']}</span>
-        <span>{result.claim_text}</span>
-        <span style="font-size: 10.5px; opacity: 0.85; border-left: 1px solid {cfg['border']}; padding-left: 6px; text-transform: uppercase;">
-            {cfg['label']}
-        </span>
-    </div>
-    """
+    return (
+        f'<div style="display: inline-flex; align-items: center; gap: 6px; background: {cfg["bg"]}; '
+        f'border: 1px solid {cfg["border"]}; color: {cfg["text"]}; padding: 5px 12px; border-radius: 9999px; '
+        f'font-size: 13px; font-weight: 700; margin: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">'
+        f'<span>{cfg["icon"]}</span><span>{result.claim_text}</span>'
+        f'<span style="font-size: 10.5px; opacity: 0.85; border-left: 1px solid {cfg["border"]}; padding-left: 6px; text-transform: uppercase;">'
+        f'{cfg["label"]}</span></div>'
+    )
 
 
 def render_claims_section(
