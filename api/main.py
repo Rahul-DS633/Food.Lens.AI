@@ -71,6 +71,8 @@ def root(request: Request):
             "version": "1.0.0",
             "status": "operational",
             "docs_url": "/docs",
+            "debug_headers": dict(request.headers),
+            "debug_scope_path": request.scope.get("path"),
             "principles": [
                 "Deterministic code calculates",
                 "Never invent or zero-fill missing values",
