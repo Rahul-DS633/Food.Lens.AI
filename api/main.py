@@ -11,9 +11,11 @@ try:
 except Exception:
     pass
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
+from foodlens.web_ui import get_foodlens_html_portal
 from api.routes import (
     scan, nutrition, products, compare, advice, quest, history, profile, personal_fit, sugar, reports, admin, household, claims
 )
@@ -58,10 +60,31 @@ app.include_router(household.router)
 app.include_router(claims.router)
 
 
-@app.get("/")
-@app.get("/api/index.py")
-@app.get("/api/index")
-def root():
+@app.get("/", response_class=HTMLResponse)
+@app.get("/api/index.py", response_class=HTMLResponse)
+@app.get("/api/index", response_class=HTMLResponse)
+def root(request: Request):
+    accept = request.headers.get("accept", "")
+    if "application/json" in accept and "text/html" not in accept:
+        return JSONResponse(content={
+            "app": "FoodLens AI",
+            "version": "1.0.0",
+            "status": "operational",
+            "docs_url": "/docs",
+            "principles": [
+                "Deterministic code calculates",
+                "Never invent or zero-fill missing values",
+                "Every value carries provenance",
+                "Neutral language",
+                "User always can correct extraction"
+            ]
+        })
+    return HTMLResponse(content=get_foodlens_html_portal())
+
+
+@app.get("/api", response_class=JSONResponse)
+@app.get("/api/status", response_class=JSONResponse)
+def api_status():
     return {
         "app": "FoodLens AI",
         "version": "1.0.0",
