@@ -61,8 +61,6 @@ app.include_router(claims.router)
 
 
 @app.get("/", response_class=HTMLResponse)
-@app.get("/api/index.py", response_class=HTMLResponse)
-@app.get("/api/index", response_class=HTMLResponse)
 def root(request: Request):
     accept = request.headers.get("accept", "")
     if "application/json" in accept and "text/html" not in accept:

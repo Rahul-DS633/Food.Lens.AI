@@ -65,5 +65,8 @@ ignore_missing_imports = true
 plugins = []
 disable_error_code = ["assignment", "arg-type", "call-overload", "valid-type", "misc"]
 
+[tool.vercel]
+entrypoint = "main.py"
+
 
 
