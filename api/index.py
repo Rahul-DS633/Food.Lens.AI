@@ -18,14 +18,22 @@ try:
     @app.middleware("http")
     async def fix_vercel_path(request: Request, call_next):
         # Normalize paths rewritten by Vercel serverless routing
-        path = request.scope.get("path", "")
-        for prefix in ["/api/index.py", "/api/index"]:
-            if path == prefix:
-                request.scope["path"] = "/"
-                break
-            elif path.startswith(prefix + "/"):
-                request.scope["path"] = path[len(prefix):]
-                break
+        matched = (
+            request.headers.get("x-matched-path")
+            or request.headers.get("x-invoke-path")
+            or request.headers.get("x-forwarded-uri")
+        )
+        if matched and not matched.startswith("/api/index"):
+            request.scope["path"] = matched
+        else:
+            path = request.scope.get("path", "")
+            for prefix in ["/api/index.py", "/api/index"]:
+                if path == prefix:
+                    request.scope["path"] = "/"
+                    break
+                elif path.startswith(prefix + "/"):
+                    request.scope["path"] = path[len(prefix):]
+                    break
         return await call_next(request)
 except Exception as e:
     from fastapi import FastAPI

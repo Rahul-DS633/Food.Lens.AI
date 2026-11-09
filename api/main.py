@@ -103,3 +103,12 @@ def api_status():
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
+
+
+@app.get("/api/debug-headers")
+def debug_headers(request: Request):
+    return {
+        "headers": dict(request.headers),
+        "scope_path": request.scope.get("path"),
+        "url": str(request.url),
+    }
