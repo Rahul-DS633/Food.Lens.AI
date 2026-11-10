@@ -41,3 +41,15 @@ def test_render_page_header_without_optionals():
         html_arg = mock_st_html.call_args[0][0]
         assert "Minimal Title" in html_arg
         assert "foodlens-page-banner" in html_arg
+
+
+def test_render_page_header_with_custom_emoji():
+    """Verify render_page_header embeds the custom emoji inside the glass box."""
+    with patch("streamlit.html") as mock_st_html:
+        render_page_header(title="Emoji Page", emoji="📷")
+
+        assert mock_st_html.called
+        html_arg = mock_st_html.call_args[0][0]
+        assert "📷" in html_arg
+        assert "Emoji Page" in html_arg
+
