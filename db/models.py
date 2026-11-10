@@ -83,6 +83,10 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    username = Column(String(64), unique=True, nullable=True, index=True)
+    email = Column(String(128), unique=True, nullable=True, index=True)
+    password_hash = Column(String(256), nullable=True)
+    role = Column(String(16), default="user")  # "user" or "admin"
     display_name = Column(String(64), default="Guest User")
     language = Column(String(8), default="en")  # en, hi
     created_at = Column(DateTime, default=utcnow)

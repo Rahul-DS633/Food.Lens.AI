@@ -7,7 +7,7 @@ import os
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Any, Optional
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, Session
 from db.models import (
     Base, User, UserProgress, Achievement, Product, Nutrition, Ingredient, Scan, XPEvent, UserAchievement,
@@ -15,6 +15,7 @@ from db.models import (
 )
 from foodlens.off_client import PRESEEDED_INDIAN_PRODUCTS
 from foodlens.ingredients import IngredientEngine
+from foodlens.auth import hash_password
 
 ingredient_engine = IngredientEngine()
 
@@ -126,9 +127,22 @@ def init_db():
     """Creates tables and populates default demo data if missing."""
     try:
         Base.metadata.create_all(bind=engine)
+        # Migrate optional columns on users table if SQLite table already existed
+        with engine.connect() as conn:
+            res = conn.execute(text("PRAGMA table_info(users)"))
+            cols = {row[1] for row in res.fetchall()}
+            if cols:
+                if "username" not in cols:
+                    conn.execute(text("ALTER TABLE users ADD COLUMN username VARCHAR(64)"))
+                if "email" not in cols:
+                    conn.execute(text("ALTER TABLE users ADD COLUMN email VARCHAR(128)"))
+                if "password_hash" not in cols:
+                    conn.execute(text("ALTER TABLE users ADD COLUMN password_hash VARCHAR(256)"))
+                if "role" not in cols:
+                    conn.execute(text("ALTER TABLE users ADD COLUMN role VARCHAR(16) DEFAULT 'user'"))
+                conn.commit()
     except Exception as e:
-        print(f"Warning: Base.metadata.create_all failed: {e}")
-        return
+        print(f"Warning: Base.metadata.create_all or migration failed: {e}")
 
     db: Session = SessionLocal()
     try:
@@ -141,7 +155,14 @@ def init_db():
         # 2. Ensure default demo user exists
         demo_user = db.query(User).filter(User.id == 1).first()
         if not demo_user:
-            demo_user = User(id=1, display_name="Curious Eater", language="en")
+            demo_user = User(
+                id=1,
+                username="curious",
+                display_name="Curious Eater",
+                role="user",
+                password_hash=hash_password("demo123"),
+                language="en"
+            )
             db.add(demo_user)
             db.flush()
 
@@ -154,6 +175,26 @@ def init_db():
                 streak_freezes=1,
             )
             db.add(progress)
+        else:
+            if not demo_user.username:
+                demo_user.username = "curious"
+            if not demo_user.password_hash:
+                demo_user.password_hash = hash_password("demo123")
+            if not demo_user.role:
+                demo_user.role = "user"
+
+        # 2b. Ensure default admin user exists
+        admin_user = db.query(User).filter(User.role == "admin").first()
+        if not admin_user:
+            admin_user = User(
+                username="admin",
+                display_name="FoodLens Admin",
+                role="admin",
+                password_hash=hash_password("foodlens_admin_secret"),
+                language="en"
+            )
+            db.add(admin_user)
+            db.flush()
 
         # 3. Seed verified Indian products for offline resilience
         for code, prod in PRESEEDED_INDIAN_PRODUCTS.items():

@@ -17,7 +17,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from foodlens.web_ui import get_foodlens_html_portal
 from api.routes import (
-    scan, nutrition, products, compare, advice, quest, history, profile, personal_fit, sugar, reports, admin, household, claims
+    scan, nutrition, products, compare, advice, quest, history, profile, personal_fit, sugar, reports, admin, household, claims, auth
 )
 from db.session import init_db
 
@@ -58,6 +58,7 @@ app.include_router(reports.router)
 app.include_router(admin.router)
 app.include_router(household.router)
 app.include_router(claims.router)
+app.include_router(auth.router)
 
 
 @app.get("/", response_class=HTMLResponse)

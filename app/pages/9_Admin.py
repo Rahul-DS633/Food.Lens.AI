@@ -24,6 +24,7 @@ if CSS_PATH.exists():
 from db.session import SessionLocal
 from db.models import DataReport, ProductRevision
 from foodlens.report_checks import validate_state_transition
+from foodlens.auth import verify_admin_key
 from app.components.icons import get_icon_svg
 from app.components.sidebar import render_sidebar
 from app.components.page_header import render_page_header
@@ -50,12 +51,18 @@ if not st.session_state.admin_authenticated:
     st.markdown("---")
     st.markdown("### 🔐 Admin Authentication Required")
     pwd_input = st.text_input("Enter Admin Password / Key", type="password")
-    if st.button("Log In as Admin", type="primary"):
-        if pwd_input == ADMIN_SECRET:
-            st.session_state.admin_authenticated = True
-            st.rerun()
-        else:
-            st.error("Invalid admin credentials.")
+    c_btn1, c_btn2 = st.columns([1, 1])
+    with c_btn1:
+        if st.button("Log In as Admin", type="primary", use_container_width=True):
+            if pwd_input == ADMIN_SECRET or verify_admin_key(pwd_input):
+                st.session_state.admin_authenticated = True
+                st.session_state.user_role = "admin"
+                st.rerun()
+            else:
+                st.error("Invalid admin credentials.")
+    with c_btn2:
+        if st.button("🔐 Go to Unified Login Portal", use_container_width=True):
+            st.switch_page("pages/0_Login.py")
     st.stop()
 
 # Logout button in top-right

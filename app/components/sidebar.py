@@ -100,7 +100,11 @@ def render_sidebar(active_page: Optional[str] = None) -> None:
             streak = progress.current_streak if progress else 1
             lvl_name, lvl_icon, base_xp, next_xp = get_level_for_xp(xp)
             user_name = profile.name if profile and profile.name else "You"
-            avatar = "👤"
+            user_role = getattr(user, "role", "user") if user else "user"
+            is_admin = st.session_state.get("admin_authenticated", False) or (user_role == "admin")
+            avatar = "🛡️" if is_admin else "👤"
+            badge_text = "🛡️ Admin" if is_admin else f"{lvl_icon} {lvl_name}"
+            badge_color = "#DC2626" if is_admin else "#166534"
             members_count = len(household.members) if household and household.members else 0
 
             # Level progress percentage
@@ -116,7 +120,7 @@ def render_sidebar(active_page: Optional[str] = None) -> None:
                     border: 1.5px solid #E2E8F0;
                     border-radius: 14px;
                     padding: 12px 14px;
-                    margin-bottom: 14px;
+                    margin-bottom: 10px;
                     box-shadow: 0 2px 8px rgba(0,0,0,0.03);
                 ">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
@@ -124,14 +128,14 @@ def render_sidebar(active_page: Optional[str] = None) -> None:
                             <div style="
                                 width: 34px; height: 34px;
                                 border-radius: 50%;
-                                background: #DCFCE7;
-                                border: 1.5px solid #86EFAC;
+                                background: {'#FEE2E2' if is_admin else '#DCFCE7'};
+                                border: 1.5px solid {'#F87171' if is_admin else '#86EFAC'};
                                 display: flex; align-items: center; justify-content: center;
                                 font-size: 16px;
                             ">{avatar}</div>
                             <div>
                                 <div style="font-weight: 800; font-size: 13.5px; color: #0F172A; line-height: 1.2;">{user_name}</div>
-                                <div style="font-size: 11px; color: #166534; font-weight: 700;">{lvl_icon} {lvl_name}</div>
+                                <div style="font-size: 11px; color: {badge_color}; font-weight: 700;">{badge_text}</div>
                             </div>
                         </div>
                         <div style="
@@ -156,6 +160,12 @@ def render_sidebar(active_page: Optional[str] = None) -> None:
                 """,
                 unsafe_allow_html=True
             )
+
+            # Quick Switch / Login link
+            try:
+                st.page_link("pages/0_Login.py", label="🔐 Switch Account / Login")
+            except Exception:
+                pass
 
             # 3. Family Shield Indicator if active
             if members_count > 0:

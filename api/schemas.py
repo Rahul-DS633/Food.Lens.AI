@@ -314,6 +314,51 @@ class ClaimCheckResponse(BaseModel):
     ai_summary: Optional[Dict[str, Any]] = None
 
 
+# --- Authentication & Session Schemas ---
+
+class UserLoginRequest(BaseModel):
+    identifier: str = Field(..., description="Username or email address")
+    password: str = Field(..., description="User password")
+
+
+class AdminLoginRequest(BaseModel):
+    admin_key: str = Field(..., description="Admin master key or password")
+
+
+class UserRegisterRequest(BaseModel):
+    username: str = Field(..., min_length=3, max_length=30)
+    password: str = Field(..., min_length=4)
+    display_name: str = Field(..., min_length=1, max_length=128)
+    email: Optional[str] = None
+    age: int = Field(25, ge=1, le=120)
+    weight_kg: Optional[float] = Field(None, ge=5.0, le=300.0)
+    allergies: List[str] = Field(default_factory=list)
+    custom_allergens: str = ""
+    consent_given: bool = Field(True, description="Mandatory DPDP Act 2023 consent")
+    parental_consent_given: bool = Field(False, description="Mandatory for users under 18")
+    language: str = "en"
+
+
+class AuthUserResponse(BaseModel):
+    id: int
+    username: Optional[str] = None
+    display_name: str
+    email: Optional[str] = None
+    role: str = "user"
+    language: str = "en"
+    level: str = "Label Rookie"
+    xp: int = 25
+    streak: int = 1
+
+
+class AuthLoginResponse(BaseModel):
+    success: bool
+    message: str
+    user: Optional[AuthUserResponse] = None
+    admin_authenticated: bool = False
+
+
+
 
 
 
