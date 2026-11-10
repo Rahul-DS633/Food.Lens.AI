@@ -18,7 +18,7 @@ st.set_page_config(page_title="Product Analysis — FoodLens AI", page_icon="�
 CSS_PATH = Path(__file__).parent.parent / "assets" / "theme.css"
 if CSS_PATH.exists():
     with open(CSS_PATH, "r", encoding="utf-8") as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+        st.html(f"<style>{f.read()}</style>")
 
 from db.session import SessionLocal
 from db.models import Product, Ingredient, UserProfile, Household
@@ -515,13 +515,10 @@ try:
             categories[cat] = categories.get(cat, 0) + 1
 
         stat_chips = " • ".join([f"<b>{count}</b> {cat.replace('_', ' ').title()}" for cat, count in categories.items()])
-        st.markdown(
-            f"""
-            <div style="background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; font-size: 14px; color: #166534; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
-                <b>{len(prod.ingredients)} Components Identified:</b> {stat_chips}
-            </div>
-            """,
-            unsafe_allow_html=True
+        st.html(
+            f'<div style="background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; font-size: 14px; color: #166534; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">'
+            f'<b>{len(prod.ingredients)} Components Identified:</b> {stat_chips}'
+            f'</div>'
         )
 
         ing_cols = st.columns(2)
@@ -532,24 +529,16 @@ try:
                     if (ing.allergen_flag and ing.allergen_flag != "none") else ""
                 )
                 cat_name = (ing.category or 'ingredient').replace('_', ' ').upper()
-                st.markdown(
-                    f"""
-                    <div class="foodlens-card-3d" style="padding: 12px 16px; margin-bottom: 10px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                            <span style="font-size: 14.5px; font-weight: 800; color: #144730;">
-                                #{ing.position} {ing.name}
-                            </span>
-                            <span style="font-size: 10.5px; font-weight: 800; padding: 3px 8px; border-radius: 6px; background: #ECFCCB; color: #365314; letter-spacing: 0.3px;">
-                                {cat_name}
-                            </span>
-                        </div>
-                        {allergen_badge}
-                        <div style="font-size: 12.5px; color: #475569; margin-top: 4px; line-height: 1.4;">
-                            {ing.explanation or 'Standard approved food-grade component.'}
-                        </div>
-                    </div>
-                    """,
-                    unsafe_allow_html=True
+                exp_text = ing.explanation or 'Standard approved food-grade component.'
+                st.html(
+                    f'<div class="foodlens-card-3d" style="padding: 12px 16px; margin-bottom: 10px;">'
+                    f'<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">'
+                    f'<span style="font-size: 14.5px; font-weight: 800; color: #144730;">#{ing.position} {ing.name}</span>'
+                    f'<span style="font-size: 10.5px; font-weight: 800; padding: 3px 8px; border-radius: 6px; background: #ECFCCB; color: #365314; letter-spacing: 0.3px;">{cat_name}</span>'
+                    f'</div>'
+                    f'{allergen_badge}'
+                    f'<div style="font-size: 12.5px; color: #475569; margin-top: 4px; line-height: 1.4;">{exp_text}</div>'
+                    f'</div>'
                 )
     else:
         st.info("No structured ingredients recorded yet for this product.")
@@ -687,20 +676,17 @@ try:
         for flag in fit_result.nutrient_flags:
             bar_color = "#16A34A" if flag.severity == "green" else ("#F59E0B" if flag.severity == "amber" else "#DC2626")
             pct_capped = min(100.0, flag.pct_of_reference)
-            st.markdown(
-                f"""
-                <div style="margin-bottom: 10px;">
-                    <div style="display: flex; justify-content: space-between; font-size: 12.5px; font-weight: 700; color: #334155; margin-bottom: 2px;">
-                        <span>{flag.display_name}</span>
-                        <span>{flag.portion_value} {flag.unit} ({flag.pct_of_reference}%)</span>
-                    </div>
-                    <div style="width: 100%; height: 7px; background: #E2E8F0; border-radius: 4px; overflow: hidden;">
-                        <div style="width: {pct_capped}%; height: 100%; background: {bar_color}; border-radius: 4px;"></div>
-                    </div>
-                    <div style="font-size: 11px; color: #64748B; margin-top: 2px;">{flag.reason}</div>
-                </div>
-                """,
-                unsafe_allow_html=True
+            st.html(
+                f'<div style="margin-bottom: 10px;">'
+                f'<div style="display: flex; justify-content: space-between; font-size: 12.5px; font-weight: 700; color: #334155; margin-bottom: 2px;">'
+                f'<span>{flag.display_name}</span>'
+                f'<span>{flag.portion_value} {flag.unit} ({flag.pct_of_reference}%)</span>'
+                f'</div>'
+                f'<div style="width: 100%; height: 7px; background: #E2E8F0; border-radius: 4px; overflow: hidden;">'
+                f'<div style="width: {pct_capped}%; height: 100%; background: {bar_color}; border-radius: 4px;"></div>'
+                f'</div>'
+                f'<div style="font-size: 11px; color: #64748B; margin-top: 2px;">{flag.reason}</div>'
+                f'</div>'
             )
 
         if fit_result.missing_data:

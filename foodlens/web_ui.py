@@ -1022,3 +1022,4 @@ def get_foodlens_html_portal() -> str:
 </body>
 </html>
 """
+

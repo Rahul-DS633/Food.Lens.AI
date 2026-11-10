@@ -16,6 +16,39 @@ def render_sidebar(active_page: Optional[str] = None) -> None:
     Renders top branding, user quest status, and footer badges in st.sidebar.
     """
     with st.sidebar:
+        # Force suppress any unwanted section header or stray 'key' header in Streamlit nav
+        st.html(
+            """
+            <style>
+            [data-testid="stNavSectionHeader"],
+            [data-testid="stNavSectionHeader"] *,
+            [data-testid="stSidebarNavSectionHeader"],
+            [data-testid="stSidebarNav"] header,
+            [data-testid="stSidebarNav"] header *,
+            [data-testid="stSidebarNav"] .en0apyo9,
+            [data-testid="stSidebarNav"] .en0apyo8,
+            [data-testid="stSidebarNav"] .en0apyo12,
+            section[data-testid="stSidebar"] header,
+            section[data-testid="stSidebar"] header *,
+            section[data-testid="stSidebar"] .en0apyo9,
+            section[data-testid="stSidebar"] .en0apyo8,
+            section[data-testid="stSidebar"] .en0apyo12 {
+                display: none !important;
+                visibility: hidden !important;
+                height: 0 !important;
+                min-height: 0 !important;
+                max-height: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                font-size: 0 !important;
+                line-height: 0 !important;
+                overflow: hidden !important;
+                opacity: 0 !important;
+            }
+            </style>
+            """
+        )
+
         # 1. Top Brand Logo & Title Card
         st.markdown(
             """

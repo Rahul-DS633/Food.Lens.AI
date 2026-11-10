@@ -358,6 +358,15 @@ section[data-testid="stSidebar"] * {
 [data-testid="stNavSectionHeader"] *,
 [data-testid="stSidebarNavSectionHeader"],
 [data-testid="stSidebarNav"] header,
+[data-testid="stSidebarNav"] header *,
+[data-testid="stSidebarNav"] .en0apyo9,
+[data-testid="stSidebarNav"] .en0apyo8,
+[data-testid="stSidebarNav"] .en0apyo12,
+section[data-testid="stSidebar"] header,
+section[data-testid="stSidebar"] header *,
+section[data-testid="stSidebar"] .en0apyo9,
+section[data-testid="stSidebar"] .en0apyo8,
+section[data-testid="stSidebar"] .en0apyo12,
 [data-testid="stSidebarNav"] > div:first-child:not([data-testid="stSidebarNavItems"]) header,
 [data-testid="stSidebarNav"] > div > div > header,
 div[class*="NavSectionHeader"],
@@ -367,11 +376,15 @@ header[class*="StyledSidebarNavSectionHeader"] {
     display: none !important;
     visibility: hidden !important;
     height: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
     opacity: 0 !important;
     pointer-events: none !important;
     font-size: 0 !important;
+    line-height: 0 !important;
+    overflow: hidden !important;
 }
 
 [data-testid="stSidebarNavItems"],

@@ -42,7 +42,7 @@ st.set_page_config(
 CSS_PATH = Path(__file__).parent / "assets" / "theme.css"
 if CSS_PATH.exists():
     with open(CSS_PATH, "r", encoding="utf-8") as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+        st.html(f"<style>{f.read()}</style>")
 
 from db.session import SessionLocal
 from db.models import User, Product

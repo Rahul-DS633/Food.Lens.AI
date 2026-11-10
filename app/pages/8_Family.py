@@ -19,7 +19,7 @@ st.set_page_config(page_title="Family Profiles — FoodLens AI", page_icon="👨
 CSS_PATH = Path(__file__).parent.parent / "assets" / "theme.css"
 if CSS_PATH.exists():
     with open(CSS_PATH, "r", encoding="utf-8") as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+        st.html(f"<style>{f.read()}</style>")
 
 from db.session import SessionLocal, export_household_data, delete_household_data
 from db.models import Household, HouseholdMember

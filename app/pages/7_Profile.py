@@ -19,7 +19,7 @@ st.set_page_config(page_title="My Dietary Profile â€” FoodLens AI", page_icon="ð
 CSS_PATH = Path(__file__).parent.parent / "assets" / "theme.css"
 if CSS_PATH.exists():
     with open(CSS_PATH, "r", encoding="utf-8") as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+        st.html(f"<style>{f.read()}</style>")
 
 from db.session import SessionLocal, export_user_data, delete_user_data
 from db.models import User, UserProfile, Achievement, UserAchievement, utcnow
