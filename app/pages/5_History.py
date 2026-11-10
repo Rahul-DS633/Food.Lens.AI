@@ -25,20 +25,20 @@ from app.components.icons import get_icon_svg
 from app.components.images import get_product_image
 from app.components.report_modal import render_report_issue_dialog
 from app.components.sidebar import render_sidebar
+from app.components.page_header import render_page_header
 
 render_sidebar("History")
 
-history_svg = get_icon_svg("history", size=26, color="#144730")
-st.markdown(
-    f"""
-    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-        {history_svg}
-        <h1 style="margin: 0; color: #144730; font-size: 26px;">Scan History & Product Diary</h1>
-    </div>
-    """,
-    unsafe_allow_html=True
+render_page_header(
+    title="Scan History & Product Diary",
+    subtitle="Review your previously scanned packaged foods, verified labels, and nutritional scores.",
+    icon_name="history",
+    overline="PRODUCT DIARY & ARCHIVE",
+    action_pills=[
+        {"icon": "history", "text": "Local Archive"},
+        {"icon": "shield", "text": "Zero Telemetry"}
+    ]
 )
-st.caption("Review your previously scanned packaged foods, verified labels, and nutritional scores.")
 
 db = SessionLocal()
 try:

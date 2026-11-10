@@ -530,3 +530,14 @@ header[class*="StyledSidebarNavSectionHeader"] {
     color: #1E293B !important;
     font-weight: 500 !important;
 }
+
+/* Hero Page Banner Card Style */
+.foodlens-page-banner {
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@media (max-width: 768px) {
+    .foodlens-page-banner {
+        padding: 14px 16px !important;
+        border-radius: 14px !important;
+    }
+}

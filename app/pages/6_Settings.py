@@ -23,18 +23,19 @@ from db.session import SessionLocal
 from db.models import Scan, XPEvent
 from app.components.icons import get_icon_svg
 from app.components.sidebar import render_sidebar
+from app.components.page_header import render_page_header
 
 render_sidebar("Settings")
 
-settings_svg = get_icon_svg("settings", size=26, color="#144730")
-st.markdown(
-    f"""
-    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-        {settings_svg}
-        <h1 style="margin: 0; color: #144730; font-size: 26px;">Settings & Privacy Controls</h1>
-    </div>
-    """,
-    unsafe_allow_html=True
+render_page_header(
+    title="Settings & Privacy Controls",
+    subtitle="Configure dietary parameters, gamification options, and manage local data privacy.",
+    icon_name="settings",
+    overline="PREFERENCES & COMPLIANCE",
+    action_pills=[
+        {"icon": "shield", "text": "DPDP Act 2023"},
+        {"icon": "lock", "text": "Local Storage"}
+    ]
 )
 
 if "game_features_enabled" not in st.session_state:

@@ -26,6 +26,7 @@ from db.models import DataReport, ProductRevision
 from foodlens.report_checks import validate_state_transition
 from app.components.icons import get_icon_svg
 from app.components.sidebar import render_sidebar
+from app.components.page_header import render_page_header
 
 ADMIN_SECRET = os.getenv("FOODLENS_ADMIN_PASSWORD_HASH", "foodlens_admin_secret")
 render_sidebar("Admin")
@@ -34,18 +35,16 @@ render_sidebar("Admin")
 if "admin_authenticated" not in st.session_state:
     st.session_state.admin_authenticated = False
 
-shield_icon = get_icon_svg("shield", size=24, color="#144730")
-
-st.markdown(
-    f"""
-    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-        {shield_icon}
-        <h1 style="margin: 0; color: #144730; font-size: 26px;">Admin Data Review Queue</h1>
-    </div>
-    """,
-    unsafe_allow_html=True
+render_page_header(
+    title="Admin Data Review Queue",
+    subtitle="Review user-reported label inaccuracies, inspect image evidence, and publish verified product revisions.",
+    icon_name="shield",
+    overline="DATA QUALITY & VERIFICATION",
+    action_pills=[
+        {"icon": "lock", "text": "Staff Portal"},
+        {"icon": "check_circle", "text": "Audit Trail"}
+    ]
 )
-st.caption("Review user-reported label inaccuracies, inspect image evidence, and publish verified product revisions.")
 
 if not st.session_state.admin_authenticated:
     st.markdown("---")

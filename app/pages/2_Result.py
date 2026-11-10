@@ -44,6 +44,7 @@ from app.components.report_modal import render_report_issue_dialog
 from app.components.audio_player import render_audio_narration_player
 from app.components.claim_chips import render_claims_section
 from app.components.sidebar import render_sidebar
+from app.components.page_header import render_page_header
 
 ingredient_engine = IngredientEngine()
 allergen_engine = AllergenEngine()
@@ -58,6 +59,18 @@ if "language" not in st.session_state:
     st.session_state.language = "en"
 
 render_sidebar("Result")
+
+render_page_header(
+    title="Packaged Food Intelligence & Verification",
+    subtitle="In-depth statutory nutritional evaluation, hidden sugar timeline, and personalized dietary alerts.",
+    icon_name="search",
+    overline="PRODUCT ANALYSIS & AUDIT",
+    action_pills=[
+        {"icon": "scale", "text": "100g Normalized"},
+        {"icon": "shield", "text": "DPDP Private"},
+        {"icon": "leaf", "text": "Ingredients Verified"}
+    ]
+)
 
 # Get product ID from session state or default
 product_id = st.session_state.get("current_scan_product_id") or 1

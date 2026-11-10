@@ -32,21 +32,21 @@ from app.components.images import get_product_image
 from app.components.report_modal import render_report_issue_dialog
 from app.components.audio_player import render_audio_narration_player
 from app.components.sidebar import render_sidebar
+from app.components.page_header import render_page_header
 
 ingredient_engine = IngredientEngine()
 render_sidebar("Compare")
 
-scale_svg = get_icon_svg("scale", size=26, color="#144730")
-st.markdown(
-    f"""
-    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-        {scale_svg}
-        <h1 style="margin: 0; color: #144730; font-size: 26px;">Side-by-Side Product Comparison</h1>
-    </div>
-    """,
-    unsafe_allow_html=True
+render_page_header(
+    title="Side-by-Side Product Comparison",
+    subtitle="Compare 2 packaged products per 100g to spot hidden sugars, saturated fat, and sodium differences.",
+    icon_name="scale",
+    overline="CATEGORY-NORMALIZED COMPARATOR",
+    action_pills=[
+        {"icon": "scale", "text": "Fair Per-100g Basis"},
+        {"icon": "check_circle", "text": "Evidence-Backed"}
+    ]
 )
-st.caption("Compare 2 packaged products per 100g to spot hidden sugars, saturated fat, and sodium differences.")
 
 db = SessionLocal()
 try:

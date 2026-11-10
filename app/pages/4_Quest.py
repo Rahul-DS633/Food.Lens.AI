@@ -33,20 +33,20 @@ from app.components.icons import get_icon_svg
 from app.components.images import get_product_image
 from app.components.sugar_cubes import render_sugar_cubes
 from app.components.sidebar import render_sidebar
+from app.components.page_header import render_page_header
 
 render_sidebar("Quest")
 
-trophy_svg = get_icon_svg("trophy", size=26, color="#144730")
-st.markdown(
-    f"""
-    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-        {trophy_svg}
-        <h1 style="margin: 0; color: #144730; font-size: 26px;">FoodLens Quest</h1>
-    </div>
-    """,
-    unsafe_allow_html=True
+render_page_header(
+    title="FoodLens Quest & Literacy Hub",
+    subtitle="Learn to decode packaged food labels, protect your streak, and earn XP through verified knowledge.",
+    icon_name="trophy",
+    overline="GAMIFIED FOOD LITERACY",
+    action_pills=[
+        {"icon": "trophy", "text": "Daily Quests"},
+        {"icon": "flame", "text": "Streak Shields"}
+    ]
 )
-st.caption("Learn to decode packaged food labels, protect your streak, and earn XP through verified knowledge.")
 
 db = SessionLocal()
 try:

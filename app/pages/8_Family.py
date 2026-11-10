@@ -25,6 +25,7 @@ from db.session import SessionLocal, export_household_data, delete_household_dat
 from db.models import Household, HouseholdMember
 from app.components.icons import get_icon_svg
 from app.components.sidebar import render_sidebar
+from app.components.page_header import render_page_header
 
 render_sidebar("Family")
 
@@ -38,17 +39,16 @@ ALLERGEN_OPTIONS = [
 DIETARY_PREF_OPTIONS = ["vegetarian", "vegan", "jain", "halal"]
 AVATAR_OPTIONS = ["👨", "👩", "👧", "👦", "👵", "👴", "👶", "🧑", "🧒", "🧓"]
 
-family_svg = get_icon_svg("users", size=26, color="#144730")
-st.markdown(
-    f"""
-    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-        {family_svg}
-        <h1 style="margin: 0; color: #144730; font-size: 26px;">Family Dietary Profiles</h1>
-    </div>
-    """,
-    unsafe_allow_html=True
+render_page_header(
+    title="Family Dietary Profiles",
+    subtitle="Manage allergy shields and portion sizes for everyone in your home. Check one scan for the whole family.",
+    icon_name="users",
+    overline="MULTI-MEMBER HOUSEHOLD SHIELD",
+    action_pills=[
+        {"icon": "users", "text": "Multi-User Safety"},
+        {"icon": "shield", "text": "Age-Scaled Portions"}
+    ]
 )
-st.caption("Manage allergy shields and portion sizes for everyone in your home. Check one scan for the whole family.")
 
 db = SessionLocal()
 try:

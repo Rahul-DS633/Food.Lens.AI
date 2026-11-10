@@ -25,6 +25,7 @@ from db.session import SessionLocal, export_user_data, delete_user_data
 from db.models import User, UserProfile, Achievement, UserAchievement, utcnow
 from app.components.icons import get_icon_svg
 from app.components.sidebar import render_sidebar
+from app.components.page_header import render_page_header
 
 if "user_id" not in st.session_state:
     st.session_state.user_id = 1
@@ -35,19 +36,15 @@ if "user_profile" not in st.session_state:
 
 render_sidebar("Profile")
 
-# Header with vector iconography
-shield_icon = get_icon_svg("shield", size=28, color="#1B5E3F")
-st.markdown(
-    f"""
-    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 6px;">
-        {shield_icon}
-        <h1 style="margin: 0; color: #144730; font-size: 26px;">Personalized Food Fit Profile</h1>
-    </div>
-    <p style="color: #64748B; font-size: 14px; margin-bottom: 20px;">
-        Configure your dietary preferences and allergen alerts. Packaged foods will be evaluated against your profile.
-    </p>
-    """,
-    unsafe_allow_html=True
+render_page_header(
+    title="Personalized Food Fit Profile",
+    subtitle="Configure your dietary preferences and allergen alerts. Packaged foods are evaluated against your profile.",
+    icon_name="shield",
+    overline="DIETARY & ALLERGEN SHIELD",
+    action_pills=[
+        {"icon": "shield", "text": "Personal Fit"},
+        {"icon": "bolt", "text": "Instant Alerts"}
+    ]
 )
 
 # Load existing profile from DB or session

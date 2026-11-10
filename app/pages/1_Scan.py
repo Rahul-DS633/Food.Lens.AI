@@ -43,6 +43,7 @@ from foodlens.gamification.xp import calculate_xp_award
 
 from app.components.icons import get_icon_svg
 from app.components.sidebar import render_sidebar
+from app.components.page_header import render_page_header
 
 st.set_page_config(page_title="Scan Food — FoodLens AI", page_icon="🔍", layout="wide")
 
@@ -76,15 +77,16 @@ off_client = OpenFoodFactsClient()
 ingredient_engine = IngredientEngine()
 ocr_engine = OCREngine()
 
-cam_svg = get_icon_svg("camera", size=28, color="#144730")
-st.markdown(
-    f"""
-    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
-        {cam_svg}
-        <h1 style="margin: 0; color: #144730; font-size: 28px;">FoodLens Multi-Angle Scanner</h1>
-    </div>
-    """,
-    unsafe_allow_html=True
+render_page_header(
+    title="FoodLens Multi-Angle Scanner",
+    subtitle="Capture packaging front, nutrition table, and ingredients for multi-angle OCR & barcode verification.",
+    icon_name="camera",
+    overline="SMART OCR & BARCODE ENGINE",
+    action_pills=[
+        {"icon": "camera", "text": "Batch Capture"},
+        {"icon": "barcode", "text": "EAN-13 Direct"},
+        {"icon": "bolt", "text": "Instant OCR"}
+    ]
 )
 
 
