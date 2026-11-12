@@ -298,7 +298,7 @@ try:
                 f'</div>'
             )
             st.markdown(card_p_html, unsafe_allow_html=True)
-                st.markdown(card_p_html, unsafe_allow_html=True)
+            st.markdown(card_p_html, unsafe_allow_html=True)
 
             if st.button(f"{t['btn_inspect']} {p.brand}", key=f"demo_btn_{p.id}", width="stretch"):
                 st.session_state.current_scan_product_id = p.id

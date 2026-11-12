@@ -120,15 +120,14 @@ def render_sugar_timeline(report: SugarReport, portion_g: float = 100.0, raw_tok
             f'About {report.portion_teaspoons:g} Teaspoons'
             f'</div>'
             f'<span style="font-size: 11px; color: #64748B;">Calculated as grams / 4.0, rounded to nearest 0.5 (based on {basis_txt}).</span>'
-            f'</div>',
-            unsafe_allow_html=True
-        )
+            f'</div>'
             f'<div style="text-align: right;">'
             f'<span style="background: #ECFCCB; color: #365314; font-weight: 800; font-size: 12px; padding: 4px 10px; border-radius: 12px;">'
             f'{len(report.distinct_sugar_names)} Sugar Sources'
             f'</span>'
             f'</div>'
-            f'</div>'
+            f'</div>',
+            unsafe_allow_html=True
         )
 
     # 4. Timeline Chips List

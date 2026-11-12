@@ -91,7 +91,6 @@ try:
                     <img src="{img_uri}" alt="{prod.name}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
                 </div>
                 """,
-                unsafe_allow_html=True,
                 unsafe_allow_html=True
             )
 
