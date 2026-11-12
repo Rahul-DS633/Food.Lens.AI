@@ -44,8 +44,8 @@ if CSS_PATH.exists():
     with open(CSS_PATH, "r", encoding="utf-8") as f:
         st.html(f"<style>{f.read()}</style>")
 
-from db.session import SessionLocal, init_db
-from db.models import User, Product
+from db.session import SessionLocal, init_db, engine
+from db.models import Base, User, Product
 from foodlens.gamification.xp import get_level_for_xp
 from foodlens.gamification.challenges import get_daily_challenge
 from app.components.xp_bar import render_xp_header
@@ -56,6 +56,7 @@ from app.components.sidebar import render_sidebar
 
 # Ensure database tables and seeds exist before rendering
 try:
+    Base.metadata.create_all(bind=engine)
     init_db()
 except Exception as _e:
     pass

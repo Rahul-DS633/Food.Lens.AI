@@ -6,8 +6,8 @@ and compliance badges for the Streamlit sidebar.
 
 from typing import Optional
 import streamlit as st
-from db.models import Household, User
-from db.session import SessionLocal, init_db
+from db.models import Base, Household, User
+from db.session import SessionLocal, init_db, engine
 from foodlens.gamification.xp import get_level_for_xp
 
 
@@ -103,6 +103,7 @@ def render_sidebar(active_page: Optional[str] = None) -> None:
                 household = db.query(Household).filter(Household.owner_user_id == user_id).first()
             except Exception:
                 try:
+                    Base.metadata.create_all(bind=engine)
                     init_db()
                     user = db.query(User).filter(User.id == user_id).first()
                     progress = user.progress if user else None
