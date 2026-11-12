@@ -513,22 +513,255 @@ header[class*="StyledSidebarNavSectionHeader"] {
     font-weight: 700 !important;
 }
 
-/* Expander headers */
-.stExpander summary, .stExpander summary * {
-    color: var(--text-slate) !important;
+/* Expander headers & containers */
+.stExpander,
+[data-testid="stExpander"],
+details[data-testid="stExpander"] {
+    background-color: #FFFFFF !important;
+    border: 1.5px solid #86EFAC !important;
+    border-radius: 14px !important;
+    box-shadow: 0 4px 14px rgba(27, 94, 63, 0.05) !important;
+    overflow: hidden !important;
+    margin-bottom: 14px !important;
+}
+
+.stExpander summary,
+[data-testid="stExpander"] summary,
+details[data-testid="stExpander"] > summary {
+    background: linear-gradient(90deg, #F0FDF4 0%, #ECFCCB 100%) !important;
+    color: #144730 !important;
+    font-weight: 800 !important;
+    font-size: 14.5px !important;
+    border-bottom: 1.5px solid #86EFAC !important;
+    padding: 12px 18px !important;
+    border-radius: 12px 12px 0 0 !important;
+    transition: background 0.2s ease !important;
+}
+
+.stExpander summary:hover,
+[data-testid="stExpander"] summary:hover {
+    background: linear-gradient(90deg, #DCFCE7 0%, #D9F99D 100%) !important;
+    color: #0F3822 !important;
+}
+
+.stExpander summary svg,
+[data-testid="stExpander"] summary svg,
+.stExpander summary p,
+.stExpander summary span,
+details[data-testid="stExpander"] > summary * {
+    color: #144730 !important;
+    fill: #144730 !important;
+    stroke: #144730 !important;
+    font-weight: 800 !important;
+}
+
+.stExpander [data-testid="stExpanderDetails"] {
+    background-color: #FFFFFF !important;
+    color: #0F172A !important;
+    padding: 18px !important;
+}
+
+/* Selectbox & Multiselect */
+[data-baseweb="select"],
+[data-baseweb="select"] > div,
+div[data-baseweb="select"] > div:first-child {
+    background-color: #FFFFFF !important;
+    border: 1.5px solid #CBD5E1 !important;
+    border-radius: 10px !important;
+    color: #0F172A !important;
+}
+
+[data-baseweb="select"]:hover > div,
+[data-baseweb="select"]:focus-within > div {
+    border-color: #1B5E3F !important;
+    box-shadow: 0 0 0 3px rgba(27, 94, 63, 0.14) !important;
+}
+
+[data-baseweb="select"] * {
+    color: #0F172A !important;
+}
+
+/* MultiSelect Tags */
+[data-baseweb="tag"],
+[data-baseweb="tag"] > span {
+    background-color: #DCFCE7 !important;
+    color: #144730 !important;
+    border: 1px solid #86EFAC !important;
     font-weight: 700 !important;
+    font-size: 12.5px !important;
+    border-radius: 8px !important;
+}
+
+[data-baseweb="tag"] svg,
+[data-baseweb="tag"] [role="presentation"] {
+    fill: #144730 !important;
+    color: #144730 !important;
+}
+
+/* Select Popover / Dropdown Menu */
+[data-baseweb="popover"],
+[data-baseweb="menu"],
+ul[role="listbox"] {
+    background-color: #FFFFFF !important;
+    border: 1.5px solid #86EFAC !important;
+    box-shadow: 0 10px 25px rgba(27, 94, 63, 0.12) !important;
+    border-radius: 12px !important;
+}
+
+li[role="option"] {
+    color: #0F172A !important;
+    background-color: #FFFFFF !important;
+    font-weight: 600 !important;
+}
+
+li[role="option"]:hover,
+li[role="option"][aria-selected="true"] {
+    background-color: #F0FDF4 !important;
+    color: #144730 !important;
+    font-weight: 700 !important;
+}
+
+/* Number Input Stepper (- and + buttons) */
+[data-testid="stNumberInputStepDown"],
+[data-testid="stNumberInputStepUp"],
+.stNumberInput button,
+[data-testid="stNumberInput"] button {
+    background-color: #F0FDF4 !important;
+    color: #1B5E3F !important;
+    border: 1px solid #86EFAC !important;
+    border-radius: 8px !important;
+    margin: 2px !important;
+    transition: all 0.2s ease !important;
+}
+
+[data-testid="stNumberInputStepDown"]:hover,
+[data-testid="stNumberInputStepUp"]:hover,
+.stNumberInput button:hover,
+[data-testid="stNumberInput"] button:hover {
+    background-color: #1B5E3F !important;
+    color: #FFFFFF !important;
+    border-color: #144730 !important;
+}
+
+[data-testid="stNumberInputStepDown"] svg,
+[data-testid="stNumberInputStepUp"] svg,
+.stNumberInput button svg {
+    stroke: #1B5E3F !important;
+    fill: #1B5E3F !important;
+}
+
+[data-testid="stNumberInputStepDown"]:hover svg,
+[data-testid="stNumberInputStepUp"]:hover svg,
+.stNumberInput button:hover svg {
+    stroke: #FFFFFF !important;
+    fill: #FFFFFF !important;
+}
+
+/* Password Eye Toggle Button */
+[data-testid="stTextInputPasswordToggle"],
+[data-baseweb="input"] button,
+button[aria-label="Show password"],
+button[aria-label="Hide password"] {
+    background-color: #F0FDF4 !important;
+    color: #1B5E3F !important;
+    border: 1px solid #86EFAC !important;
+    border-radius: 8px !important;
+    margin-right: 6px !important;
+    padding: 4px 8px !important;
+    transition: all 0.2s ease !important;
+}
+
+[data-testid="stTextInputPasswordToggle"]:hover,
+[data-baseweb="input"] button:hover {
+    background-color: #DCFCE7 !important;
+    border-color: #1B5E3F !important;
+}
+
+[data-testid="stTextInputPasswordToggle"] svg,
+[data-baseweb="input"] button svg {
+    fill: #1B5E3F !important;
+    stroke: #1B5E3F !important;
+}
+
+/* Form Submit Buttons */
+[data-testid="stFormSubmitButton"] > button,
+[data-testid="stFormSubmitButton"] button,
+button[kind="primaryFormSubmit"],
+button[data-testid="stBaseButton-primaryFormSubmit"] {
+    background: linear-gradient(135deg, #1B5E3F 0%, #2E7D56 100%) !important;
+    color: #FFFFFF !important;
+    border: 1.5px solid #1B5E3F !important;
+    border-radius: 12px !important;
+    font-weight: 700 !important;
+    padding: 10px 22px !important;
+    box-shadow: 0 4px 14px rgba(27, 94, 63, 0.28) !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+[data-testid="stFormSubmitButton"] > button:hover,
+[data-testid="stFormSubmitButton"] button:hover,
+button[kind="primaryFormSubmit"]:hover,
+button[data-testid="stBaseButton-primaryFormSubmit"]:hover {
+    background: linear-gradient(135deg, #144730 0%, #1B5E3F 100%) !important;
+    border-color: #144730 !important;
+    box-shadow: 0 8px 22px rgba(27, 94, 63, 0.38) !important;
+    transform: translateY(-2px);
+}
+
+[data-testid="stFormSubmitButton"] button *,
+button[kind="primaryFormSubmit"] * {
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    fill: #FFFFFF !important;
 }
 
 /* Alerts & Notifications */
 [data-testid="stAlert"] {
-    background: #F8FAFC !important;
-    border: 1.5px solid #CBD5E1 !important;
     border-radius: 12px !important;
-    color: #0F172A !important;
+    padding: 14px 18px !important;
+    font-weight: 600 !important;
 }
-.stAlert p, .stAlert span, .stAlert div {
-    color: #1E293B !important;
-    font-weight: 500 !important;
+
+/* Info */
+div[data-testid="stAlert"]:has([aria-label="info"]),
+[data-testid="stAlert"] [data-testid="stNotificationContentInfo"],
+.stAlert:has([data-testid="stNotificationContentInfo"]) {
+    background-color: #F0FDF4 !important;
+    border: 1.5px solid #86EFAC !important;
+    color: #144730 !important;
+}
+
+/* Success */
+div[data-testid="stAlert"]:has([aria-label="success"]),
+[data-testid="stAlert"] [data-testid="stNotificationContentSuccess"],
+.stAlert:has([data-testid="stNotificationContentSuccess"]) {
+    background-color: #DCFCE7 !important;
+    border: 1.5px solid #4ADE80 !important;
+    color: #144730 !important;
+}
+
+/* Warning */
+div[data-testid="stAlert"]:has([aria-label="warning"]),
+[data-testid="stAlert"] [data-testid="stNotificationContentWarning"],
+.stAlert:has([data-testid="stNotificationContentWarning"]) {
+    background-color: #FFFBEB !important;
+    border: 1.5px solid #FCD34D !important;
+    color: #92400E !important;
+}
+
+/* Error */
+div[data-testid="stAlert"]:has([aria-label="error"]),
+[data-testid="stAlert"] [data-testid="stNotificationContentError"],
+.stAlert:has([data-testid="stNotificationContentError"]) {
+    background-color: #FEF2F2 !important;
+    border: 1.5px solid #FCA5A5 !important;
+    color: #991B1B !important;
+}
+
+[data-testid="stAlert"] p,
+[data-testid="stAlert"] span,
+[data-testid="stAlert"] div {
+    font-weight: 600 !important;
 }
 
 /* Hero Page Banner Card Style */
@@ -541,3 +774,81 @@ header[class*="StyledSidebarNavSectionHeader"] {
         border-radius: 14px !important;
     }
 }
+
+/* Tables & DataFrames */
+[data-testid="stDataFrame"],
+[data-testid="stTable"],
+.stDataFrame,
+.stTable {
+    background-color: #FFFFFF !important;
+    border: 1.5px solid #86EFAC !important;
+    border-radius: 14px !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 16px rgba(27, 94, 63, 0.06) !important;
+}
+
+[data-testid="stTable"] th {
+    background: linear-gradient(90deg, #1B5E3F 0%, #2E7D56 100%) !important;
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    padding: 12px 16px !important;
+    border: none !important;
+}
+
+[data-testid="stTable"] td {
+    background-color: #FFFFFF !important;
+    color: #0F172A !important;
+    padding: 10px 16px !important;
+    border-bottom: 1px solid #E2E8F0 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PREVENT BROWSER DARK MODE FROM OVERRIDING LIGHT THEME
+   ═══════════════════════════════════════════════════════════════ */
+@media (prefers-color-scheme: dark) {
+    html, body, .stApp {
+        background-color: var(--bg-cream) !important;
+        color: var(--text-slate) !important;
+    }
+
+    .stApp [data-baseweb="select"] > div,
+    .stApp [data-baseweb="select"] input {
+        background-color: #FFFFFF !important;
+        color: #0F172A !important;
+    }
+
+    .stApp [data-testid="stExpander"] summary {
+        background: linear-gradient(90deg, #F0FDF4 0%, #ECFCCB 100%) !important;
+        color: #144730 !important;
+    }
+
+    .stApp [data-testid="stExpander"] [data-testid="stExpanderDetails"] {
+        background-color: #FFFFFF !important;
+        color: #0F172A !important;
+    }
+
+    .stApp [data-testid="stNumberInputStepDown"],
+    .stApp [data-testid="stNumberInputStepUp"],
+    .stApp .stNumberInput button {
+        background-color: #F0FDF4 !important;
+        color: #1B5E3F !important;
+    }
+
+    .stApp [data-testid="stTextInputPasswordToggle"],
+    .stApp [data-baseweb="input"] button {
+        background-color: #F0FDF4 !important;
+        color: #1B5E3F !important;
+    }
+
+    .stApp [data-baseweb="tag"] {
+        background-color: #DCFCE7 !important;
+        color: #144730 !important;
+    }
+
+    .stApp [data-testid="stAlert"] {
+        background-color: #F0FDF4 !important;
+        color: #144730 !important;
+    }
+}
+
+

@@ -50,7 +50,7 @@ st.set_page_config(page_title="Scan Food — FoodLens AI", page_icon="🔍", lay
 CSS_PATH = Path(__file__).parent.parent / "assets" / "theme.css"
 if CSS_PATH.exists():
     with open(CSS_PATH, "r", encoding="utf-8") as f:
-        st.html(f"<style>{f.read()}</style>")
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 # ── Safe Session State Initialization ──
 if "user_id" not in st.session_state:
@@ -598,14 +598,15 @@ elif st.session_state.scan_step == "review":
             for idx, ing in enumerate(preview_analysis.ingredients):
                 with cols[idx % 2]:
                     cat_badge = ing.category.upper()
-                    st.html(
+                    st.markdown(
                         f'<div class="foodlens-card-3d" style="padding: 10px 14px; margin-bottom: 8px;">'
                         f'<div style="display: flex; justify-content: space-between; align-items: center;">'
                         f'<b style="color: #144730; font-size: 13.5px;">{ing.position}. {ing.cleaned_name}</b>'
                         f'<span style="font-size: 10.5px; padding: 2px 7px; border-radius: 6px; background: #DCFCE7; color: #166534; font-weight: 700;">{cat_badge}</span>'
                         f'</div>'
                         f'<div style="font-size: 12px; color: #475569; margin-top: 3px;">{ing.explanation}</div>'
-                        f'</div>'
+                        f'</div>',
+                        unsafe_allow_html=True
                     )
 
     st.markdown("<hr style='border: none; border-top: 1.5px solid #E2E8F0; margin: 20px 0;'>", unsafe_allow_html=True)

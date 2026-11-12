@@ -17,7 +17,7 @@ st.set_page_config(page_title="Scan History — FoodLens AI", page_icon="🔍", 
 CSS_PATH = Path(__file__).parent.parent / "assets" / "theme.css"
 if CSS_PATH.exists():
     with open(CSS_PATH, "r", encoding="utf-8") as f:
-        st.html(f"<style>{f.read()}</style>")
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 from db.session import SessionLocal
 from db.models import Scan
@@ -60,7 +60,7 @@ try:
             f'</div>'
         )
         if hasattr(st, "html"):
-            st.html(history_empty_html)
+            st.markdown(history_empty_html)
         else:
             st.markdown(history_empty_html, unsafe_allow_html=True)
 
@@ -91,6 +91,7 @@ try:
                     <img src="{img_uri}" alt="{prod.name}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
                 </div>
                 """,
+                unsafe_allow_html=True,
                 unsafe_allow_html=True
             )
 

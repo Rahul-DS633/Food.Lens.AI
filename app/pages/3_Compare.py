@@ -19,7 +19,7 @@ st.set_page_config(page_title="Compare Foods — FoodLens AI", page_icon="🔍",
 CSS_PATH = Path(__file__).parent.parent / "assets" / "theme.css"
 if CSS_PATH.exists():
     with open(CSS_PATH, "r", encoding="utf-8") as f:
-        st.html(f"<style>{f.read()}</style>")
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 from db.session import SessionLocal
 from db.models import Product, UserProgress, XPEvent
@@ -210,13 +210,51 @@ try:
         comparison = _diff_text(v1, v2, unit, lower_is_better)
         rows.append({
             "Nutrient": m_label,
-            f"{p1.brand} ({p1.name[:16]}...)": v1_str,
-            f"{p2.brand} ({p2.name[:16]}...)": v2_str,
+            "val1": v1_str,
+            "val2": v2_str,
             "Evaluation": comparison
         })
 
-    df = pd.DataFrame(rows)
-    st.dataframe(df, width="stretch", hide_index=True)
+    table_rows_html = ""
+    for idx, r in enumerate(rows):
+        row_bg = "#FFFFFF" if idx % 2 == 0 else "#F8FCF9"
+        eval_val = r["Evaluation"]
+        if eval_val.startswith("Better"):
+            eval_badge = f'<span style="background: #DCFCE7; color: #166534; font-weight: 700; padding: 4px 10px; border-radius: 9999px; font-size: 12px; display: inline-block; border: 1px solid #86EFAC;">{eval_val}</span>'
+        elif eval_val.startswith("Higher"):
+            eval_badge = f'<span style="background: #FEF3C7; color: #92400E; font-weight: 700; padding: 4px 10px; border-radius: 9999px; font-size: 12px; display: inline-block; border: 1px solid #FCD34D;">{eval_val}</span>'
+        elif eval_val == "Identical":
+            eval_badge = f'<span style="background: #F1F5F9; color: #475569; font-weight: 600; padding: 4px 10px; border-radius: 9999px; font-size: 12px; display: inline-block; border: 1px solid #E2E8F0;">Identical</span>'
+        else:
+            eval_badge = f'<span style="color: #64748B;">{eval_val}</span>'
+
+        table_rows_html += f"""
+        <tr style="background: {row_bg}; border-bottom: 1px solid #E2E8F0;">
+            <td style="padding: 12px 16px; font-weight: 700; color: #0F172A; font-size: 13.5px;">{r['Nutrient']}</td>
+            <td style="padding: 12px 16px; color: #1E293B; font-size: 13.5px; font-family: 'JetBrains Mono', monospace;">{r['val1']}</td>
+            <td style="padding: 12px 16px; color: #1E293B; font-size: 13.5px; font-family: 'JetBrains Mono', monospace;">{r['val2']}</td>
+            <td style="padding: 12px 16px;">{eval_badge}</td>
+        </tr>
+        """
+
+    table_html = f"""
+    <div style="background: #FFFFFF; border: 1.5px solid #86EFAC; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 14px rgba(27,94,63,0.06); margin-bottom: 22px;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-family: 'Plus Jakarta Sans', sans-serif;">
+            <thead>
+                <tr style="background: linear-gradient(90deg, #1B5E3F 0%, #2E7D56 100%); color: #FFFFFF;">
+                    <th style="padding: 12px 16px; font-weight: 800; font-size: 13.5px; letter-spacing: 0.3px;">Nutrient</th>
+                    <th style="padding: 12px 16px; font-weight: 800; font-size: 13.5px; letter-spacing: 0.3px;">{p1.brand} ({p1.name[:16]}...)</th>
+                    <th style="padding: 12px 16px; font-weight: 800; font-size: 13.5px; letter-spacing: 0.3px;">{p2.brand} ({p2.name[:16]}...)</th>
+                    <th style="padding: 12px 16px; font-weight: 800; font-size: 13.5px; letter-spacing: 0.3px;">Evaluation</th>
+                </tr>
+            </thead>
+            <tbody>
+                {table_rows_html}
+            </tbody>
+        </table>
+    </div>
+    """
+    st.markdown(table_html, unsafe_allow_html=True)
 
     # Ingredients Side-by-side
     st.markdown("#### Ingredients Comparison")

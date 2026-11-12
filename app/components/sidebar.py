@@ -17,7 +17,7 @@ def render_sidebar(active_page: Optional[str] = None) -> None:
     """
     with st.sidebar:
         # Force suppress any unwanted section header or stray 'key' header in Streamlit nav
-        st.html(
+        st.markdown(
             """
             <style>
             [data-testid="stNavSectionHeader"],
@@ -46,7 +46,8 @@ def render_sidebar(active_page: Optional[str] = None) -> None:
                 opacity: 0 !important;
             }
             </style>
-            """
+            """,
+            unsafe_allow_html=True
         )
 
         # 1. Top Brand Logo & Title Card

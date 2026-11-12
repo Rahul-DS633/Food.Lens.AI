@@ -19,7 +19,7 @@ st.set_page_config(page_title="Family Profiles — FoodLens AI", page_icon="👨
 CSS_PATH = Path(__file__).parent.parent / "assets" / "theme.css"
 if CSS_PATH.exists():
     with open(CSS_PATH, "r", encoding="utf-8") as f:
-        st.html(f"<style>{f.read()}</style>")
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 from db.session import SessionLocal, export_household_data, delete_household_data
 from db.models import Household, HouseholdMember
@@ -115,7 +115,15 @@ try:
                     st.rerun()
 
     else:
-        st.info("No family members added yet. Add your first member below to activate multi-person food checks!")
+        st.markdown(
+            """
+            <div style="background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 12px; padding: 14px 18px; margin-bottom: 14px; color: #144730; font-size: 14px; display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 18px;">ℹ️</span>
+                <span><b>No family members added yet.</b> Add your first member below to activate multi-person food checks!</span>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
     st.markdown("---")
 

@@ -64,19 +64,20 @@ def render_sugar_timeline(report: SugarReport, portion_g: float = 100.0, raw_tok
         return
 
     cubes_icon = get_icon_svg("cubes", size=22, color="#B45309")
-    st.html(
+    st.markdown(
         f'<div style="display: flex; align-items: center; gap: 8px; margin-top: 14px; margin-bottom: 6px;">'
         f'{cubes_icon}'
         f'<h3 style="margin: 0; color: #144730; font-size: 18px;">Hidden Sugar & Sweetener Timeline</h3>'
         f'</div>'
         f'<p style="color: #64748B; font-size: 13px; margin-bottom: 12px;">'
         f'Ingredients appear in statutory descending weight order. Highlighted badges indicate caloric sugars, syrups, bulking fillers, or sweeteners.'
-        f'</p>'
+        f'</p>',
+        unsafe_allow_html=True
     )
 
     # 1. Sugar Splitting Warning Banner
     if report.sugar_splitting:
-        st.html(
+        st.markdown(
             f'<div style="background: #FEF3C7; border: 1.5px solid #F59E0B; border-radius: 12px; padding: 12px 16px; margin-bottom: 14px; box-shadow: 0 2px 6px rgba(245, 158, 11, 0.08);">'
             f'<div style="display: flex; align-items: center; gap: 10px;">'
             f'<span style="font-size: 20px;">⚠️</span>'
@@ -87,12 +88,13 @@ def render_sugar_timeline(report: SugarReport, portion_g: float = 100.0, raw_tok
             f'</div>'
             f'</div>'
             f'</div>'
-            f'</div>'
+            f'</div>',
+            unsafe_allow_html=True
         )
 
     # 2. Label Conflict Notice
     if report.label_conflict and report.label_conflict_reason:
-        st.html(
+        st.markdown(
             f'<div style="background: #EFF6FF; border: 1.5px solid #60A5FA; border-radius: 12px; padding: 12px 16px; margin-bottom: 14px;">'
             f'<div style="display: flex; align-items: center; gap: 10px;">'
             f'<span style="font-size: 20px;">⚖️</span>'
@@ -103,13 +105,14 @@ def render_sugar_timeline(report: SugarReport, portion_g: float = 100.0, raw_tok
             f'</div>'
             f'</div>'
             f'</div>'
-            f'</div>'
+            f'</div>',
+            unsafe_allow_html=True
         )
 
     # 3. Teaspoons Metric Card
     if report.portion_teaspoons is not None:
         basis_txt = "added sugar" if report.teaspoon_basis == "added_sugar" else "total sugars"
-        st.html(
+        st.markdown(
             f'<div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 12px 16px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">'
             f'<div>'
             f'<span style="font-size: 12px; color: #64748B; font-weight: 700; text-transform: uppercase;">Equivalent Sugar in {portion_g:g}g Portion</span>'
@@ -117,7 +120,9 @@ def render_sugar_timeline(report: SugarReport, portion_g: float = 100.0, raw_tok
             f'About {report.portion_teaspoons:g} Teaspoons'
             f'</div>'
             f'<span style="font-size: 11px; color: #64748B;">Calculated as grams / 4.0, rounded to nearest 0.5 (based on {basis_txt}).</span>'
-            f'</div>'
+            f'</div>',
+            unsafe_allow_html=True
+        )
             f'<div style="text-align: right;">'
             f'<span style="background: #ECFCCB; color: #365314; font-weight: 800; font-size: 12px; padding: 4px 10px; border-radius: 12px;">'
             f'{len(report.distinct_sugar_names)} Sugar Sources'
@@ -155,7 +160,7 @@ def render_sugar_timeline(report: SugarReport, portion_g: float = 100.0, raw_tok
             timeline_items_html.append(neutral_html)
 
     joined_timeline = "".join(timeline_items_html)
-    st.html(
+    st.markdown(
         f'<div class="foodlens-card-3d" style="padding: 14px; margin-bottom: 14px;">'
         f'<div style="font-size: 12px; font-weight: 800; color: #144730; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.4px;">'
         f'Ordered Ingredient Track (Descending Weight)'
@@ -163,7 +168,8 @@ def render_sugar_timeline(report: SugarReport, portion_g: float = 100.0, raw_tok
         f'<div style="line-height: 2.2;">'
         f'{joined_timeline}'
         f'</div>'
-        f'</div>'
+        f'</div>',
+        unsafe_allow_html=True
     )
 
     # 5. Expandable 'What Is This?' Glossary
@@ -171,7 +177,7 @@ def render_sugar_timeline(report: SugarReport, portion_g: float = 100.0, raw_tok
         with st.expander("📖 What Are These Ingredients? (Neutral Educational Guide)", expanded=False):
             for m in report.matches:
                 style = _CLASS_STYLE_MAP.get(m.sugar_class, _CLASS_STYLE_MAP["sugars"])
-                st.html(
+                st.markdown(
                     f'<div style="margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #F1F5F9;">'
                     f'<span style="font-weight: 800; color: {style["color"]}; font-size: 13.5px;">'
                     f'#{m.position} {m.ingredient_text}'
@@ -182,6 +188,7 @@ def render_sugar_timeline(report: SugarReport, portion_g: float = 100.0, raw_tok
                     f'<div style="font-size: 12px; color: #475569; margin-top: 3px; line-height: 1.4;">'
                     f'{m.explanation}'
                     f'</div>'
-                    f'</div>'
+                    f'</div>',
+                    unsafe_allow_html=True
                 )
 

@@ -126,4 +126,7 @@ def render_page_header(
         f'</div>'
     )
 
-    st.html(banner_html)
+    if hasattr(st, "html"):
+        st.html(banner_html)
+    else:
+        st.markdown(banner_html, unsafe_allow_html=True)

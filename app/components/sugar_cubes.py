@@ -45,10 +45,7 @@ def render_sugar_cubes(sugar_grams: Optional[float], portion_label: str = "this 
             f'{info_icon}<span>Total sugar quantity is <b>not declared</b> on this manufacturer\'s label.</span>'
             f'</div>'
         )
-        if hasattr(st, "html"):
-            st.html(card_empty)
-        else:
-            st.markdown(card_empty, unsafe_allow_html=True)
+        st.markdown(card_empty, unsafe_allow_html=True)
         return
 
     tsps = round(sugar_grams / 4.0, 1)
@@ -78,7 +75,4 @@ def render_sugar_cubes(sugar_grams: Optional[float], portion_label: str = "this 
         f'</div>'
         f'</div>'
     )
-    if hasattr(st, "html"):
-        st.html(card_html)
-    else:
-        st.markdown(card_html, unsafe_allow_html=True)
+    st.markdown(card_html, unsafe_allow_html=True)

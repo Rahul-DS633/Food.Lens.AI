@@ -42,7 +42,7 @@ st.set_page_config(
 CSS_PATH = Path(__file__).parent / "assets" / "theme.css"
 if CSS_PATH.exists():
     with open(CSS_PATH, "r", encoding="utf-8") as f:
-        st.html(f"<style>{f.read()}</style>")
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 from db.session import SessionLocal, init_db, engine
 from db.models import Base, User, Product
@@ -186,14 +186,11 @@ try:
             f'<h1 style="color: #144730; margin: 4px 0 6px 0; font-size: 32px;">{t["hero_title"]}</h1>'
             f'<p style="font-size: 15.5px; color: #475569; line-height: 1.5; margin-bottom: 16px;">{t["hero_subtitle"]}</p>'
         )
-        if hasattr(st, "html"):
-            st.html(hero_html)
-        else:
-            st.markdown(hero_html, unsafe_allow_html=True)
+        st.markdown(hero_html, unsafe_allow_html=True)
 
     # 4. Today's Quest Card
     today_quest = get_daily_challenge(date.today())
-    trophy_icon = get_icon_svg("trophy", size=22, color="#166534")
+    trophy_icon = get_icon_svg("trophy", size=24, color="#166534")
     quest_title = today_quest["title"]
     quest_desc = today_quest["description"]
     if active_lang == "hi":
@@ -204,7 +201,7 @@ try:
         f'<div class="foodlens-card-3d" style="background: linear-gradient(90deg, #F0FDF4 0%, #ECFCCB 100%); border: 1.5px solid #86EFAC; margin-bottom: 22px;">'
         f'<div style="display: flex; justify-content: space-between; align-items: center;">'
         f'<div style="display: flex; align-items: center; gap: 14px;">'
-        f'<div style="width: 46px; height: 46px; border-radius: 12px; background: rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">{trophy_icon}</div>'
+        f'<div style="width: 48px; height: 48px; border-radius: 12px; background: #FFFFFF; border: 1.5px solid #86EFAC; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">{trophy_icon}</div>'
         f'<div>'
         f'<span style="background: #1B5E3F; color: #FFFFFF !important; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 6px; letter-spacing: 0.5px;">{t["daily_quest"]}</span>'
         f'<h3 style="margin: 4px 0 2px 0; color: #166534; font-size: 17px;">{quest_title}</h3>'
@@ -218,77 +215,62 @@ try:
         f'</div>'
         f'</div>'
     )
-    if hasattr(st, "html"):
-        st.html(quest_card_html)
-    else:
-        st.markdown(quest_card_html, unsafe_allow_html=True)
+    st.markdown(quest_card_html, unsafe_allow_html=True)
 
-    # 5. Quick Action Columns (3D Elevating Cards with Vector Badges)
+    # 5. Quick Action Columns (3D Elevating Cards with Cohesive Green Badges)
     col1, col2, col3 = st.columns(3)
 
-    cam_badge = icon_badge("camera", bg="#DCFCE7", color="#166534", size=24, badge_size=48)
-    scale_badge = icon_badge("scale", bg="#EFF6FF", color="#2563EB", size=24, badge_size=48)
-    game_badge = icon_badge("gamepad", bg="#FDF4FF", color="#9333EA", size=24, badge_size=48)
+    cam_badge = icon_badge("camera", bg="#DCFCE7", color="#166534", size=24, badge_size=48, border="#86EFAC")
+    scale_badge = icon_badge("scale", bg="#F0FDF4", color="#1B5E3F", size=24, badge_size=48, border="#86EFAC")
+    game_badge = icon_badge("gamepad", bg="#ECFCCB", color="#3F6212", size=24, badge_size=48, border="#BEF264")
 
     with col1:
         card1_html = (
-            f'<div class="action-card-3d">'
+            f'<div class="action-card-3d" style="border-top: 3.5px solid #1B5E3F;">'
             f'<div style="margin-bottom: 12px;">{cam_badge}</div>'
             f'<h3 style="color: #144730; margin: 0 0 6px 0; font-size: 18px;">{t["card_scan_title"]}</h3>'
             f'<p style="font-size: 13.5px; color: #475569; min-height: 42px; line-height: 1.4;">{t["card_scan_desc"]}</p>'
             f'</div>'
         )
-        if hasattr(st, "html"):
-            st.html(card1_html)
-        else:
-            st.markdown(card1_html, unsafe_allow_html=True)
+        st.markdown(card1_html, unsafe_allow_html=True)
         if st.button(t["btn_scan"], width="stretch", type="primary", key="btn_scan_home"):
             st.switch_page("pages/1_Scan.py")
 
     with col2:
         card2_html = (
-            f'<div class="action-card-3d">'
+            f'<div class="action-card-3d" style="border-top: 3.5px solid #2E7D56;">'
             f'<div style="margin-bottom: 12px;">{scale_badge}</div>'
             f'<h3 style="color: #144730; margin: 0 0 6px 0; font-size: 18px;">{t["card_compare_title"]}</h3>'
             f'<p style="font-size: 13.5px; color: #475569; min-height: 42px; line-height: 1.4;">{t["card_compare_desc"]}</p>'
             f'</div>'
         )
-        if hasattr(st, "html"):
-            st.html(card2_html)
-        else:
-            st.markdown(card2_html, unsafe_allow_html=True)
+        st.markdown(card2_html, unsafe_allow_html=True)
         if st.button(t["btn_compare"], width="stretch", key="btn_comp_home"):
             st.switch_page("pages/3_Compare.py")
 
     with col3:
         card3_html = (
-            f'<div class="action-card-3d">'
+            f'<div class="action-card-3d" style="border-top: 3.5px solid #166534;">'
             f'<div style="margin-bottom: 12px;">{game_badge}</div>'
             f'<h3 style="color: #144730; margin: 0 0 6px 0; font-size: 18px;">{t["card_quest_title"]}</h3>'
             f'<p style="font-size: 13.5px; color: #475569; min-height: 42px; line-height: 1.4;">{t["card_quest_desc"]}</p>'
             f'</div>'
         )
-        if hasattr(st, "html"):
-            st.html(card3_html)
-        else:
-            st.markdown(card3_html, unsafe_allow_html=True)
+        st.markdown(card3_html, unsafe_allow_html=True)
         if st.button(t["btn_quest"], width="stretch", key="btn_quest_home"):
             st.switch_page("pages/4_Quest.py")
 
     st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
 
     # 6. Realistic Packaged Food Visual Showcase (Instant Demos)
-    bolt_icon = get_icon_svg("bolt", size=22, color="#EA580C")
+    bolt_icon = get_icon_svg("bolt", size=22, color="#1B5E3F")
     showcase_html = (
         f'<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">'
         f'{bolt_icon}<h2 style="color: #144730; margin: 0; font-size: 22px;">{t["showcase_title"]}</h2>'
         f'</div>'
         f'<p style="color: #64748B; font-size: 14px; margin-bottom: 16px;">{t["showcase_subtitle"]}</p>'
     )
-    if hasattr(st, "html"):
-        st.html(showcase_html)
-    else:
-        st.markdown(showcase_html, unsafe_allow_html=True)
+    st.markdown(showcase_html, unsafe_allow_html=True)
 
     preseeded_prods = db.query(Product).limit(5).all()
     demo_cols = st.columns(len(preseeded_prods))
@@ -301,7 +283,7 @@ try:
 
         with demo_cols[idx]:
             card_p_html = (
-                f'<div class="product-card-3d" style="padding: 12px; text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: space-between;">'
+                f'<div class="product-card-3d" style="border-top: 3.5px solid #1B5E3F; padding: 12px; text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: space-between;">'
                 f'<div>'
                 f'<div style="width: 100%; height: 130px; border-radius: 12px; overflow: hidden; background: #FFFFFF; margin-bottom: 10px; border: 1.5px solid #E2E8F0; display: flex; align-items: center; justify-content: center; padding: 6px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);">'
                 f'<img src="{img_uri}" alt="{p.name}" style="max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.3s ease;">'
@@ -315,9 +297,7 @@ try:
                 f'</div>'
                 f'</div>'
             )
-            if hasattr(st, "html"):
-                st.html(card_p_html)
-            else:
+            st.markdown(card_p_html, unsafe_allow_html=True)
                 st.markdown(card_p_html, unsafe_allow_html=True)
 
             if st.button(f"{t['btn_inspect']} {p.brand}", key=f"demo_btn_{p.id}", width="stretch"):

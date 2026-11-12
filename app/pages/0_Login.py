@@ -26,7 +26,7 @@ st.set_page_config(
 CSS_PATH = Path(__file__).parent.parent / "assets" / "theme.css"
 if CSS_PATH.exists():
     with open(CSS_PATH, "r", encoding="utf-8") as f:
-        st.html(f"<style>{f.read()}</style>")
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 from db.session import SessionLocal, init_db
 from db.models import User, UserProfile, UserProgress
@@ -97,7 +97,7 @@ try:
             else '<span style="background: #DCFCE7; color: #166534; padding: 3px 9px; border-radius: 9999px; font-size: 11px; font-weight: 800;">👤 VERIFIED MEMBER</span>'
         )
 
-        st.html(
+        st.markdown(
             f"""
             <div style="
                 background: #FFFFFF;
@@ -135,7 +135,8 @@ try:
                     </div>
                 </div>
             </div>
-            """
+            """,
+            unsafe_allow_html=True
         )
 
         # Quick action row for logged-in user
@@ -216,7 +217,7 @@ try:
                             st.error("Invalid username/email or password. Please check your credentials or use the Quick Switcher.")
 
         with c_log2:
-            st.html(
+            st.markdown(
                 """
                 <div style="
                     background: #F8FAFC;
@@ -236,7 +237,8 @@ try:
                         <li>Default demo login: <code>curious</code> / <code>demo123</code>.</li>
                     </ul>
                 </div>
-                """
+                """,
+                unsafe_allow_html=True
             )
 
     # --- TAB 2: Register New Account ---
@@ -360,19 +362,20 @@ try:
                         st.error("Invalid administrator key or password.")
 
             if st.session_state.get("admin_authenticated", False):
-                st.html(
+                st.markdown(
                     """
                     <div style="background: #F0FDF4; border: 1.5px solid #22C55E; border-radius: 12px; padding: 14px; margin-top: 14px;">
                         <span style="font-weight: 800; color: #166534; font-size: 15px;">🛡️ Administrator Session Currently Active</span>
                         <p style="margin: 4px 0 0 0; font-size: 13px; color: #15803D;">You have full privileges to review data reports, inspect submitted OCR images, and approve verified revisions.</p>
                     </div>
-                    """
+                    """,
+                    unsafe_allow_html=True
                 )
                 if st.button("🚀 Proceed to Admin Review Queue", type="primary", use_container_width=True):
                     st.switch_page("pages/9_Admin.py")
 
         with ad_col2:
-            st.html(
+            st.markdown(
                 """
                 <div style="
                     background: #FEF2F2;
@@ -392,7 +395,8 @@ try:
                         <li>Default demo key: <code>foodlens_admin_secret</code>.</li>
                     </ul>
                 </div>
-                """
+                """,
+                unsafe_allow_html=True
             )
 
     # --- TAB 4: Quick Demo Profile Switcher ---
@@ -413,7 +417,7 @@ try:
 
             col_u_info, col_u_btn = st.columns([3, 1])
             with col_u_info:
-                st.html(
+                st.markdown(
                     f"""
                     <div style="
                         background: {'#F0FDF4' if is_active else '#FFFFFF'};
@@ -434,7 +438,8 @@ try:
                             <strong>Role:</strong> {getattr(u, "role", "user")} &nbsp;|&nbsp; <strong>Allergies:</strong> {allergen_preview}
                         </div>
                     </div>
-                    """
+                    """,
+                    unsafe_allow_html=True
                 )
             with col_u_btn:
                 if st.button(f"Switch to #{u.id}", key=f"switch_user_{u.id}", disabled=is_active, use_container_width=True):
