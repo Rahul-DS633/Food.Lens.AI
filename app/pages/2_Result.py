@@ -291,8 +291,8 @@ try:
     with col_h_img:
         st.markdown(
             f"""
-            <div style="width: 100%; height: 175px; border-radius: 16px; overflow: hidden; background: #FFFFFF; border: 1.5px solid #E2E8F0; box-shadow: 0 10px 20px -5px rgba(0,0,0,0.06); display: flex; align-items: center; justify-content: center;">
-                <img src="{img_uri}" alt="{prod.name}" style="width: 100%; height: 100%; object-fit: cover;">
+            <div style="width: 100%; height: 175px; border-radius: 16px; overflow: hidden; background: #FFFFFF; border: 1.5px solid #E2E8F0; box-shadow: 0 10px 20px -5px rgba(0,0,0,0.06); display: flex; align-items: center; justify-content: center; padding: 6px;">
+                <img src="{img_uri}" alt="{prod.name}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
             </div>
             """,
             unsafe_allow_html=True

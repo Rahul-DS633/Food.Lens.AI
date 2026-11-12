@@ -124,6 +124,11 @@ def process_images_batch(image_bytes_list):
             try:
                 existing = db.query(Product).filter(Product.barcode == detected_barcode).first()
                 if existing:
+                    if not existing.image_url:
+                        info, _ = off_client.fetch_product(detected_barcode)
+                        if info and info.get("image_url"):
+                            existing.image_url = info["image_url"]
+                            db.commit()
                     st.session_state.current_scan_product_id = existing.id
                     progress_bar.progress(1.0)
                     st.success(f"Recognized Product: {existing.name} ({existing.brand})")
@@ -140,6 +145,7 @@ def process_images_batch(image_bytes_list):
                         category=info.get("category", "general"),
                         net_weight_g=info.get("net_weight_g"),
                         serving_size_g=info.get("serving_size_g"),
+                        image_url=info.get("image_url"),
                         source="api",
                         verification_status="verified",
                         quality_grade="A"
@@ -323,6 +329,11 @@ if st.session_state.scan_step == "capture":
                 try:
                     prod = db.query(Product).filter(Product.barcode == clean_code).first()
                     if prod:
+                        if not prod.image_url:
+                            info, _ = off_client.fetch_product(clean_code)
+                            if info and info.get("image_url"):
+                                prod.image_url = info["image_url"]
+                                db.commit()
                         st.session_state.current_scan_product_id = prod.id
                         st.switch_page("pages/2_Result.py")
                     else:
@@ -335,6 +346,7 @@ if st.session_state.scan_step == "capture":
                                 category=info.get("category", "general"),
                                 net_weight_g=info.get("net_weight_g"),
                                 serving_size_g=info.get("serving_size_g"),
+                                image_url=info.get("image_url"),
                                 source="api",
                                 verification_status="verified",
                                 quality_grade="A"

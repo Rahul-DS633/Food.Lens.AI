@@ -87,8 +87,8 @@ try:
         with col1:
             st.markdown(
                 f"""
-                <div style="width: 100%; height: 75px; border-radius: 12px; overflow: hidden; background: #F8FAFC; border: 1px solid #E2E8F0; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
-                    <img src="{img_uri}" alt="{prod.name}" style="width: 100%; height: 100%; object-fit: cover;">
+                <div style="width: 100%; height: 75px; border-radius: 12px; overflow: hidden; background: #FFFFFF; border: 1px solid #E2E8F0; box-shadow: 0 2px 6px rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: center; padding: 4px;">
+                    <img src="{img_uri}" alt="{prod.name}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
                 </div>
                 """,
                 unsafe_allow_html=True

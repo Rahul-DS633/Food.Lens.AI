@@ -127,8 +127,8 @@ try:
             f"""
             <div class="product-card-3d" style="border-top: 5px solid #1B5E3F; padding: 18px;">
                 <div style="display: flex; gap: 14px; align-items: center; margin-bottom: 12px;">
-                    <div style="width: 80px; height: 80px; border-radius: 12px; overflow: hidden; background: #F8FAFC; border: 1px solid #E2E8F0; flex-shrink: 0;">
-                        <img src="{img1}" alt="{p1.name}" style="width: 100%; height: 100%; object-fit: cover;">
+                    <div style="width: 80px; height: 80px; border-radius: 12px; overflow: hidden; background: #FFFFFF; border: 1px solid #E2E8F0; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 4px;">
+                        <img src="{img1}" alt="{p1.name}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
                     </div>
                     <div>
                         <span style="font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; background: #DCFCE7; color: #166534; text-transform: uppercase;">
@@ -154,8 +154,8 @@ try:
             f"""
             <div class="product-card-3d" style="border-top: 5px solid #2563EB; padding: 18px;">
                 <div style="display: flex; gap: 14px; align-items: center; margin-bottom: 12px;">
-                    <div style="width: 80px; height: 80px; border-radius: 12px; overflow: hidden; background: #F8FAFC; border: 1px solid #E2E8F0; flex-shrink: 0;">
-                        <img src="{img2}" alt="{p2.name}" style="width: 100%; height: 100%; object-fit: cover;">
+                    <div style="width: 80px; height: 80px; border-radius: 12px; overflow: hidden; background: #FFFFFF; border: 1px solid #E2E8F0; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 4px;">
+                        <img src="{img2}" alt="{p2.name}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
                     </div>
                     <div>
                         <span style="font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; background: #EFF6FF; color: #1D4ED8; text-transform: uppercase;">

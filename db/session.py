@@ -233,6 +233,8 @@ def init_db():
                 db.add(db_nutr)
                 target_prod = db_prod
             else:
+                if prod.get("image_url") and existing_prod.image_url != prod["image_url"]:
+                    existing_prod.image_url = prod["image_url"]
                 target_prod = existing_prod
 
             # Seed ingredients if missing

@@ -57,9 +57,16 @@ def get_product_image(
     fallback_url: Optional[str] = None
 ) -> str:
     """
-    Resolves the best realistic image for a product.
-    Checks exact brand/product keywords against local realistic photography.
+    Resolves the best real packaging image for a product.
+    1. Prioritizes verified Open Food Facts / CDN image URL (fallback_url).
+    2. Falls back to local authentic packaging photography base64 data URI.
+    3. Falls back to nutrition hero visual.
     """
+    # 1. Prioritize real Open Food Facts / CDN image URL if provided
+    if fallback_url and fallback_url.startswith("http"):
+        return fallback_url
+
+    # 2. Match against local packaging photography assets
     search_keys = [
         product_name.lower(),
         brand.lower(),
@@ -73,11 +80,7 @@ def get_product_image(
                 if data_uri:
                     return data_uri
 
-    # If fallback URL provided and valid
-    if fallback_url and fallback_url.startswith("http"):
-        return fallback_url
-
-    # Default category fallback
+    # 3. Default category fallback
     data_uri = get_image_base64("hero_nutrition.jpg")
     return data_uri or ""
 

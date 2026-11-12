@@ -96,8 +96,8 @@ try:
                 st.markdown(
                     f"""
                     <div class="product-card-3d" style="padding: 14px; text-align: center;">
-                        <div style="width: 100%; height: 160px; border-radius: 12px; overflow: hidden; background: #F8FAFC; border: 1px solid #E2E8F0; margin-bottom: 8px;">
-                            <img src="{img_uri}" alt="{sample_product.name}" style="width: 100%; height: 100%; object-fit: cover;">
+                        <div style="width: 100%; height: 160px; border-radius: 12px; overflow: hidden; background: #FFFFFF; border: 1px solid #E2E8F0; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; padding: 6px;">
+                            <img src="{img_uri}" alt="{sample_product.name}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
                         </div>
                         <div style="font-weight: 800; font-size: 14px; color: #0F172A;">{sample_product.name}</div>
                         <div style="font-size: 12px; color: #64748B;">1 Serving = <b>{serving_size:g} g</b> (~4 biscuits)</div>
@@ -162,8 +162,8 @@ try:
                 st.markdown(
                     f"""
                     <div class="product-card-3d" style="padding: 14px; text-align: center;">
-                        <div style="width: 100%; height: 160px; border-radius: 12px; overflow: hidden; background: #F8FAFC; border: 1px solid #E2E8F0; margin-bottom: 8px;">
-                            <img src="{img_uri}" alt="{quiz_prod.name}" style="width: 100%; height: 100%; object-fit: cover;">
+                        <div style="width: 100%; height: 160px; border-radius: 12px; overflow: hidden; background: #FFFFFF; border: 1px solid #E2E8F0; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; padding: 6px;">
+                            <img src="{img_uri}" alt="{quiz_prod.name}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
                         </div>
                         <div style="font-weight: 800; font-size: 14px; color: #0F172A;">{quiz_prod.name}</div>
                         <div style="font-size: 12px; color: #64748B;">Total Net Weight: <b>{net_wt:g} g</b></div>

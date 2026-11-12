@@ -24,7 +24,7 @@ PRESEEDED_INDIAN_PRODUCTS: Dict[str, Dict[str, Any]] = {
         "category": "biscuits",
         "net_weight_g": 65.0,
         "serving_size_g": 21.6,
-        "image_url": "https://images.openfoodfacts.org/images/products/890/171/910/1052/front_en.11.400.jpg",
+        "image_url": "https://images.openfoodfacts.org/images/products/890/171/910/1038/front_en.20.400.jpg",
         "ingredients_text": "Wheat Flour (68%), Sugar, Edible Vegetable Oil (Palm Oil), Invert Sugar Syrup, Raising Agents [503(ii), 500(ii)], Salt, Milk Solids, Emulsifier [322], Dough Conditioner [223].",
         "allergens": ["gluten", "milk", "wheat", "soy"],
         "nutrients": {
@@ -48,7 +48,7 @@ PRESEEDED_INDIAN_PRODUCTS: Dict[str, Dict[str, Any]] = {
         "category": "instant_noodles",
         "net_weight_g": 70.0,
         "serving_size_g": 70.0,
-        "image_url": "https://images.openfoodfacts.org/images/products/890/105/885/2347/front_en.43.400.jpg",
+        "image_url": "https://images.openfoodfacts.org/images/products/890/105/890/5274/front_en.3.400.jpg",
         "ingredients_text": "Refined Wheat Flour (Maida), Palm Oil, Iodised Salt, Wheat Gluten, Thickeners (508, 412), Acidity Regulators (501(i), 500(i)), Masala Tastemaker: Mixed Spices (Onion Powder, Coriander Powder, Turmeric Powder, Red Chilli Powder, Garlic Powder, Cumin Powder, Aniseed, Fenugreek, Ginger, Black Pepper, Clove, Nutmeg, Cardamom), Sugar, Salt, Hydrolysed Groundnut Protein.",
         "allergens": ["gluten", "wheat", "peanut"],
         "nutrients": {
@@ -72,7 +72,7 @@ PRESEEDED_INDIAN_PRODUCTS: Dict[str, Dict[str, Any]] = {
         "category": "namkeen",
         "net_weight_g": 150.0,
         "serving_size_g": 30.0,
-        "image_url": "https://images.openfoodfacts.org/images/products/890/406/320/0142/front_en.16.400.jpg",
+        "image_url": "https://images.openfoodfacts.org/images/products/890/400/440/0731/front_en.28.400.jpg",
         "ingredients_text": "Potatoes, Edible Vegetable Oil (Palmolein Oil, Cotton Seed Oil), Gram Pulse Flour, Tepary Bean Flour, Edible Starch, Edible Common Salt, Spices & Condiments (Coriander Powder, Cumin Powder, Mango Powder, Garlic Powder, Onion Powder, Lemon Powder, Ginger Powder, Red Chilli Powder, Mint Leaves Powder).",
         "allergens": [],
         "nutrients": {
@@ -96,7 +96,7 @@ PRESEEDED_INDIAN_PRODUCTS: Dict[str, Dict[str, Any]] = {
         "category": "spreads",
         "net_weight_g": 100.0,
         "serving_size_g": 10.0,
-        "image_url": "https://images.openfoodfacts.org/images/products/890/126/201/0025/front_en.21.400.jpg",
+        "image_url": "https://images.openfoodfacts.org/images/products/890/126/201/0016/front_en.53.400.jpg",
         "ingredients_text": "Butter, Common Salt, Permitted Natural Colour (Annatto).",
         "allergens": ["milk"],
         "nutrients": {
@@ -120,7 +120,7 @@ PRESEEDED_INDIAN_PRODUCTS: Dict[str, Dict[str, Any]] = {
         "category": "drinks",
         "net_weight_g": 160.0,  # 160 ml
         "serving_size_g": 160.0,
-        "image_url": "https://images.openfoodfacts.org/images/products/890/171/911/4120/front_en.12.400.jpg",
+        "image_url": "https://images.openfoodfacts.org/images/products/890/257/900/1599/front_en.9.400.jpg",
         "ingredients_text": "Water, Mango Pulp (19.5%), Sugar, Acidity Regulator (330), Antioxidant (300).",
         "allergens": [],
         "nutrients": {

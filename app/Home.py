@@ -303,8 +303,8 @@ try:
             card_p_html = (
                 f'<div class="product-card-3d" style="padding: 12px; text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: space-between;">'
                 f'<div>'
-                f'<div style="width: 100%; height: 130px; border-radius: 12px; overflow: hidden; background: #F8FAFC; margin-bottom: 10px; border: 1px solid #E2E8F0; display: flex; align-items: center; justify-content: center;">'
-                f'<img src="{img_uri}" alt="{p.name}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;">'
+                f'<div style="width: 100%; height: 130px; border-radius: 12px; overflow: hidden; background: #FFFFFF; margin-bottom: 10px; border: 1.5px solid #E2E8F0; display: flex; align-items: center; justify-content: center; padding: 6px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);">'
+                f'<img src="{img_uri}" alt="{p.name}" style="max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.3s ease;">'
                 f'</div>'
                 f'<div style="display: flex; justify-content: center; gap: 4px; margin-bottom: 6px;">'
                 f'<span style="font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 6px; background: #DCFCE7; color: #166534; text-transform: uppercase;">{p.brand}</span>'
