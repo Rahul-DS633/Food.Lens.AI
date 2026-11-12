@@ -228,32 +228,32 @@ try:
         else:
             eval_badge = f'<span style="color: #64748B;">{eval_val}</span>'
 
-        table_rows_html += f"""
-        <tr style="background: {row_bg}; border-bottom: 1px solid #E2E8F0;">
-            <td style="padding: 12px 16px; font-weight: 700; color: #0F172A; font-size: 13.5px;">{r['Nutrient']}</td>
-            <td style="padding: 12px 16px; color: #1E293B; font-size: 13.5px; font-family: 'JetBrains Mono', monospace;">{r['val1']}</td>
-            <td style="padding: 12px 16px; color: #1E293B; font-size: 13.5px; font-family: 'JetBrains Mono', monospace;">{r['val2']}</td>
-            <td style="padding: 12px 16px;">{eval_badge}</td>
-        </tr>
-        """
+        table_rows_html += (
+            f'<tr style="background: {row_bg}; border-bottom: 1px solid #E2E8F0;">'
+            f'<td style="padding: 12px 16px; font-weight: 700; color: #0F172A; font-size: 13.5px;">{r["Nutrient"]}</td>'
+            f'<td style="padding: 12px 16px; color: #1E293B; font-size: 13.5px; font-family: \'JetBrains Mono\', monospace;">{r["val1"]}</td>'
+            f'<td style="padding: 12px 16px; color: #1E293B; font-size: 13.5px; font-family: \'JetBrains Mono\', monospace;">{r["val2"]}</td>'
+            f'<td style="padding: 12px 16px;">{eval_badge}</td>'
+            f'</tr>'
+        )
 
-    table_html = f"""
-    <div style="background: #FFFFFF; border: 1.5px solid #86EFAC; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 14px rgba(27,94,63,0.06); margin-bottom: 22px;">
-        <table style="width: 100%; border-collapse: collapse; text-align: left; font-family: 'Plus Jakarta Sans', sans-serif;">
-            <thead>
-                <tr style="background: linear-gradient(90deg, #1B5E3F 0%, #2E7D56 100%); color: #FFFFFF;">
-                    <th style="padding: 12px 16px; font-weight: 800; font-size: 13.5px; letter-spacing: 0.3px;">Nutrient</th>
-                    <th style="padding: 12px 16px; font-weight: 800; font-size: 13.5px; letter-spacing: 0.3px;">{p1.brand} ({p1.name[:16]}...)</th>
-                    <th style="padding: 12px 16px; font-weight: 800; font-size: 13.5px; letter-spacing: 0.3px;">{p2.brand} ({p2.name[:16]}...)</th>
-                    <th style="padding: 12px 16px; font-weight: 800; font-size: 13.5px; letter-spacing: 0.3px;">Evaluation</th>
-                </tr>
-            </thead>
-            <tbody>
-                {table_rows_html}
-            </tbody>
-        </table>
-    </div>
-    """
+    table_html = (
+        f'<div style="background: #FFFFFF; border: 1.5px solid #86EFAC; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 14px rgba(27,94,63,0.06); margin-bottom: 22px;">'
+        f'<table style="width: 100%; border-collapse: collapse; text-align: left; font-family: \'Plus Jakarta Sans\', sans-serif;">'
+        f'<thead>'
+        f'<tr style="background: linear-gradient(90deg, #1B5E3F 0%, #2E7D56 100%); color: #FFFFFF;">'
+        f'<th style="padding: 12px 16px; font-weight: 800; font-size: 13.5px; letter-spacing: 0.3px;">Nutrient</th>'
+        f'<th style="padding: 12px 16px; font-weight: 800; font-size: 13.5px; letter-spacing: 0.3px;">{p1.brand} ({p1.name[:16]}...)</th>'
+        f'<th style="padding: 12px 16px; font-weight: 800; font-size: 13.5px; letter-spacing: 0.3px;">{p2.brand} ({p2.name[:16]}...)</th>'
+        f'<th style="padding: 12px 16px; font-weight: 800; font-size: 13.5px; letter-spacing: 0.3px;">Evaluation</th>'
+        f'</tr>'
+        f'</thead>'
+        f'<tbody>'
+        f'{table_rows_html}'
+        f'</tbody>'
+        f'</table>'
+        f'</div>'
+    )
     st.markdown(table_html, unsafe_allow_html=True)
 
     # Ingredients Side-by-side
