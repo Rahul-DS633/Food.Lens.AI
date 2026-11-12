@@ -368,3 +368,11 @@ def delete_household_data(user_id: int, db: Session) -> bool:
     return True
 
 
+# Auto-initialize database tables and seed default demo data if missing
+try:
+    init_db()
+except Exception as _auto_init_err:
+    pass
+
+
+

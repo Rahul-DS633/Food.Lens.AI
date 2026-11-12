@@ -44,7 +44,7 @@ if CSS_PATH.exists():
     with open(CSS_PATH, "r", encoding="utf-8") as f:
         st.html(f"<style>{f.read()}</style>")
 
-from db.session import SessionLocal
+from db.session import SessionLocal, init_db
 from db.models import User, Product
 from foodlens.gamification.xp import get_level_for_xp
 from foodlens.gamification.challenges import get_daily_challenge
@@ -53,6 +53,12 @@ from app.components.icons import get_icon_svg, icon_badge
 from app.components.images import get_product_image
 from app.components.three_d import render_3d_hero
 from app.components.sidebar import render_sidebar
+
+# Ensure database tables and seeds exist before rendering
+try:
+    init_db()
+except Exception as _e:
+    pass
 
 # Initialize session state variables
 if "user_id" not in st.session_state:
@@ -75,7 +81,16 @@ if st.session_state.get("profile_saved_toast"):
 # Fetch user progress from DB
 db = SessionLocal()
 try:
-    user = db.query(User).filter(User.id == st.session_state.user_id).first()
+    user = None
+    try:
+        user = db.query(User).filter(User.id == st.session_state.user_id).first()
+    except Exception:
+        try:
+            init_db()
+            user = db.query(User).filter(User.id == st.session_state.user_id).first()
+        except Exception:
+            user = None
+
     progress = user.progress if user else None
     xp = progress.xp if progress else 25
     level = progress.level if progress else "Label Rookie"
