@@ -75,18 +75,16 @@ def render_claims_section(
     st.markdown("<hr style='border: none; border-top: 1.5px solid #E2E8F0; margin: 24px 0;'>", unsafe_allow_html=True)
 
     target_icon = get_icon_svg("search", size=22, color="#1D4ED8")
-    st.markdown(
-        f"""
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-            {target_icon}
-            <h2 style="margin: 0; color: #1E3A8A; font-size: 20px;">Front-of-Pack Claim Checker</h2>
-        </div>
-        <p style="color: #64748B; font-size: 13.5px; margin-bottom: 12px;">
-            Marketing claims printed on front packaging compared directly with declared laboratory nutrition and statutory benchmark standards (FSSAI 2018 / Codex).
-        </p>
-        """,
-        unsafe_allow_html=True
+    claim_header_html = (
+        f'<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">'
+        f'{target_icon}'
+        f'<h2 style="margin: 0; color: #1E3A8A; font-size: 20px;">Front-of-Pack Claim Checker</h2>'
+        f'</div>'
+        f'<p style="color: #64748B; font-size: 13.5px; margin-bottom: 12px;">'
+        f'Marketing claims printed on front packaging compared directly with declared laboratory nutrition and statutory benchmark standards (FSSAI 2018 / Codex).'
+        f'</p>'
     )
+    st.markdown(claim_header_html, unsafe_allow_html=True)
 
     # 1. Suggested claims based on pack
     default_claims = []
@@ -120,41 +118,38 @@ def render_claims_section(
 
     # 2. Summary KPI Banner
     chip_htmls = "".join(render_claim_chip_html(r) for r in summary.results)
-    st.markdown(
-        f"""
-        <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 12px 14px; margin-bottom: 14px;">
-            <div style="font-weight: 700; color: #1E293B; font-size: 14px; margin-bottom: 8px;">
-                📊 Verification Summary: {summary.summary_sentence}
-            </div>
-            <div style="display: flex; flex-wrap: wrap; gap: 4px;">
-                {chip_htmls}
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
+    kpi_banner_html = (
+        f'<div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 12px 14px; margin-bottom: 14px;">'
+        f'<div style="font-weight: 700; color: #1E293B; font-size: 14px; margin-bottom: 8px;">'
+        f'📊 Verification Summary: {summary.summary_sentence}'
+        f'</div>'
+        f'<div style="display: flex; flex-wrap: wrap; gap: 4px;">'
+        f'{chip_htmls}'
+        f'</div>'
+        f'</div>'
     )
+    st.markdown(kpi_banner_html, unsafe_allow_html=True)
 
     # 3. Evidence Expander
     with st.expander("🔬 View Statutory Benchmarks & Label Evidence", expanded=True):
         for idx, res in enumerate(summary.results):
             cfg = STATUS_STYLES.get(res.status, STATUS_STYLES[ClaimStatus.NOT_CHECKABLE])
-            st.markdown(
-                f"""
-                <div style="border-left: 4px solid {cfg['border']}; padding: 6px 12px; margin-bottom: 12px; background: #FFFFFF; border-radius: 0 8px 8px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                        <span style="font-weight: 800; color: #0F172A; font-size: 14.5px;">{res.claim_text}</span>
-                        <span style="background: {cfg['bg']}; color: {cfg['text']}; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 9999px;">
-                            {cfg['label']}
-                        </span>
-                    </div>
-                    <p style="color: #334155; font-size: 13.5px; margin: 4px 0 6px 0;">{res.neutral_explanation}</p>
-                    <div style="font-size: 11.5px; color: #64748B;">
-                        <b>Benchmark Rule:</b> {res.threshold_source or 'FSSAI Claims Regulations, 2018'}
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
+            bench_src = res.threshold_source or "FSSAI Claims Regulations, 2018"
+            evidence_card_html = (
+                f'<div style="border-left: 4px solid {cfg["border"]}; padding: 6px 12px; margin-bottom: 12px; background: #FFFFFF; border-radius: 0 8px 8px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">'
+                f'<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">'
+                f'<span style="font-weight: 800; color: #0F172A; font-size: 14.5px;">{res.claim_text}</span>'
+                f'<span style="background: {cfg["bg"]}; color: {cfg["text"]}; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 9999px;">'
+                f'{cfg["label"]}'
+                f'</span>'
+                f'</div>'
+                f'<p style="color: #334155; font-size: 13.5px; margin: 4px 0 6px 0;">{res.neutral_explanation}</p>'
+                f'<div style="font-size: 11.5px; color: #64748B;">'
+                f'<b>Benchmark Rule:</b> {bench_src}'
+                f'</div>'
+                f'</div>'
             )
+            st.markdown(evidence_card_html, unsafe_allow_html=True)
 
         st.caption(
             "📌 *Legal Footnote: Based on the label data we have; claim rules can differ by product category.*"

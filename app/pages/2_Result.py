@@ -32,12 +32,14 @@ from foodlens.allergens import AllergenEngine, AllergenStatus
 from foodlens.personal_fit import PersonalFitEngine, UserProfileData, PersonalFitVerdict
 from foodlens.family_fit import HouseholdFitEngine, FamilyMemberInput
 from foodlens.sugar_detector import SugarDetector
+import textwrap
 from foodlens.advisor import AIAdvisor
 from app.components.nutrient_card import render_nutrient_card
 from app.components.score_ring import render_score_ring
 from app.components.sugar_cubes import render_sugar_cubes
 from app.components.sugar_timeline import render_sugar_timeline
 from app.components.allergen_matrix import render_allergen_matrix
+from app.components.metabolic_card import render_metabolic_section
 from app.components.icons import get_icon_svg
 from app.components.images import get_product_image
 from app.components.report_modal import render_report_issue_dialog
@@ -179,17 +181,15 @@ try:
             banner_color = "#991B1B" if hh_result.worst_allergen_status == AllergenStatus.CONTAINS_YOUR_ALLERGEN else "#92400E" if hh_result.worst_allergen_status in [AllergenStatus.MAY_CONTAIN_TRACES, AllergenStatus.UNKNOWN] else "#166534"
             banner_border = "#EF4444" if hh_result.worst_allergen_status == AllergenStatus.CONTAINS_YOUR_ALLERGEN else "#F59E0B" if hh_result.worst_allergen_status in [AllergenStatus.MAY_CONTAIN_TRACES, AllergenStatus.UNKNOWN] else "#86EFAC"
 
-            st.markdown(
-                f"""
-                <div style="background: {banner_bg}; border: 2px solid {banner_border}; border-radius: 14px; padding: 12px 18px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between;">
-                    <div style="color: {banner_color}; font-weight: 800; font-size: 14.5px;">
-                        {hh_result.top_alert_banner}
-                    </div>
-                    <span style="font-size: 12px; color: {banner_color}; font-weight: 700;">Family Shield Active ({len(selected_members)} Members)</span>
-                </div>
-                """,
-                unsafe_allow_html=True
+            banner_html = (
+                f'<div style="background: {banner_bg}; border: 2px solid {banner_border}; border-radius: 14px; padding: 12px 18px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between;">'
+                f'<div style="color: {banner_color}; font-weight: 800; font-size: 14.5px;">'
+                f'{hh_result.top_alert_banner}'
+                f'</div>'
+                f'<span style="font-size: 12px; color: {banner_color}; font-weight: 700;">Family Shield Active ({len(selected_members)} Members)</span>'
+                f'</div>'
             )
+            st.markdown(banner_html, unsafe_allow_html=True)
 
             with st.expander("👨‍👩‍👧‍👦 View Family Allergen Matrix & Dietary Breakdown", expanded=False):
                 render_allergen_matrix(selected_members, hh_result.allergen_matrix)
@@ -205,76 +205,50 @@ try:
         )
 
         if allergen_res.overall_status == AllergenStatus.CONTAINS_YOUR_ALLERGEN:
-            st.markdown(
-                f"""
-                <div style="background: #FEE2E2; border: 2px solid #EF4444; border-radius: 14px; padding: 14px 18px; margin-bottom: 18px; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);">
-                    <div style="width: 38px; height: 38px; border-radius: 50%; background: #DC2626; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: white; font-size: 22px; font-weight: bold;">
-                        !
-                    </div>
-                    <div>
-                        <div style="color: #991B1B; font-weight: 800; font-size: 15px; margin-bottom: 2px;">
-                            {allergen_res.banner_text}
-                        </div>
-                        <div style="color: #B91C1C; font-size: 12.5px;">
-                            Matches your declared allergies ({', '.join(user_prof.get('allergies', []))}). Please inspect the package before consuming.
-                        </div>
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
+            alg_html = (
+                f'<div style="background: #FEE2E2; border: 2px solid #EF4444; border-radius: 14px; padding: 14px 18px; margin-bottom: 18px; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);">'
+                f'<div style="width: 38px; height: 38px; border-radius: 50%; background: #DC2626; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: white; font-size: 22px; font-weight: bold;">!</div>'
+                f'<div>'
+                f'<div style="color: #991B1B; font-weight: 800; font-size: 15px; margin-bottom: 2px;">{allergen_res.banner_text}</div>'
+                f'<div style="color: #B91C1C; font-size: 12.5px;">Matches your declared allergies ({", ".join(user_prof.get("allergies", []))}). Please inspect the package before consuming.</div>'
+                f'</div>'
+                f'</div>'
             )
+            st.markdown(alg_html, unsafe_allow_html=True)
         elif allergen_res.overall_status == AllergenStatus.MAY_CONTAIN_TRACES:
-            st.markdown(
-                f"""
-                <div style="background: #FEF3C7; border: 2px solid #F59E0B; border-radius: 14px; padding: 14px 18px; margin-bottom: 18px; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.12);">
-                    <div style="width: 38px; height: 38px; border-radius: 50%; background: #D97706; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: white; font-size: 20px;">
-                        ⚠️
-                    </div>
-                    <div>
-                        <div style="color: #92400E; font-weight: 800; font-size: 15px; margin-bottom: 2px;">
-                            {allergen_res.banner_text}
-                        </div>
-                        <div style="color: #B45309; font-size: 12.5px;">
-                            Precautionary statement detected on packaging. Facility cross-contact is possible.
-                        </div>
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
+            alg_html = (
+                f'<div style="background: #FEF3C7; border: 2px solid #F59E0B; border-radius: 14px; padding: 14px 18px; margin-bottom: 18px; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.12);">'
+                f'<div style="width: 38px; height: 38px; border-radius: 50%; background: #D97706; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: white; font-size: 20px;">⚠️</div>'
+                f'<div>'
+                f'<div style="color: #92400E; font-weight: 800; font-size: 15px; margin-bottom: 2px;">{allergen_res.banner_text}</div>'
+                f'<div style="color: #B45309; font-size: 12.5px;">Precautionary statement detected on packaging. Facility cross-contact is possible.</div>'
+                f'</div>'
+                f'</div>'
             )
+            st.markdown(alg_html, unsafe_allow_html=True)
         elif allergen_res.overall_status == AllergenStatus.UNKNOWN:
-            st.markdown(
-                f"""
-                <div style="background: #FEF3C7; border: 1.5px solid #F59E0B; border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; color: #92400E; font-size: 13.5px;">
-                    {allergen_res.banner_text}
-                </div>
-                """,
-                unsafe_allow_html=True
+            alg_html = (
+                f'<div style="background: #FEF3C7; border: 1.5px solid #F59E0B; border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; color: #92400E; font-size: 13.5px;">'
+                f'{allergen_res.banner_text}'
+                f'</div>'
             )
+            st.markdown(alg_html, unsafe_allow_html=True)
         else:
-            st.markdown(
-                f"""
-                <div style="background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 12px; padding: 10px 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;">
-                    <div style="color: #166534; font-size: 13.5px; font-weight: 600;">
-                        ✓ None of your selected allergens ({', '.join(user_prof.get('allergies', []))}) detected in readable text. Verify on the pack.
-                    </div>
-                    <span style="font-size: 12px; color: #166534; font-weight: 700;">Allergen Shield Active</span>
-                </div>
-                """,
-                unsafe_allow_html=True
+            alg_html = (
+                f'<div style="background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 12px; padding: 10px 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;">'
+                f'<div style="color: #166534; font-size: 13.5px; font-weight: 600;">✓ None of your selected allergens ({", ".join(user_prof.get("allergies", []))}) detected in readable text. Verify on the pack.</div>'
+                f'<span style="font-size: 12px; color: #166534; font-weight: 700;">Allergen Shield Active</span>'
+                f'</div>'
             )
+            st.markdown(alg_html, unsafe_allow_html=True)
     else:
-        st.markdown(
-            """
-            <div style="background: #F8FAFC; border: 1.5px dashed #CBD5E1; border-radius: 12px; padding: 10px 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;">
-                <div style="color: #475569; font-size: 13px;">
-                    🛡️ <b>Want personalized allergen alerts & portion guidance?</b> Configure your dietary profile.
-                </div>
-                <span style="font-size: 12.5px; color: #1B5E3F; font-weight: 700;">Use Profile Page in Menu</span>
-            </div>
-            """,
-            unsafe_allow_html=True
+        shield_prompt_html = (
+            f'<div style="background: #F8FAFC; border: 1.5px dashed #CBD5E1; border-radius: 12px; padding: 10px 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;">'
+            f'<div style="color: #475569; font-size: 13px;">🛡️ <b>Want personalized allergen alerts & portion guidance?</b> Configure your dietary profile.</div>'
+            f'<span style="font-size: 12.5px; color: #1B5E3F; font-weight: 700;">Use Profile Page in Menu</span>'
+            f'</div>'
         )
+        st.markdown(shield_prompt_html, unsafe_allow_html=True)
 
     # Top Hero Showcase with Realistic Packaging Photo
     img_uri = get_product_image(prod.name, prod.brand, prod.category, prod.image_url)
@@ -289,36 +263,32 @@ try:
     col_h_img, col_h_info, col_h_acts = st.columns([1.2, 2.8, 1.2])
 
     with col_h_img:
-        st.markdown(
-            f"""
-            <div style="width: 100%; height: 175px; border-radius: 16px; overflow: hidden; background: #FFFFFF; border: 1.5px solid #E2E8F0; box-shadow: 0 10px 20px -5px rgba(0,0,0,0.06); display: flex; align-items: center; justify-content: center; padding: 6px;">
-                <img src="{img_uri}" alt="{prod.name}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
-            </div>
-            """,
-            unsafe_allow_html=True
+        hero_img_html = (
+            f'<div style="width: 100%; height: 175px; border-radius: 16px; overflow: hidden; background: #FFFFFF; border: 1.5px solid #E2E8F0; box-shadow: 0 10px 20px -5px rgba(0,0,0,0.06); display: flex; align-items: center; justify-content: center; padding: 6px;">'
+            f'<img src="{img_uri}" alt="{prod.name}" style="max-width: 100%; max-height: 100%; object-fit: contain;">'
+            f'</div>'
         )
+        st.markdown(hero_img_html, unsafe_allow_html=True)
 
     with col_h_info:
-        st.markdown(
-            f"""
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                <span class="pill-badge {grade_class}">{check_icon} Data Grade {prod.quality_grade or 'B'}</span>
-                <span class="pill-badge pill-source">Source: {source_label}</span>
-                <span class="pill-badge pill-source">Status: {prod.verification_status.title()}</span>
-            </div>
-            <h1 style="margin: 0 0 6px 0; color: #144730; font-size: 28px;">{prod.name}</h1>
-            <div style="font-size: 14.5px; color: #475569; line-height: 1.5;">
-                <b>Brand:</b> <span style="color: #0F172A; font-weight: 700;">{prod.brand or 'Packaged Brand'}</span> • 
-                <b>Category:</b> <span style="text-transform: capitalize;">{prod.category}</span> • 
-                <b>Net Wt:</b> {prod.net_weight_g or 100:g}g • 
-                <b>Serving:</b> {prod.serving_size_g or 25:g}g
-            </div>
-            <div style="margin-top: 6px; font-size: 13px; color: #64748B; display: flex; align-items: center; gap: 6px;">
-                {barcode_icon} <code>{prod.barcode}</code>
-            </div>
-            """,
-            unsafe_allow_html=True
+        hero_info_html = (
+            f'<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">'
+            f'<span class="pill-badge {grade_class}">{check_icon} Data Grade {prod.quality_grade or "B"}</span>'
+            f'<span class="pill-badge pill-source">Source: {source_label}</span>'
+            f'<span class="pill-badge pill-source">Status: {prod.verification_status.title()}</span>'
+            f'</div>'
+            f'<h1 style="margin: 0 0 6px 0; color: #144730; font-size: 28px;">{prod.name}</h1>'
+            f'<div style="font-size: 14.5px; color: #475569; line-height: 1.5;">'
+            f'<b>Brand:</b> <span style="color: #0F172A; font-weight: 700;">{prod.brand or "Packaged Brand"}</span> • '
+            f'<b>Category:</b> <span style="text-transform: capitalize;">{prod.category}</span> • '
+            f'<b>Net Wt:</b> {prod.net_weight_g or 100:g}g • '
+            f'<b>Serving:</b> {prod.serving_size_g or 25:g}g'
+            f'</div>'
+            f'<div style="margin-top: 6px; font-size: 13px; color: #64748B; display: flex; align-items: center; gap: 6px;">'
+            f'{barcode_icon} <code>{prod.barcode}</code>'
+            f'</div>'
         )
+        st.markdown(hero_info_html, unsafe_allow_html=True)
 
     with col_h_acts:
         st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
@@ -331,15 +301,13 @@ try:
 
     # Portion Selector & Multiplier
     utensils_icon = get_icon_svg("utensils", size=20, color="#1B5E3F")
-    st.markdown(
-        f"""
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-            {utensils_icon}
-            <h3 style="margin: 0; color: #144730; font-size: 18px;">Live Portion Calculator</h3>
-        </div>
-        """,
-        unsafe_allow_html=True
+    portion_title_html = (
+        f'<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">'
+        f'{utensils_icon}'
+        f'<h3 style="margin: 0; color: #144730; font-size: 18px;">Live Portion Calculator</h3>'
+        f'</div>'
     )
+    st.markdown(portion_title_html, unsafe_allow_html=True)
 
     portion_options = ["Standard (100g / 100ml)"]
     if prod.serving_size_g:
@@ -494,31 +462,30 @@ try:
         alert_border = "#FCA5A5" if ing_res.has_allergens else "#86EFAC"
         alert_color = "#991B1B" if ing_res.has_allergens else "#166534"
         alert_icon = "⚠️" if ing_res.has_allergens else "ℹ️"
-        st.markdown(
-            f"""
-            <div style="background: {alert_bg}; border: 1.5px solid {alert_border}; border-radius: 12px; padding: 12px 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 10px;">
-                <span style="font-size: 20px;">{alert_icon}</span>
-                <span style="color: {alert_color}; font-weight: 700; font-size: 13.5px; line-height: 1.4;">{ing_res.allergen_banner}</span>
-            </div>
-            """,
-            unsafe_allow_html=True
+        allergen_banner_html = (
+            f'<div style="background: {alert_bg}; border: 1.5px solid {alert_border}; border-radius: 12px; padding: 12px 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 10px;">'
+            f'<span style="font-size: 20px;">{alert_icon}</span>'
+            f'<span style="color: {alert_color}; font-weight: 700; font-size: 13.5px; line-height: 1.4;">{ing_res.allergen_banner}</span>'
+            f'</div>'
         )
+        st.markdown(allergen_banner_html, unsafe_allow_html=True)
+
+    # ═════════════════ METABOLIC & PHYSIOLOGICAL IMPACT ═════════════════
+    render_metabolic_section(active_profile, serving_size_g=active_portion_grams)
 
     # ═════════════════ INGREDIENTS & RECIPE COMPONENTS ═════════════════
     st.markdown("<hr style='border: none; border-top: 1.5px solid #E2E8F0; margin: 24px 0;'>", unsafe_allow_html=True)
     leaf_icon = get_icon_svg("leaf", size=22, color="#166534")
-    st.markdown(
-        f"""
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-            {leaf_icon}
-            <h2 style="margin: 0; color: #144730; font-size: 20px;">What's Inside — Ingredient & Recipe Components</h2>
-        </div>
-        <p style="color: #64748B; font-size: 13.5px; margin-bottom: 14px;">
-            Packaged food ingredients are listed in descending order of weight. Here is what this product is made of:
-        </p>
-        """,
-        unsafe_allow_html=True
+    ing_header_html = (
+        f'<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">'
+        f'{leaf_icon}'
+        f'<h2 style="margin: 0; color: #144730; font-size: 20px;">What\'s Inside — Ingredient & Recipe Components</h2>'
+        f'</div>'
+        f'<p style="color: #64748B; font-size: 13.5px; margin-bottom: 14px;">'
+        f'Packaged food ingredients are listed in descending order of weight. Here is what this product is made of:'
+        f'</p>'
     )
+    st.markdown(ing_header_html, unsafe_allow_html=True)
 
     if prod.ingredients:
         # Hidden Sugar & Sweetener Detection Timeline
@@ -596,18 +563,16 @@ try:
     sparkles_icon = get_icon_svg("sparkles", size=22, color="#1B5E3F")
     shield_icon = get_icon_svg("shield", size=22, color="#1B5E3F")
 
-    st.markdown(
-        f"""
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-            {shield_icon}
-            <h2 style="margin: 0; color: #144730; font-size: 20px;">Personalized Food Fit & Grounded AI Advice</h2>
-        </div>
-        <p style="color: #64748B; font-size: 13.5px; margin-bottom: 14px;">
-            Evaluated relative to your dietary profile and standard ICMR-NIN & FSSAI daily reference intakes.
-        </p>
-        """,
-        unsafe_allow_html=True
+    fit_hdr_html = (
+        f'<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">'
+        f'{shield_icon}'
+        f'<h2 style="margin: 0; color: #144730; font-size: 20px;">Personalized Food Fit & Grounded AI Advice</h2>'
+        f'</div>'
+        f'<p style="color: #64748B; font-size: 13.5px; margin-bottom: 14px;">'
+        f'Evaluated relative to your dietary profile and standard ICMR-NIN & FSSAI daily reference intakes.'
+        f'</p>'
     )
+    st.markdown(fit_hdr_html, unsafe_allow_html=True)
 
     # 1. Compute deterministic personal fit
     user_obj = None
@@ -656,46 +621,43 @@ try:
     col_fit_main, col_fit_side = st.columns([3, 2])
 
     with col_fit_main:
-        st.markdown(
-            f"""
-            <div class="foodlens-card-3d" style="margin-bottom: 16px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #E2E8F0; padding-bottom: 10px;">
-                    <div>
-                        <span style="font-size: 13px; color: #64748B; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Personal Fit Verdict</span>
-                        <div style="font-size: 19px; font-weight: 900; color: #144730;">For a {active_portion_grams:g}g portion</div>
-                    </div>
-                    <span style="background: {bg_v}; color: {col_v}; padding: 6px 14px; border-radius: 20px; font-weight: 800; font-size: 14px;">
-                        {icon_v} {fit_result.verdict.value}
-                    </span>
-                </div>
-                <div style="font-size: 14px; color: #334155; line-height: 1.5; margin-bottom: 14px;">
-                    {fit_explanation.summary}
-                </div>
-                <h4 style="color: #144730; margin: 12px 0 6px 0; font-size: 14px;">Portion Tip</h4>
-                <p style="font-size: 13px; color: #475569; margin: 0 0 12px 0;">{fit_explanation.portion_tip}</p>
-                <h4 style="color: #144730; margin: 12px 0 6px 0; font-size: 14px;">Generic Category Alternatives to Look For</h4>
-                <ul style="font-size: 13px; color: #475569; margin: 0 0 12px 0; padding-left: 20px;">
-                    {''.join([f'<li>{alt}</li>' for alt in fit_explanation.alternatives_to_look_for])}
-                </ul>
-                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 10px 12px; font-size: 11.5px; color: #64748B; margin-top: 14px;">
-                    <b>Disclaimer:</b> {fit_result.disclaimer}
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
+        alts_li_html = "".join([f"<li>{alt}</li>" for alt in fit_explanation.alternatives_to_look_for])
+        fit_card_html = (
+            f'<div class="foodlens-card-3d" style="margin-bottom: 16px;">'
+            f'<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #E2E8F0; padding-bottom: 10px;">'
+            f'<div>'
+            f'<span style="font-size: 13px; color: #64748B; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Personal Fit Verdict</span>'
+            f'<div style="font-size: 19px; font-weight: 900; color: #144730;">For a {active_portion_grams:g}g portion</div>'
+            f'</div>'
+            f'<span style="background: {bg_v}; color: {col_v}; padding: 6px 14px; border-radius: 20px; font-weight: 800; font-size: 14px;">'
+            f'{icon_v} {fit_result.verdict.value}'
+            f'</span>'
+            f'</div>'
+            f'<div style="font-size: 14px; color: #334155; line-height: 1.5; margin-bottom: 14px;">'
+            f'{fit_explanation.summary}'
+            f'</div>'
+            f'<h4 style="color: #144730; margin: 12px 0 6px 0; font-size: 14px;">Portion Tip</h4>'
+            f'<p style="font-size: 13px; color: #475569; margin: 0 0 12px 0;">{fit_explanation.portion_tip}</p>'
+            f'<h4 style="color: #144730; margin: 12px 0 6px 0; font-size: 14px;">Generic Category Alternatives to Look For</h4>'
+            f'<ul style="font-size: 13px; color: #475569; margin: 0 0 12px 0; padding-left: 20px;">'
+            f'{alts_li_html}'
+            f'</ul>'
+            f'<div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 10px 12px; font-size: 11.5px; color: #64748B; margin-top: 14px;">'
+            f'<b>Disclaimer:</b> {fit_result.disclaimer}'
+            f'</div>'
+            f'</div>'
         )
+        st.markdown(fit_card_html, unsafe_allow_html=True)
 
     with col_fit_side:
-        st.markdown(
-            """
-            <div class="foodlens-card-3d" style="margin-bottom: 14px;">
-                <h4 style="color: #144730; margin-top: 0; font-size: 15px;">Daily Reference Contribution</h4>
-                <p style="font-size: 12px; color: #64748B; margin-bottom: 10px;">
-                    Based on standard ICMR-NIN & FSSAI RDA guidelines for this portion.
-                </p>
-            """,
-            unsafe_allow_html=True
+        ref_header_html = (
+            f'<div class="foodlens-card-3d" style="margin-bottom: 14px;">'
+            f'<h4 style="color: #144730; margin-top: 0; font-size: 15px;">Daily Reference Contribution</h4>'
+            f'<p style="font-size: 12px; color: #64748B; margin-bottom: 10px;">'
+            f'Based on standard ICMR-NIN & FSSAI RDA guidelines for this portion.'
+            f'</p>'
         )
+        st.markdown(ref_header_html, unsafe_allow_html=True)
 
         for flag in fit_result.nutrient_flags:
             bar_color = "#16A34A" if flag.severity == "green" else ("#F59E0B" if flag.severity == "amber" else "#DC2626")

@@ -25,6 +25,7 @@ from db.session import SessionLocal
 from db.models import Product, UserProgress, XPEvent
 from foodlens.nutrition import NutritionProfile, create_nutrient
 from foodlens.scoring import calculate_foodlens_score
+from foodlens.metabolic import analyze_metabolic_impact
 from foodlens.ingredients import IngredientEngine
 from foodlens.gamification.xp import calculate_xp_award
 from app.components.icons import get_icon_svg
@@ -106,6 +107,9 @@ try:
     sc1 = calculate_foodlens_score(prof1, category=p1.category)
     sc2 = calculate_foodlens_score(prof2, category=p2.category)
 
+    meta1 = analyze_metabolic_impact(prof1, serving_size_g=p1.serving_size_g)
+    meta2 = analyze_metabolic_impact(prof2, serving_size_g=p2.serving_size_g)
+
     # Award XP for comparing
     progress = db.query(UserProgress).filter(UserProgress.user_id == 1).first()
     if progress:
@@ -123,58 +127,54 @@ try:
     col_c1, col_c2 = st.columns(2)
 
     with col_c1:
-        st.markdown(
-            f"""
-            <div class="product-card-3d" style="border-top: 5px solid #1B5E3F; padding: 18px;">
-                <div style="display: flex; gap: 14px; align-items: center; margin-bottom: 12px;">
-                    <div style="width: 80px; height: 80px; border-radius: 12px; overflow: hidden; background: #FFFFFF; border: 1px solid #E2E8F0; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 4px;">
-                        <img src="{img1}" alt="{p1.name}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
-                    </div>
-                    <div>
-                        <span style="font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; background: #DCFCE7; color: #166534; text-transform: uppercase;">
-                            {p1.brand}
-                        </span>
-                        <h3 style="margin: 4px 0 2px 0; color: #144730; font-size: 17px;">{p1.name}</h3>
-                        <div style="font-size: 13px; color: #64748B;">Category: {p1.category.title()}</div>
-                    </div>
-                </div>
-                <div style="background: #F8FAFC; border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: baseline;">
-                    <span style="font-size: 12.5px; font-weight: 700; color: #475569; text-transform: uppercase;">Nutri-Score</span>
-                    <span style="font-size: 26px; font-weight: 800; color: {sc1.color_hex}; font-family: 'JetBrains Mono', monospace;">
-                        {sc1.score or 'N/A'}<span style="font-size: 14px; color: #64748B;">/100 ({sc1.band})</span>
-                    </span>
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
+        card1_html = (
+            f'<div class="product-card-3d" style="border-top: 5px solid #1B5E3F; padding: 18px;">'
+            f'<div style="display: flex; gap: 14px; align-items: center; margin-bottom: 12px;">'
+            f'<div style="width: 80px; height: 80px; border-radius: 12px; overflow: hidden; background: #FFFFFF; border: 1px solid #E2E8F0; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 4px;">'
+            f'<img src="{img1}" alt="{p1.name}" style="max-width: 100%; max-height: 100%; object-fit: contain;">'
+            f'</div>'
+            f'<div>'
+            f'<span style="font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; background: #DCFCE7; color: #166534; text-transform: uppercase;">'
+            f'{p1.brand}'
+            f'</span>'
+            f'<h3 style="margin: 4px 0 2px 0; color: #144730; font-size: 17px;">{p1.name}</h3>'
+            f'<div style="font-size: 13px; color: #64748B;">Category: {p1.category.title()}</div>'
+            f'</div>'
+            f'</div>'
+            f'<div style="background: #F8FAFC; border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: baseline;">'
+            f'<span style="font-size: 12.5px; font-weight: 700; color: #475569; text-transform: uppercase;">Nutri-Score</span>'
+            f'<span style="font-size: 26px; font-weight: 800; color: {sc1.color_hex}; font-family: \'JetBrains Mono\', monospace;">'
+            f'{sc1.score or "N/A"}<span style="font-size: 14px; color: #64748B;">/100 ({sc1.band})</span>'
+            f'</span>'
+            f'</div>'
+            f'</div>'
         )
+        st.markdown(card1_html, unsafe_allow_html=True)
 
     with col_c2:
-        st.markdown(
-            f"""
-            <div class="product-card-3d" style="border-top: 5px solid #2563EB; padding: 18px;">
-                <div style="display: flex; gap: 14px; align-items: center; margin-bottom: 12px;">
-                    <div style="width: 80px; height: 80px; border-radius: 12px; overflow: hidden; background: #FFFFFF; border: 1px solid #E2E8F0; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 4px;">
-                        <img src="{img2}" alt="{p2.name}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
-                    </div>
-                    <div>
-                        <span style="font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; background: #EFF6FF; color: #1D4ED8; text-transform: uppercase;">
-                            {p2.brand}
-                        </span>
-                        <h3 style="margin: 4px 0 2px 0; color: #1E3A8A; font-size: 17px;">{p2.name}</h3>
-                        <div style="font-size: 13px; color: #64748B;">Category: {p2.category.title()}</div>
-                    </div>
-                </div>
-                <div style="background: #F8FAFC; border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: baseline;">
-                    <span style="font-size: 12.5px; font-weight: 700; color: #475569; text-transform: uppercase;">Nutri-Score</span>
-                    <span style="font-size: 26px; font-weight: 800; color: {sc2.color_hex}; font-family: 'JetBrains Mono', monospace;">
-                        {sc2.score or 'N/A'}<span style="font-size: 14px; color: #64748B;">/100 ({sc2.band})</span>
-                    </span>
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
+        card2_html = (
+            f'<div class="product-card-3d" style="border-top: 5px solid #2563EB; padding: 18px;">'
+            f'<div style="display: flex; gap: 14px; align-items: center; margin-bottom: 12px;">'
+            f'<div style="width: 80px; height: 80px; border-radius: 12px; overflow: hidden; background: #FFFFFF; border: 1px solid #E2E8F0; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 4px;">'
+            f'<img src="{img2}" alt="{p2.name}" style="max-width: 100%; max-height: 100%; object-fit: contain;">'
+            f'</div>'
+            f'<div>'
+            f'<span style="font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; background: #EFF6FF; color: #1D4ED8; text-transform: uppercase;">'
+            f'{p2.brand}'
+            f'</span>'
+            f'<h3 style="margin: 4px 0 2px 0; color: #1E3A8A; font-size: 17px;">{p2.name}</h3>'
+            f'<div style="font-size: 13px; color: #64748B;">Category: {p2.category.title()}</div>'
+            f'</div>'
+            f'</div>'
+            f'<div style="background: #F8FAFC; border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: baseline;">'
+            f'<span style="font-size: 12.5px; font-weight: 700; color: #475569; text-transform: uppercase;">Nutri-Score</span>'
+            f'<span style="font-size: 26px; font-weight: 800; color: {sc2.color_hex}; font-family: \'JetBrains Mono\', monospace;">'
+            f'{sc2.score or "N/A"}<span style="font-size: 14px; color: #64748B;">/100 ({sc2.band})</span>'
+            f'</span>'
+            f'</div>'
+            f'</div>'
         )
+        st.markdown(card2_html, unsafe_allow_html=True)
 
     # Detailed Table of Nutrients per 100g
     st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
@@ -201,6 +201,10 @@ try:
         ("Protein", n1.protein_g, n2.protein_g, "g", False),
         ("Dietary Fibre", n1.fibre_g, n2.fibre_g, "g", False),
         ("Sodium", n1.sodium_mg, n2.sodium_mg, "mg", True),
+        ("Protein Energy Ratio (PE%)", meta1.protein_density.protein_energy_pct, meta2.protein_density.protein_energy_pct, "%", False),
+        ("Estimated Sugar Spike (SSI)", meta1.sugar_spike.sugar_spike_index, meta2.sugar_spike.sugar_spike_index, "", True),
+        ("Sodium per 100 kcal", meta1.sodium.sodium_per_100kcal, meta2.sodium.sodium_per_100kcal, " mg", True),
+        ("Satiety / Weight Management Index", meta1.weight_management.weight_management_index, meta2.weight_management.weight_management_index, " / 100", False),
     ]
 
     rows = []
@@ -255,6 +259,72 @@ try:
         f'</div>'
     )
     st.markdown(table_html, unsafe_allow_html=True)
+
+    # Side-by-side Metabolic & Physiological Comparison
+    bolt_icon = get_icon_svg("bolt", size=20, color="#1B5E3F")
+    meta_hdr_html = (
+        f'<div style="display: flex; align-items: center; gap: 8px; margin: 18px 0 6px 0;">'
+        f'{bolt_icon}'
+        f'<h4 style="margin: 0; color: #144730; font-size: 17px;">Physiological & Metabolic Comparison (ICMR-NIN 2024 Models)</h4>'
+        f'</div>'
+        f'<p style="color: #64748B; font-size: 13px; margin-bottom: 14px;">'
+        f'Direct physiological modeling of glycemic spikes, protein leverage satiety, cardiovascular fluid load, and weight dynamics.'
+        f'</p>'
+    )
+    st.markdown(meta_hdr_html, unsafe_allow_html=True)
+
+    col_m1, col_m2 = st.columns(2)
+    with col_m1:
+        ssi1 = meta1.sugar_spike
+        pd1 = meta1.protein_density
+        wm1 = meta1.weight_management
+        card_m1_html = (
+            f'<div class="foodlens-card-3d" style="border-top: 4px solid {ssi1.color_hex}; padding: 16px; margin-bottom: 16px;">'
+            f'<div style="font-weight: 800; color: #144730; font-size: 15px; margin-bottom: 8px;">{p1.brand} Physiological Profile</div>'
+            f'<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">'
+            f'<span style="font-size: 12.5px; color: #475569;">Sugar Spike:</span>'
+            f'<span style="background: {ssi1.color_hex}15; color: {ssi1.color_hex}; font-weight: 800; font-size: 11px; padding: 2px 8px; border-radius: 9999px;">{ssi1.risk_band} (SSI: {ssi1.sugar_spike_index:g})</span>'
+            f'</div>'
+            f'<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">'
+            f'<span style="font-size: 12.5px; color: #475569;">Protein Leverage:</span>'
+            f'<span style="background: {pd1.color_hex}15; color: {pd1.color_hex}; font-weight: 800; font-size: 11px; padding: 2px 8px; border-radius: 9999px;">{pd1.classification}</span>'
+            f'</div>'
+            f'<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">'
+            f'<span style="font-size: 12.5px; color: #475569;">Fullness Latency:</span>'
+            f'<span style="font-weight: 700; font-size: 12px; color: #0F172A;">{wm1.hunger_latency}</span>'
+            f'</div>'
+            f'<div style="background: #F8FAFC; border-radius: 8px; padding: 8px 10px; font-size: 12px; color: {wm1.color_hex}; font-weight: 700;">'
+            f'Verdict: {wm1.verdict}'
+            f'</div>'
+            f'</div>'
+        )
+        st.markdown(card_m1_html, unsafe_allow_html=True)
+
+    with col_m2:
+        ssi2 = meta2.sugar_spike
+        pd2 = meta2.protein_density
+        wm2 = meta2.weight_management
+        card_m2_html = (
+            f'<div class="foodlens-card-3d" style="border-top: 4px solid {ssi2.color_hex}; padding: 16px; margin-bottom: 16px;">'
+            f'<div style="font-weight: 800; color: #1E3A8A; font-size: 15px; margin-bottom: 8px;">{p2.brand} Physiological Profile</div>'
+            f'<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">'
+            f'<span style="font-size: 12.5px; color: #475569;">Sugar Spike:</span>'
+            f'<span style="background: {ssi2.color_hex}15; color: {ssi2.color_hex}; font-weight: 800; font-size: 11px; padding: 2px 8px; border-radius: 9999px;">{ssi2.risk_band} (SSI: {ssi2.sugar_spike_index:g})</span>'
+            f'</div>'
+            f'<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">'
+            f'<span style="font-size: 12.5px; color: #475569;">Protein Leverage:</span>'
+            f'<span style="background: {pd2.color_hex}15; color: {pd2.color_hex}; font-weight: 800; font-size: 11px; padding: 2px 8px; border-radius: 9999px;">{pd2.classification}</span>'
+            f'</div>'
+            f'<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">'
+            f'<span style="font-size: 12.5px; color: #475569;">Fullness Latency:</span>'
+            f'<span style="font-weight: 700; font-size: 12px; color: #0F172A;">{wm2.hunger_latency}</span>'
+            f'</div>'
+            f'<div style="background: #F8FAFC; border-radius: 8px; padding: 8px 10px; font-size: 12px; color: {wm2.color_hex}; font-weight: 700;">'
+            f'Verdict: {wm2.verdict}'
+            f'</div>'
+            f'</div>'
+        )
+        st.markdown(card_m2_html, unsafe_allow_html=True)
 
     # Ingredients Side-by-side
     st.markdown("#### Ingredients Comparison")

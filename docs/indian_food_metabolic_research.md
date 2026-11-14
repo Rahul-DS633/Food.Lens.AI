@@ -252,3 +252,4 @@ By implementing these formulas into the FoodLens AI engine, the application will
 4. **Weight Management Verdict:** A clear, scientific assessment:
    * *"Calorie Dense / Low Satiety: Likely to drive cravings within 2 hours."*
    * *"High Satiety / Balanced: Supports steady energy and appetite control."*
+

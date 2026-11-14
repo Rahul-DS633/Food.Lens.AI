@@ -425,16 +425,14 @@ if st.session_state.scan_step == "capture":
                 for idx, sp in enumerate(sample_prods):
                     with cols[idx % 2]:
                         with st.container():
-                            st.markdown(
-                                f"""
-                                <div style="border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px; margin-bottom: 10px; background: #FFFFFF;">
-                                    <div style="font-weight: 700; color: #144730; font-size: 15px;">{sp.name}</div>
-                                    <div style="color: #64748B; font-size: 13px;">Brand: {sp.brand} | Category: {sp.category}</div>
-                                    <div style="color: #475569; font-size: 12px; margin-top: 4px;">Barcode: {sp.barcode}</div>
-                                </div>
-                                """,
-                                unsafe_allow_html=True
+                            sp_card_html = (
+                                f'<div style="border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px; margin-bottom: 10px; background: #FFFFFF;">'
+                                f'<div style="font-weight: 700; color: #144730; font-size: 15px;">{sp.name}</div>'
+                                f'<div style="color: #64748B; font-size: 13px;">Brand: {sp.brand} | Category: {sp.category}</div>'
+                                f'<div style="color: #475569; font-size: 12px; margin-top: 4px;">Barcode: {sp.barcode}</div>'
+                                f'</div>'
                             )
+                            st.markdown(sp_card_html, unsafe_allow_html=True)
                             if st.button(f"Analyze {sp.name[:24]}", key=f"btn_sample_{sp.id}", width="stretch"):
                                 st.session_state.current_scan_product_id = sp.id
                                 st.switch_page("pages/2_Result.py")
@@ -445,15 +443,13 @@ if st.session_state.scan_step == "capture":
 # ═════════════════ STEP 2: REVIEW & CORRECTION ═════════════════
 elif st.session_state.scan_step == "review":
     search_icon = get_icon_svg("search", size=22, color="#144730")
-    st.markdown(
-        f"""
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-            {search_icon}
-            <h2 style="margin: 0; color: #144730; font-size: 22px;">Review & Correct Extracted Label Values</h2>
-        </div>
-        """,
-        unsafe_allow_html=True
+    review_hdr_html = (
+        f'<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">'
+        f'{search_icon}'
+        f'<h2 style="margin: 0; color: #144730; font-size: 22px;">Review & Correct Extracted Label Values</h2>'
+        f'</div>'
     )
+    st.markdown(review_hdr_html, unsafe_allow_html=True)
     st.caption(
         "Verify the numbers extracted by OCR against your packaging. Low-confidence fields are highlighted with alerts. "
         "Earn +15 XP for verifying and confirming this record!"
@@ -511,20 +507,18 @@ elif st.session_state.scan_step == "review":
     if advice_items:
         advice_html = "".join([f"<li style='margin-bottom: 6px;'>{item}</li>" for item in advice_items])
         ai_icon = get_icon_svg("sparkles", size=18, color="#166534")
-        st.markdown(
-            f"""
-            <div style="background: linear-gradient(135deg, #F0FDF4 0%, #ECFCCB 100%); border: 1.5px solid #86EFAC; border-radius: 14px; padding: 16px 20px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(27, 94, 63, 0.06);">
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
-                    {ai_icon}
-                    <b style="font-size: 15px; color: #166534; letter-spacing: 0.2px;">FoodLens AI Instant Insights & Nutritional Analysis</b>
-                </div>
-                <ul style="margin: 0; padding-left: 20px; font-size: 13.5px; color: #1E293B; line-height: 1.55;">
-                    {advice_html}
-                </ul>
-            </div>
-            """,
-            unsafe_allow_html=True
+        advice_box_html = (
+            f'<div style="background: linear-gradient(135deg, #F0FDF4 0%, #ECFCCB 100%); border: 1.5px solid #86EFAC; border-radius: 14px; padding: 16px 20px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(27, 94, 63, 0.06);">'
+            f'<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">'
+            f'{ai_icon}'
+            f'<b style="font-size: 15px; color: #166534; letter-spacing: 0.2px;">FoodLens AI Instant Insights & Nutritional Analysis</b>'
+            f'</div>'
+            f'<ul style="margin: 0; padding-left: 20px; font-size: 13.5px; color: #1E293B; line-height: 1.55;">'
+            f'{advice_html}'
+            f'</ul>'
+            f'</div>'
         )
+        st.markdown(advice_box_html, unsafe_allow_html=True)
 
     col_meta1, col_meta2 = st.columns(2)
     with col_meta1:

@@ -561,29 +561,43 @@ details[data-testid="stExpander"] > summary * {
     padding: 18px !important;
 }
 
-/* Selectbox & Multiselect */
+/* Selectbox & Multiselect Base Containers */
 [data-baseweb="select"],
 [data-baseweb="select"] > div,
-div[data-baseweb="select"] > div:first-child {
+div[data-baseweb="select"] > div:first-child,
+div[data-testid="stMultiSelect"] [data-baseweb="select"],
+div[data-testid="stMultiSelect"] [data-baseweb="select"] > div,
+div[data-testid="stSelectbox"] [data-baseweb="select"],
+div[data-testid="stSelectbox"] [data-baseweb="select"] > div {
     background-color: #FFFFFF !important;
     border: 1.5px solid #CBD5E1 !important;
     border-radius: 10px !important;
     color: #0F172A !important;
 }
 
+[data-baseweb="select"] input,
+div[data-testid="stMultiSelect"] input {
+    color: #0F172A !important;
+    background-color: transparent !important;
+}
+
 [data-baseweb="select"]:hover > div,
-[data-baseweb="select"]:focus-within > div {
+[data-baseweb="select"]:focus-within > div,
+div[data-testid="stMultiSelect"] [data-baseweb="select"]:focus-within > div {
     border-color: #1B5E3F !important;
     box-shadow: 0 0 0 3px rgba(27, 94, 63, 0.14) !important;
 }
 
-[data-baseweb="select"] * {
+[data-baseweb="select"] *,
+div[data-testid="stMultiSelect"] [data-baseweb="select"] * {
     color: #0F172A !important;
 }
 
-/* MultiSelect Tags */
+/* MultiSelect Tags / Chips */
 [data-baseweb="tag"],
-[data-baseweb="tag"] > span {
+[data-baseweb="tag"] > span,
+[data-testid="stMultiSelect"] [data-baseweb="tag"],
+div[data-baseweb="tag"] {
     background-color: #DCFCE7 !important;
     color: #144730 !important;
     border: 1px solid #86EFAC !important;
@@ -592,10 +606,25 @@ div[data-baseweb="select"] > div:first-child {
     border-radius: 8px !important;
 }
 
+[data-baseweb="tag"] span,
+[data-baseweb="tag"] div,
+[data-baseweb="tag"] * {
+    color: #144730 !important;
+}
+
 [data-baseweb="tag"] svg,
 [data-baseweb="tag"] [role="presentation"] {
     fill: #144730 !important;
     color: #144730 !important;
+    stroke: #144730 !important;
+}
+
+/* Light styling for code blocks if rendered */
+code, pre, [data-testid="stCode"] {
+    background-color: #F8FAFC !important;
+    color: #0F172A !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 8px !important;
 }
 
 /* Select Popover / Dropdown Menu */

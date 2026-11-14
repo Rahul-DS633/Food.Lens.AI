@@ -97,42 +97,31 @@ try:
             else '<span style="background: #DCFCE7; color: #166534; padding: 3px 9px; border-radius: 9999px; font-size: 11px; font-weight: 800;">👤 VERIFIED MEMBER</span>'
         )
 
-        st.markdown(
-            f"""
-            <div style="
-                background: #FFFFFF;
-                border: 2px solid #86EFAC;
-                border-radius: 16px;
-                padding: 18px 22px;
-                margin-bottom: 22px;
-                box-shadow: 0 4px 14px rgba(22, 101, 52, 0.08);
-            ">
-                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-                    <div style="display: flex; align-items: center; gap: 14px;">
-                        <div style="
-                            width: 52px; height: 52px;
-                            border-radius: 50%;
-                            background: linear-gradient(135deg, #166534, #22C55E);
-                            display: flex; align-items: center; justify-content: center;
-                            font-size: 24px; color: white;
-                            box-shadow: 0 4px 10px rgba(22, 101, 52, 0.25);
-                        ">
-                            {"🛡️" if is_admin_active else "👤"}
-                        </div>
-                        <div>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span style="font-size: 18px; font-weight: 800; color: #0F172A;">{user_name}</span>
-                                <span style="font-size: 13px; color: #64748B; font-weight: 600;">{handle}</span>
-                                {role_badge}
-                            </div>
-                            <div style="font-size: 13px; color: #334155; margin-top: 3px;">
-                                <strong>Level:</strong> {lvl_icon} {lvl_name} &nbsp;•&nbsp; 
-                                <strong>Streak:</strong> 🔥 {streak} days &nbsp;•&nbsp; 
-                                <strong>XP:</strong> ⚡ {user_xp} &nbsp;•&nbsp; 
-                                <strong>Dietary Shield:</strong> 🛡️ {allergen_str}
-                            </div>
-                        </div>
-                    </div>
+        status_banner_html = (
+            f'<div style="background: #FFFFFF; border: 2px solid #86EFAC; border-radius: 16px; padding: 18px 22px; margin-bottom: 22px; box-shadow: 0 4px 14px rgba(22, 101, 52, 0.08);">'
+            f'<div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">'
+            f'<div style="display: flex; align-items: center; gap: 14px;">'
+            f'<div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #166534, #22C55E); display: flex; align-items: center; justify-content: center; font-size: 24px; color: white; box-shadow: 0 4px 10px rgba(22, 101, 52, 0.25);">'
+            f'{"🛡️" if is_admin_active else "👤"}'
+            f'</div>'
+            f'<div>'
+            f'<div style="display: flex; align-items: center; gap: 8px;">'
+            f'<span style="font-size: 18px; font-weight: 800; color: #0F172A;">{user_name}</span>'
+            f'<span style="font-size: 13px; color: #64748B; font-weight: 600;">{handle}</span>'
+            f'{role_badge}'
+            f'</div>'
+            f'<div style="font-size: 13px; color: #334155; margin-top: 3px;">'
+            f'<strong>Level:</strong> {lvl_icon} {lvl_name} &nbsp;•&nbsp; '
+            f'<strong>Streak:</strong> 🔥 {streak} days &nbsp;•&nbsp; '
+            f'<strong>XP:</strong> ⚡ {user_xp} &nbsp;•&nbsp; '
+            f'<strong>Dietary Shield:</strong> 🛡️ {allergen_str}'
+            f'</div>'
+            f'</div>'
+            f'</div>'
+            f'</div>'
+            f'</div>'
+        )
+        st.markdown(status_banner_html, unsafe_allow_html=True)
                 </div>
             </div>
             """,
@@ -417,30 +406,25 @@ try:
 
             col_u_info, col_u_btn = st.columns([3, 1])
             with col_u_info:
-                st.markdown(
-                    f"""
-                    <div style="
-                        background: {'#F0FDF4' if is_active else '#FFFFFF'};
-                        border: 1.5px solid {'#4ADE80' if is_active else '#E2E8F0'};
-                        border-radius: 12px;
-                        padding: 10px 14px;
-                        margin-bottom: 8px;
-                    ">
-                        <div style="display: flex; align-items: center; justify-content: space-between;">
-                            <div>
-                                <strong style="color: #0F172A; font-size: 14px;">{u.display_name}</strong>
-                                <span style="font-size: 12px; color: #64748B;">(@{u.username or 'user'})</span>
-                                {'<span style="background: #166534; color: white; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 800; margin-left: 6px;">CURRENT</span>' if is_active else ''}
-                            </div>
-                            <span style="font-size: 12px; font-weight: 700; color: #166534;">{u_icon} {u_lvl} ({u_xp} XP)</span>
-                        </div>
-                        <div style="font-size: 12px; color: #475569; margin-top: 2px;">
-                            <strong>Role:</strong> {getattr(u, "role", "user")} &nbsp;|&nbsp; <strong>Allergies:</strong> {allergen_preview}
-                        </div>
-                    </div>
-                    """,
-                    unsafe_allow_html=True
+                active_bg = '#F0FDF4' if is_active else '#FFFFFF'
+                active_border = '#4ADE80' if is_active else '#E2E8F0'
+                active_pill = '<span style="background: #166534; color: white; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 800; margin-left: 6px;">CURRENT</span>' if is_active else ''
+                user_item_html = (
+                    f'<div style="background: {active_bg}; border: 1.5px solid {active_border}; border-radius: 12px; padding: 10px 14px; margin-bottom: 8px;">'
+                    f'<div style="display: flex; align-items: center; justify-content: space-between;">'
+                    f'<div>'
+                    f'<strong style="color: #0F172A; font-size: 14px;">{u.display_name}</strong>'
+                    f'<span style="font-size: 12px; color: #64748B;">(@{u.username or "user"})</span>'
+                    f'{active_pill}'
+                    f'</div>'
+                    f'<span style="font-size: 12px; font-weight: 700; color: #166534;">{u_icon} {u_lvl} ({u_xp} XP)</span>'
+                    f'</div>'
+                    f'<div style="font-size: 12px; color: #475569; margin-top: 2px;">'
+                    f'<strong>Role:</strong> {getattr(u, "role", "user")} &nbsp;|&nbsp; <strong>Allergies:</strong> {allergen_preview}'
+                    f'</div>'
+                    f'</div>'
                 )
+                st.markdown(user_item_html, unsafe_allow_html=True)
             with col_u_btn:
                 if st.button(f"Switch to #{u.id}", key=f"switch_user_{u.id}", disabled=is_active, use_container_width=True):
                     st.session_state.user_id = u.id

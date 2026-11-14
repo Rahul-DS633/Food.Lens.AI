@@ -64,14 +64,12 @@ try:
     # Top Status Bar
     col_stat1, col_stat2 = st.columns([3, 1.2])
     with col_stat1:
-        st.markdown(
-            f"""
-            <div style="font-size: 14.5px; color: #334155;">
-                Active Household Members: <b>{len(members)} / 8</b>
-            </div>
-            """,
-            unsafe_allow_html=True
+        stat_html = (
+            f'<div style="font-size: 14.5px; color: #334155;">'
+            f'Active Household Members: <b>{len(members)} / 8</b>'
+            f'</div>'
         )
+        st.markdown(stat_html, unsafe_allow_html=True)
     with col_stat2:
         exp_data = export_household_data(USER_ID, db)
         if exp_data and exp_data.get("members"):
@@ -94,20 +92,18 @@ try:
                 allergies_str = ", ".join(m.allergies_json) if m.allergies_json else "None"
                 prefs_str = ", ".join(m.dietary_prefs_json) if m.dietary_prefs_json else "None"
 
-                st.markdown(
-                    f"""
-                    <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
-                        <div style="font-size: 32px; margin-bottom: 6px;">{m.emoji_avatar}</div>
-                        <div style="font-size: 17px; font-weight: 800; color: #0F172A;">{m.display_name}</div>
-                        <div style="font-size: 13px; color: #64748B; margin-bottom: 8px;">Age: {m.age}{minor_badge}</div>
-                        <div style="font-size: 12px; color: #475569; line-height: 1.5;">
-                            🛡️ <b>Allergies:</b> <span style="color: #991B1B; font-weight: 600;">{allergies_str}</span><br>
-                            🥗 <b>Diet:</b> <span style="text-transform: capitalize;">{prefs_str}</span>
-                        </div>
-                    </div>
-                    """,
-                    unsafe_allow_html=True
+                mem_card_html = (
+                    f'<div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">'
+                    f'<div style="font-size: 32px; margin-bottom: 6px;">{m.emoji_avatar}</div>'
+                    f'<div style="font-size: 17px; font-weight: 800; color: #0F172A;">{m.display_name}</div>'
+                    f'<div style="font-size: 13px; color: #64748B; margin-bottom: 8px;">Age: {m.age}{minor_badge}</div>'
+                    f'<div style="font-size: 12px; color: #475569; line-height: 1.5;">'
+                    f'🛡️ <b>Allergies:</b> <span style="color: #991B1B; font-weight: 600;">{allergies_str}</span><br>'
+                    f'🥗 <b>Diet:</b> <span style="text-transform: capitalize;">{prefs_str}</span>'
+                    f'</div>'
+                    f'</div>'
                 )
+                st.markdown(mem_card_html, unsafe_allow_html=True)
                 if st.button(f"Remove {m.display_name}", key=f"del_mem_{m.id}"):
                     db.delete(m)
                     db.commit()
@@ -115,15 +111,13 @@ try:
                     st.rerun()
 
     else:
-        st.markdown(
-            """
-            <div style="background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 12px; padding: 14px 18px; margin-bottom: 14px; color: #144730; font-size: 14px; display: flex; align-items: center; gap: 10px;">
-                <span style="font-size: 18px;">ℹ️</span>
-                <span><b>No family members added yet.</b> Add your first member below to activate multi-person food checks!</span>
-            </div>
-            """,
-            unsafe_allow_html=True
+        empty_family_html = (
+            f'<div style="background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 12px; padding: 14px 18px; margin-bottom: 14px; color: #144730; font-size: 14px; display: flex; align-items: center; gap: 10px;">'
+            f'<span style="font-size: 18px;">ℹ️</span>'
+            f'<span><b>No family members added yet.</b> Add your first member below to activate multi-person food checks!</span>'
+            f'</div>'
         )
+        st.markdown(empty_family_html, unsafe_allow_html=True)
 
     st.markdown("---")
 
@@ -142,15 +136,13 @@ try:
             weight_val = None
 
             if is_minor:
-                st.markdown(
-                    """
-                    <div style="background: #EFF6FF; border: 1.5px solid #93C5FD; border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; font-size: 13px; color: #1E40AF;">
-                        <b>Child Data Protection (India DPDP Act 2023):</b><br>
-                        Caloric and weight guidance are strictly disabled for individuals under 18. FoodLens will provide allergen alerts and general nutritional facts only.
-                    </div>
-                    """,
-                    unsafe_allow_html=True
+                child_dpdp_html = (
+                    f'<div style="background: #EFF6FF; border: 1.5px solid #93C5FD; border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; font-size: 13px; color: #1E40AF;">'
+                    f'<b>Child Data Protection (India DPDP Act 2023):</b><br>'
+                    f'Caloric and weight guidance are strictly disabled for individuals under 18. FoodLens will provide allergen alerts and general nutritional facts only.'
+                    f'</div>'
                 )
+                st.markdown(child_dpdp_html, unsafe_allow_html=True)
                 consent = st.checkbox(
                     "I confirm I am the parent or lawful guardian of this child and consent to processing dietary preferences for food safety.",
                     value=True,

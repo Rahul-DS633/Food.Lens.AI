@@ -190,7 +190,7 @@ try:
 
     # 4. Today's Quest Card
     today_quest = get_daily_challenge(date.today())
-    trophy_icon = get_icon_svg("trophy", size=24, color="#166534")
+    trophy_icon = get_icon_svg("trophy", size=26, color="#166534", stroke_width=2.2)
     quest_title = today_quest["title"]
     quest_desc = today_quest["description"]
     if active_lang == "hi":
@@ -201,7 +201,7 @@ try:
         f'<div class="foodlens-card-3d" style="background: linear-gradient(90deg, #F0FDF4 0%, #ECFCCB 100%); border: 1.5px solid #86EFAC; margin-bottom: 22px;">'
         f'<div style="display: flex; justify-content: space-between; align-items: center;">'
         f'<div style="display: flex; align-items: center; gap: 14px;">'
-        f'<div style="width: 48px; height: 48px; border-radius: 12px; background: #FFFFFF; border: 1.5px solid #86EFAC; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">{trophy_icon}</div>'
+        f'<div style="width: 48px; height: 48px; border-radius: 12px; background: #DCFCE7; border: 1.5px solid #86EFAC; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">{trophy_icon}</div>'
         f'<div>'
         f'<span style="background: #1B5E3F; color: #FFFFFF !important; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 6px; letter-spacing: 0.5px;">{t["daily_quest"]}</span>'
         f'<h3 style="margin: 4px 0 2px 0; color: #166534; font-size: 17px;">{quest_title}</h3>'
@@ -220,9 +220,9 @@ try:
     # 5. Quick Action Columns (3D Elevating Cards with Cohesive Green Badges)
     col1, col2, col3 = st.columns(3)
 
-    cam_badge = icon_badge("camera", bg="#DCFCE7", color="#166534", size=24, badge_size=48, border="#86EFAC")
-    scale_badge = icon_badge("scale", bg="#F0FDF4", color="#1B5E3F", size=24, badge_size=48, border="#86EFAC")
-    game_badge = icon_badge("gamepad", bg="#ECFCCB", color="#3F6212", size=24, badge_size=48, border="#BEF264")
+    cam_badge = icon_badge("camera", bg="#DCFCE7", color="#166534", size=26, badge_size=48, border="#86EFAC")
+    scale_badge = icon_badge("scale", bg="#F0FDF4", color="#1B5E3F", size=26, badge_size=48, border="#86EFAC")
+    game_badge = icon_badge("gamepad", bg="#ECFCCB", color="#3F6212", size=26, badge_size=48, border="#BEF264")
 
     with col1:
         card1_html = (
@@ -297,7 +297,6 @@ try:
                 f'</div>'
                 f'</div>'
             )
-            st.markdown(card_p_html, unsafe_allow_html=True)
             st.markdown(card_p_html, unsafe_allow_html=True)
 
             if st.button(f"{t['btn_inspect']} {p.brand}", key=f"demo_btn_{p.id}", width="stretch"):
